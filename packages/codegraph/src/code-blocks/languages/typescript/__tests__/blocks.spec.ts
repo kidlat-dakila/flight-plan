@@ -4,6 +4,23 @@ const DEEP_NESTING_TIMEOUT_MS = 30_000
 
 const outlineOfCode = (...lines: readonly string[]): string[] => outlineOf(groupOf({ "src/file.ts": codeOf(...lines) }), "src/file.ts")
 
+const NESTED_KEYS = Array.from({ length: 20 }, (_unused, index) => `k${String(index)}`)
+const NESTED_PATH = NESTED_KEYS.join(".")
+const FIRST_INNER_LINE = NESTED_KEYS.length + 2
+
+const nestedApiOf = (...innermost: readonly string[]): string[] => [
+  "const api = {",
+  ...NESTED_KEYS.map((key) => `${key}: {`),
+  ...innermost,
+  ...NESTED_KEYS.map(() => "},"),
+  "}",
+]
+
+const followedFromRunOf = (...lines: readonly string[]): (string | null)[] =>
+  groupOf({ "src/file.ts": codeOf(...lines) })
+    .codeBlocks.filter((block) => block.name === "run")
+    .flatMap((block) => block.outerSymbols.map((symbol) => symbol.member?.blockId ?? null))
+
 describe("the blocks at the root of a TypeScript file", () => {
   it("makes a function block of a declared function and of a variable that holds one", () => {
     expect(outlineOfCode("function priceOf() {}", "export const taxOf = () => 1", "const sum = function () {}")).toStrictEqual([
@@ -236,5 +253,29 @@ describe("the path of a route made on a value a factory made", () => {
     const group = groupOf({ "src/routes.ts": codeOf("import express from \"express\"", "const router = express.Router()", "router.route(\"/api/items\").get((req, res) => res.json([]))") })
 
     expect(group.codeBlocks.filter((block) => block.type === "route").map((block) => [block.catalogue?.method, block.catalogue?.path])).toStrictEqual([["GET", "/api/items"]])
+  })
+})
+
+describe("the keys a function of a nested object is written under", () => {
+  it("follows a member through every key of the objects around a function and a method, and stops at an object a call is handed or a function returns", () => {
+    const followed = followedFromRunOf(
+      ...nestedApiOf("save: () => 1,", "load() { return 2 },", "wrapped: wrap({ inner: () => 3 }),", "make: () => ({ made: () => 4 }),"),
+      "export function run() {",
+      `  return [api.${NESTED_PATH}.save(), api.${NESTED_PATH}.load(), api.${NESTED_PATH}.wrapped.inner(), api.${NESTED_PATH}.make().made()]`,
+      "}",
+    )
+
+    expect(followed).toStrictEqual([
+      `src/file.ts#function@${String(FIRST_INNER_LINE)}:1`,
+      `src/file.ts#function@${String(FIRST_INNER_LINE + 1)}:1`,
+      `src/file.ts#property@${String(FIRST_INNER_LINE + 2)}:1`,
+      `src/file.ts#function@${String(FIRST_INNER_LINE + 3)}:1`,
+    ])
+  })
+
+  it("follows a member through quoted keys", () => {
+    const followed = followedFromRunOf("const api = { \"orders\": { 'remove': () => 1 } }", "export function run() {", "  return api.orders.remove()", "}")
+
+    expect(followed).toStrictEqual(["src/file.ts#function@1:27"])
   })
 })

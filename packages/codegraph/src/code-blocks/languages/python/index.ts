@@ -1,8 +1,8 @@
 import { readPythonSyntax } from "@/ast-graph/languages/python"
 import { parseWithGrammar, type GrammarId } from "@/ast-graph/parser"
 import { matchSyntax } from "@/catalogue/matching/match-source"
-import { declaredBindingAt, pythonReaderOf, type FindImportedBinding } from "@/catalogue/matching/python-reader"
-import type { FindExportedBinding, SyntaxReader } from "@/catalogue/matching/syntax-reader"
+import { pythonReadingOf, type FindImportedBinding, type PythonReading } from "@/catalogue/matching/python-reader"
+import type { FindExportedBinding } from "@/catalogue/matching/syntax-reader"
 import { listLibraryUses } from "@/code-blocks/classifications"
 import { withReturns } from "@/code-blocks/languages/returns"
 import { createFileNaming } from "@/code-blocks/languages/typescript/named-by"
@@ -11,6 +11,7 @@ import { LIBRARIES } from "@/code-blocks/libraries"
 import { listOwnUses, nodeFinderOf, withCards } from "@/code-blocks/libraries/cards"
 import type { FileExports, OutlinedFile } from "@/code-blocks/reading"
 import { fromSyntaxRange, toSyntaxRange } from "@/code-blocks/source-range"
+import { Memo } from "@/shared/memo"
 import { readPythonBlocks } from "./blocks"
 import { isModuleWide, isModuleWideImport, readPythonOutline, resolutionAt, type PythonOutline } from "./outline"
 import { readPythonUses } from "./uses"
@@ -40,17 +41,19 @@ const findImportedIn = (outline: PythonOutline, findBinding: FindExportedBinding
   return findBinding(resolution.variable.importedFilePath, resolution.variable.importedName)
 }
 
-const syntaxReaderOf = (outline: PythonOutline, findBinding: FindExportedBinding): SyntaxReader => pythonReaderOf(outline.tree, findImportedIn(outline, findBinding))
+const pythonReadingIn = (outline: PythonOutline, findBinding: FindExportedBinding): PythonReading => pythonReadingOf(outline.tree, findImportedIn(outline, findBinding))
 
 export const outlinePython = ({ filePath, source, importedFilePaths }: PythonSource): OutlinedFile => {
   const outline = readPythonOutline(parseWithGrammar(GRAMMAR, source), importedFilePaths)
+  const readings = new Memo<FindExportedBinding, PythonReading>()
+  const readingFor = (findBinding: FindExportedBinding): PythonReading => readings.remember(findBinding, () => pythonReadingIn(outline, findBinding))
   return {
     filePath,
     exports: exportsOf(outline),
     bindingAt: (declarationRange, findBinding) =>
-      declaredBindingAt(syntaxReaderOf(outline, findBinding), nodeAtRange(outline.tree, toSyntaxRange(declarationRange))),
+      readingFor(findBinding).declaredBindingAt(nodeAtRange(outline.tree, toSyntaxRange(declarationRange))),
     read: (findExport, findBinding) => {
-      const matches = matchSyntax(syntaxReaderOf(outline, findBinding), LIBRARIES)
+      const matches = matchSyntax(readingFor(findBinding).reader, LIBRARIES)
       const blocks = withReturns(readPythonBlocks({ filePath, outline, naming: createFileNaming(matches), findExport }), outline.tree.rootNode, FUNCTION_TYPES)
       return {
         filePath,

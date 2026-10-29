@@ -4,6 +4,7 @@ import { parseWithGrammar, type GrammarId, type SyntaxNode, type SyntaxTree } fr
 import { nodesMatching, patternOfTypes } from "@/ast-graph/query-nodes"
 import { chainFrom, selfAndAncestorsOf } from "@/ast-graph/walk-tree"
 import { annotatedTypeFilling, annotatedTypeOf } from "@/code-blocks/languages/python/annotated"
+import { once } from "@/shared/memo"
 import { NO_EXPRESSION, type Binding, type DeclaredMember, type Expression, type ParameterBinding, type PassedValue, type Site, type SyntaxReader } from "./syntax-reader"
 
 const GRAMMAR: GrammarId = "python"
@@ -271,15 +272,26 @@ const listDeclaredMembers = (declaration: SyntaxNode, name: string): DeclaredMem
 const builtinBindingOf = (name: SyntaxNode, boundNames: ReadonlySet<string>): Binding | null =>
   boundNames.has(name.text) ? null : { kind: "import", specifier: BUILTINS_MODULE, importedName: name.text }
 
-export const pythonReaderOf = (tree: SyntaxTree, findImported: FindImportedBinding = findNothingImported): SyntaxReader => {
+export interface PythonReading {
+  readonly reader: SyntaxReader
+  readonly declaredBindingAt: (declaredName: SyntaxNode) => Binding | null
+}
+
+const withReader = (binding: Binding | null, reader: SyntaxReader): Binding | null =>
+  binding?.kind === "value" || binding?.kind === "class" ? { ...binding, reader } : binding
+
+const bindingDeclaredAt = (bindings: readonly NamedBinding[], declaredName: SyntaxNode): Binding | null =>
+  bindings.find(({ startIndex }) => startIndex === declaredName.startIndex)?.binding ?? null
+
+export const pythonReadingOf = (tree: SyntaxTree, findImported: FindImportedBinding = findNothingImported): PythonReading => {
   const bindings = readBindings(tree)
-  const boundNames = listBoundNames(tree)
-  return {
+  const boundNames = once(() => listBoundNames(tree))
+  const reader: SyntaxReader = {
     language: "python",
     tree,
     expressionOf,
     bindingOf: (name) =>
-      receiverBindingOf(name) ?? followedImport(bindingAmong(bindings, name), name, findImported) ?? parameterBindingOf(name) ?? builtinBindingOf(name, boundNames),
+      receiverBindingOf(name) ?? followedImport(bindingAmong(bindings, name), name, findImported) ?? parameterBindingOf(name) ?? builtinBindingOf(name, boundNames()),
     basesOf,
     handedAt: () => null,
     parameterTypeOf,
@@ -294,14 +306,7 @@ export const pythonReaderOf = (tree: SyntaxTree, findImported: FindImportedBindi
     textOf,
     isFunction: (value) => value.type === FUNCTION_VALUE_TYPE,
   }
+  return { reader, declaredBindingAt: (declaredName) => withReader(bindingDeclaredAt(bindings, declaredName), reader) }
 }
 
-export const readPython = (source: string): SyntaxReader => pythonReaderOf(parseWithGrammar(GRAMMAR, source))
-
-const withReader = (binding: Binding | null, reader: SyntaxReader): Binding | null =>
-  binding?.kind === "value" || binding?.kind === "class" ? { ...binding, reader } : binding
-
-export const declaredBindingAt = (reader: SyntaxReader, declaredName: SyntaxNode): Binding | null => {
-  const declared = readBindings(reader.tree).find(({ startIndex }) => startIndex === declaredName.startIndex)
-  return withReader(declared?.binding ?? null, reader)
-}
+export const readPython = (source: string): SyntaxReader => pythonReadingOf(parseWithGrammar(GRAMMAR, source)).reader

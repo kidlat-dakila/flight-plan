@@ -16,6 +16,18 @@ const chainsOf = (group: StoredCodeGroupGraph): string[] =>
 
 const chainsIn = (files: FixtureFiles, diffs: FixtureDiffs): string[] => chainsOf(groupOf(files, diffs))
 
+const LOOP_COUNT = 2000
+const MANY_LOOPS_TIMEOUT_MS = 30_000
+
+const loopNameAt = (position: number): string => `loop${String(position)}`
+
+const selfCallingFunctions = (): string =>
+  codeOf(...Array.from({ length: LOOP_COUNT }, (_, position) => [`function ${loopNameAt(position)}() {`, `  ${loopNameAt(position)}()`, "}"]).flat())
+
+const selfCallChanges = (): FixtureDiffs => ({
+  "src/loops.ts": Array.from({ length: LOOP_COUNT }, (_, position) => rangeAt(position * 3 + 2, 3, position * 3 + 2, 3 + loopNameAt(position).length)),
+})
+
 const USERS = codeOf("export const removeUser = (id) => {", "  return api.delete(id)", "}")
 const USERS_CHANGE = { "src/users.ts": [rangeAt(2, 10, 2, 13)] }
 
@@ -979,4 +991,12 @@ describe("a chain into the classes a framework fills", () => {
 
     expect(chainsIn(files, { "src/users/user.dto.ts": [rangeAt(2, 3, 2, 12)] })).toStrictEqual(["class CreateUserDto"])
   })
+})
+
+describe("the chains of many loops", () => {
+  it("starts a chain at one block of each of 2,000 loops that nothing outside runs", () => {
+    const group = groupOf({ "src/loops.ts": selfCallingFunctions() }, selfCallChanges())
+
+    expect(group.diffChainIds).toStrictEqual(Array.from({ length: LOOP_COUNT }, (_, position) => blockNamed(group, "function", loopNameAt(position)).id))
+  }, MANY_LOOPS_TIMEOUT_MS)
 })

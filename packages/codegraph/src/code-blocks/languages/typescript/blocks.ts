@@ -31,7 +31,7 @@ import { parameterMemberWrittenIn } from "./parameter-writes"
 import { isPlainValue } from "./plain-values"
 import { isReturnedFunction } from "./returned-functions"
 import { blockIdOf, callableTypeOf, named, startOf } from "./syntax"
-import { memberPathOf } from "./written-at"
+import { keyHolderOf, memberPathWithin, type KeyHolder } from "./written-at"
 
 export interface BlockReader extends CallReader {
   readonly filePath: string
@@ -50,6 +50,7 @@ interface WalkContext {
   readonly isRenderedInPlace: boolean
   readonly isInRootClass: boolean
   readonly isInEvent: boolean
+  readonly keyHolder: KeyHolder | null
 }
 
 interface Seed {
@@ -131,6 +132,7 @@ const START: WalkContext = {
   isRenderedInPlace: false,
   isInRootClass: false,
   isInEvent: false,
+  keyHolder: null,
 }
 
 const isAtRoot = (context: WalkContext): boolean => context.parentId === null
@@ -612,7 +614,7 @@ const contextAt = (node: SyntaxNode, context: WalkContext): WalkContext => (isMo
 
 const readBlocksAt = (node: SyntaxNode, walked: WalkContext, reader: BlockReader): ReadBlock[] => {
   const context = contextAt(node, walked)
-  const memberPath = memberPathOf(node)
+  const memberPath = memberPathWithin(node, walked.keyHolder)
   const blocks = blocksOf(readSeeds(node, context, reader), context, reader.filePath).map((block) => withMemberPath(block, memberPath))
   return [
     ...blocks,
@@ -623,8 +625,10 @@ const readBlocksAt = (node: SyntaxNode, walked: WalkContext, reader: BlockReader
   ]
 }
 
-const contextWithin = (node: SyntaxNode, blocks: readonly ReadBlock[], context: WalkContext): WalkContext =>
-  withNode(withBlocks(context, blocks.filter((block) => block.argument === undefined && block.isParameter !== true)), node)
+const contextWithin = (node: SyntaxNode, blocks: readonly ReadBlock[], context: WalkContext): WalkContext => ({
+  ...withNode(withBlocks(context, blocks.filter((block) => block.argument === undefined && block.isParameter !== true)), node),
+  keyHolder: keyHolderOf(node, context.keyHolder),
+})
 
 function* walkBlocks(cursor: SyntaxCursor, reader: BlockReader, start: WalkContext): Generator<ReadBlock> {
   for (let contexts: ContextStack = { context: start, below: null }, isArriving = true; ;) {

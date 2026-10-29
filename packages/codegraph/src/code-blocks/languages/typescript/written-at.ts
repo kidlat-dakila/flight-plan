@@ -15,6 +15,7 @@ const ATTRIBUTE_TYPE = "jsx_attribute"
 const EXTENDING_TYPE = "extends_clause"
 const KEYED_TYPES: ReadonlySet<string> = new Set([PAIR_TYPE, METHOD_TYPE])
 const NO_KEYS: readonly string[] = []
+const NEAR_HOLDER_STEPS = 3
 
 interface ParentLink {
   readonly child: SyntaxNode
@@ -39,10 +40,34 @@ const holdingPairOf = (object: SyntaxNode | null): SyntaxNode | null => {
 const keysAround = (object: SyntaxNode | null): readonly string[] =>
   [...chainFrom(holdingPairOf(object), (pair) => holdingPairOf(pair.parent))].map(keyOf).reverse()
 
-export const memberPathOf = (node: SyntaxNode): readonly string[] => {
-  if (KEYED_TYPES.has(node.type)) return node.parent?.type === OBJECT_TYPE ? [...keysAround(node.parent), keyOf(node)] : NO_KEYS
-  const { parent } = node
-  return FUNCTION_TYPES.has(node.type) && parent?.type === PAIR_TYPE && isFieldOf(node, "value") ? memberPathOf(parent) : NO_KEYS
+interface ObjectHolder {
+  readonly type: typeof OBJECT_TYPE
+  readonly keys: readonly string[]
+}
+
+interface PairHolder {
+  readonly type: typeof PAIR_TYPE
+  readonly keys: readonly string[]
+  readonly valueId: number | null
+  readonly isInObject: boolean
+}
+
+export type KeyHolder = ObjectHolder | PairHolder
+
+const isValueOf = (node: SyntaxNode, holder: KeyHolder | null): holder is PairHolder => holder?.type === PAIR_TYPE && holder.valueId === node.id
+
+const keysOfObjectIn = (holder: KeyHolder | null): readonly string[] => (holder?.type === OBJECT_TYPE ? holder.keys : NO_KEYS)
+
+export const keyHolderOf = (node: SyntaxNode, holder: KeyHolder | null): KeyHolder | null => {
+  if (node.type === OBJECT_TYPE) return { type: OBJECT_TYPE, keys: isValueOf(node, holder) ? holder.keys : NO_KEYS }
+  if (node.type !== PAIR_TYPE) return null
+  const valueId = node.childForFieldName("value")?.id ?? null
+  return { type: PAIR_TYPE, keys: [...keysOfObjectIn(holder), keyOf(node)], valueId, isInObject: holder?.type === OBJECT_TYPE }
+}
+
+export const memberPathWithin = (node: SyntaxNode, holder: KeyHolder | null): readonly string[] => {
+  if (KEYED_TYPES.has(node.type)) return holder?.type === OBJECT_TYPE ? [...holder.keys, keyOf(node)] : NO_KEYS
+  return FUNCTION_TYPES.has(node.type) && isValueOf(node, holder) && holder.isInObject ? holder.keys : NO_KEYS
 }
 
 const isSlotHolder = (holder: SyntaxNode | null): boolean =>
@@ -54,8 +79,16 @@ const slotAt = ({ child, parent }: ParentLink): HandingSlot | null => {
   return parent.parent?.type === ATTRIBUTE_TYPE ? attributeNameOf(parent.parent) : null
 }
 
+const linkOf = (child: SyntaxNode): ParentLink => ({ child, parent: child.parent })
+
+function* nearParentLinksOf(node: SyntaxNode): Generator<ParentLink> {
+  for (let link: ParentLink | null = linkOf(node), step = 1; link !== null; link = step < NEAR_HOLDER_STEPS && link.parent !== null ? linkOf(link.parent) : null, step += 1) yield link
+}
+
+const isHanding = ({ parent }: ParentLink): boolean => isSlotHolder(parent)
+
 const slotOf = (used: SyntaxNode): HandingSlot | null => {
-  const handing = parentLinksOf(used).find(({ parent }) => isSlotHolder(parent))
+  const handing = [...nearParentLinksOf(used)].find(isHanding) ?? parentLinksOf(used).find(isHanding)
   return handing === undefined ? null : slotAt(handing)
 }
 

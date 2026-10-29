@@ -1,12 +1,13 @@
 export class Memo<Key, Stored> {
-  private entries: ReadonlyMap<Key, Stored> = new Map()
+  private entries = new Map<Key, Stored>()
 
   public readonly find = (key: Key): Stored | undefined => this.entries.get(key)
 
   public readonly has = (key: Key): boolean => this.entries.has(key)
 
   public readonly store = (key: Key, stored: Stored): Stored => {
-    this.entries = new Map(this.entries).set(key, stored)
+    // eslint-disable-next-line functional/immutable-data -- one private map keeps each store constant time; copying the map per store made every memo quadratic
+    this.entries.set(key, stored)
     return stored
   }
 
