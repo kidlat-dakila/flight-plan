@@ -33,7 +33,7 @@ const RETURN_START = /^return\b[\s(]*/u
 const ELEMENT_START = /^<(?<tag>[^\s>/]*)/u
 const FIRST_TOKEN = /^[^\s;,)]+/u
 const CALL_ARGUMENTS = /^[\w$.]+(?:<[^()]*>)?\((?<inside>.*)\)$/su
-const NAME_CHARACTERS = /[$]/gu
+const PATTERN_SYNTAX = /[\\^$.*+?()[\]{}|/]/gu
 const TERNARY = /\s\?\s/u
 const JOINING_OPERATOR = /&&|\|\||\?\?/u
 const VUE_CONDITION = /\bv-(?:else-if|if|else|show)\b/u
@@ -69,7 +69,7 @@ const headLineTexts = (source: SourceFile, firstLine: number, lastLine: number):
 
 const restOfLine = (source: SourceFile, at: Position): string => (headLineTexts(source, at.line, at.line)[0] ?? "").slice(at.column - FIRST_COLUMN)
 
-const memberPatternOf = (name: string): RegExp => new RegExp(`(?:^|[\\s{;,(<])${name.replace(NAME_CHARACTERS, "\\$&")}\\s*(?<optional>\\??)\\s*:\\s*`, "u")
+const memberPatternOf = (name: string): RegExp => new RegExp(`(?:^|[\\s{;,(<])${name.replace(PATTERN_SYNTAX, "\\$&")}\\s*(?<optional>\\??)\\s*:\\s*`, "u")
 
 const annotationOf = (match: RegExpExecArray, typeText: string): string | null => {
   const type = typeFrom(typeText)
