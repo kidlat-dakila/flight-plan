@@ -42,6 +42,13 @@ interface HeldSymbol {
 
 type Seen = ReadonlySet<string>
 
+interface Followed {
+  readonly blockId: string
+  readonly path: readonly string[]
+}
+
+type FollowedChain = readonly Followed[]
+
 const VALUE_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>(["external-value", "root-variable", "state", "derived", "variable"])
 const WRITTEN_MEMBER_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>(["function", "hook", "component", "property"])
 const CLASS_MEMBER_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>(["method", "property"])
@@ -51,8 +58,9 @@ const MARKUP: CodeBlockType = "render"
 const CLASS: CodeBlockType = "class"
 const TYPE_USE: StoredCodeBlockSymbol["use"] = "type"
 const MEMBER_SEPARATOR = "."
-const SEEN_SEPARATOR = "|"
 const NO_PLACES: Places = []
+const NOTHING_FOLLOWED: FollowedChain = []
+const DEEPEST_FOLLOW = 64
 
 const placesOf = (position: SlotPosition | undefined): Places => {
   if (position === undefined) return NO_PLACES
@@ -165,6 +173,11 @@ const contentOf = (block: StoredCodeBlock, index: OriginIndex): HeldSymbol[] => 
 const startsWith = (path: readonly string[], keys: readonly string[]): boolean =>
   keys.length <= path.length && keys.every((key, position) => path[position] === key)
 
+const isSamePath = (one: readonly string[], other: readonly string[]): boolean => one.length === other.length && startsWith(one, other)
+
+const isFollowedAgain = (block: StoredCodeBlock, path: readonly string[], chain: FollowedChain): boolean =>
+  chain.some((followed) => followed.blockId === block.id && (followed.path.length < path.length || isSamePath(followed.path, path)))
+
 function firstFound<Item>(items: readonly Item[], find: (item: Item) => string | null): string | null {
   return items.reduce<string | null>((found, item) => found ?? find(item), null)
 }
@@ -192,40 +205,39 @@ const findWrittenMember = (path: readonly string[], block: StoredCodeBlock, inde
   return longest?.id ?? within.find((inner) => CALLABLE_TYPES.has(inner.type) && inner.name === path[0] && !index.details.memberPathById.has(inner.id))?.id ?? null
 }
 
-function followPath(path: readonly string[], block: StoredCodeBlock, index: OriginIndex, seen: Seen): string | null {
-  const key = [block.id, ...path].join(SEEN_SEPARATOR)
-  if (path.length === 0 || seen.has(key)) return null
-  const visited = new Set([...seen, key])
-  return findWrittenMember(path, block, index) ?? firstFound(contentOf(block, index), (held) => followSymbol(path, held, index, visited))
+function followPath(path: readonly string[], block: StoredCodeBlock, index: OriginIndex, chain: FollowedChain): string | null {
+  if (path.length === 0 || chain.length >= DEEPEST_FOLLOW || isFollowedAgain(block, path, chain)) return null
+  const followed = [...chain, { blockId: block.id, path }]
+  return findWrittenMember(path, block, index) ?? firstFound(contentOf(block, index), (held) => followSymbol(path, held, index, followed))
 }
 
-function followNamed(path: readonly string[], held: HeldSymbol, index: OriginIndex, seen: Seen): string | null {
+function followNamed(path: readonly string[], held: HeldSymbol, index: OriginIndex, chain: FollowedChain): string | null {
   const referenced = referencedBlockOf(held.symbol, index)
   if (referenced === null) return null
   const provided = VALUE_TYPES.has(referenced.type) && isReadAsContext(held, index)
-    ? firstFound([...listProvidedByElement(referenced, index), ...listProvidedByCall(referenced, index)], (given) => followSymbol(path, given, index, seen))
+    ? firstFound([...listProvidedByElement(referenced, index), ...listProvidedByCall(referenced, index)], (given) => followSymbol(path, given, index, chain))
     : null
   if (provided !== null) return provided
   if (path.length === 0) return referenced.id
-  return VALUE_TYPES.has(referenced.type) ? followPath(path, referenced, index, seen) : null
+  return VALUE_TYPES.has(referenced.type) ? followPath(path, referenced, index, chain) : null
 }
 
-function followSymbol(path: readonly string[], held: HeldSymbol, index: OriginIndex, seen: Seen): string | null {
+function followSymbol(path: readonly string[], held: HeldSymbol, index: OriginIndex, chain: FollowedChain): string | null {
   const { symbol } = held
   const { keyPath } = writtenAtOf(symbol, index)
   if (symbol.use === "type" || !startsWith(path, keyPath)) return null
   const rest = path.slice(keyPath.length)
-  if (NAMING_USES.has(symbol.use)) return followNamed([...(symbol.member?.path ?? []), ...rest], held, index, seen)
+  if (NAMING_USES.has(symbol.use)) return followNamed([...(symbol.member?.path ?? []), ...rest], held, index, chain)
   const called = referencedBlockOf(symbol, index)
   const isMaking = called !== null && (CALLABLE_TYPES.has(called.type) || called.type === CLASS || VALUE_TYPES.has(called.type)) && symbol.member === undefined
-  return isMaking ? followPath(rest, called, index, seen) : null
+  return isMaking ? followPath(rest, called, index, chain) : null
 }
 
 const followThroughReader = (path: readonly string[], context: StoredCodeBlock, index: OriginIndex): string | null => {
   const isReading = makerOf(context, index)?.readingMembers.includes(path[0]) ?? false
   if (!isReading) return null
   const provided = [...listProvidedByElement(context, index), ...listProvidedByCall(context, index)]
-  return firstFound(provided, (given) => followSymbol(path.slice(1), given, index, new Set()))
+  return firstFound(provided, (given) => followSymbol(path.slice(1), given, index, NOTHING_FOLLOWED))
 }
 
 const classOfType = (block: StoredCodeBlock, index: OriginIndex): StoredCodeBlock | null =>
@@ -244,7 +256,7 @@ const withMemberFollowed = (symbol: StoredCodeBlockSymbol, index: OriginIndex): 
   const referenced = referencedBlockOf(symbol, index)
   if (member?.blockId !== null || symbol.use === TYPE_USE || referenced === null) return symbol
   if (referenced.type === CLASS) return { ...symbol, member: { ...member, blockId: findMethod(member.path[0], referenced, index, new Set()) } }
-  const followed = VALUE_TYPES.has(referenced.type) ? (followThroughReader(member.path, referenced, index) ?? followPath(member.path, referenced, index, new Set())) : null
+  const followed = VALUE_TYPES.has(referenced.type) ? (followThroughReader(member.path, referenced, index) ?? followPath(member.path, referenced, index, NOTHING_FOLLOWED)) : null
   const blockId = followed ?? findTypedMethod(member.path, referenced, index)
   return blockId === null && !VALUE_TYPES.has(referenced.type) ? symbol : { ...symbol, member: { ...member, blockId } }
 }

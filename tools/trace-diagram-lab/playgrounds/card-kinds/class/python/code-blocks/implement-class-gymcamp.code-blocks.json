@@ -1,0 +1,4556 @@
+[
+  {
+    "astGraphs": [
+      {
+        "filePath": "src/pokedex/cli.py",
+        "codeBlockIds": [
+          "src/pokedex/cli.py#import@1:1",
+          "src/pokedex/cli.py#function@4:1",
+          "src/pokedex/cli.py#external-value@5:5",
+          "src/pokedex/cli.py#call@6:5",
+          "src/pokedex/cli.py#root-statement@9:1",
+          "src/pokedex/cli.py#condition@9:1",
+          "src/pokedex/cli.py#call@10:5"
+        ],
+        "rootBlockIds": [
+          "src/pokedex/cli.py#import@1:1",
+          "src/pokedex/cli.py#function@4:1",
+          "src/pokedex/cli.py#root-statement@9:1"
+        ],
+        "diffBlockIds": [
+          "src/pokedex/cli.py#import@1:1",
+          "src/pokedex/cli.py#external-value@5:5",
+          "src/pokedex/cli.py#call@6:5"
+        ],
+        "diffContains": [
+          "logic"
+        ],
+        "externalSymbols": [
+          {
+            "blockId": "src/pokedex/cli.py#external-value@5:5",
+            "symbolIndex": 0
+          }
+        ],
+        "externalBlockIds": [
+          "src/pokedex/trainers/gym_camp.py#class@5:1"
+        ],
+        "exports": {
+          "main": "src/pokedex/cli.py#function@4:1",
+          "GymCamp": "src/pokedex/trainers/gym_camp.py#class@5:1"
+        }
+      },
+      {
+        "filePath": "src/pokedex/config.py",
+        "codeBlockIds": [
+          "src/pokedex/config.py#root-variable@1:1"
+        ],
+        "rootBlockIds": [
+          "src/pokedex/config.py#root-variable@1:1"
+        ],
+        "diffBlockIds": [],
+        "diffContains": [],
+        "externalSymbols": [],
+        "externalBlockIds": [],
+        "exports": {
+          "MAX_LEVEL": "src/pokedex/config.py#root-variable@1:1"
+        }
+      },
+      {
+        "filePath": "src/pokedex/trainers/camp.py",
+        "codeBlockIds": [
+          "src/pokedex/trainers/camp.py#import@1:1",
+          "src/pokedex/trainers/camp.py#import@2:1",
+          "src/pokedex/trainers/camp.py#class@5:1",
+          "src/pokedex/trainers/camp.py#method@6:5",
+          "src/pokedex/trainers/camp.py#property@7:9",
+          "src/pokedex/trainers/camp.py#property@8:9",
+          "src/pokedex/trainers/camp.py#method@10:5",
+          "src/pokedex/trainers/camp.py#root-argument-value@10:21",
+          "src/pokedex/trainers/camp.py#root-argument-value@10:38",
+          "src/pokedex/trainers/camp.py#variable@11:9",
+          "src/pokedex/trainers/camp.py#condition@12:9",
+          "src/pokedex/trainers/camp.py#method@17:5",
+          "src/pokedex/trainers/camp.py#root-argument-value@17:22"
+        ],
+        "rootBlockIds": [
+          "src/pokedex/trainers/camp.py#import@1:1",
+          "src/pokedex/trainers/camp.py#import@2:1",
+          "src/pokedex/trainers/camp.py#class@5:1"
+        ],
+        "diffBlockIds": [
+          "src/pokedex/trainers/camp.py#import@1:1",
+          "src/pokedex/trainers/camp.py#import@2:1",
+          "src/pokedex/trainers/camp.py#class@5:1",
+          "src/pokedex/trainers/camp.py#method@6:5",
+          "src/pokedex/trainers/camp.py#property@7:9",
+          "src/pokedex/trainers/camp.py#property@8:9",
+          "src/pokedex/trainers/camp.py#method@10:5",
+          "src/pokedex/trainers/camp.py#root-argument-value@10:21",
+          "src/pokedex/trainers/camp.py#root-argument-value@10:38",
+          "src/pokedex/trainers/camp.py#variable@11:9",
+          "src/pokedex/trainers/camp.py#condition@12:9",
+          "src/pokedex/trainers/camp.py#method@17:5",
+          "src/pokedex/trainers/camp.py#root-argument-value@17:22"
+        ],
+        "diffContains": [
+          "logic"
+        ],
+        "externalSymbols": [
+          {
+            "blockId": "src/pokedex/trainers/camp.py#property@7:9",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/pokedex/trainers/camp.py#property@7:9",
+            "symbolIndex": 1
+          },
+          {
+            "blockId": "src/pokedex/trainers/camp.py#root-argument-value@17:22",
+            "symbolIndex": 0
+          }
+        ],
+        "externalBlockIds": [
+          "src/pokedex/trainers/roster.py#class@12:1",
+          "src/pokedex/trainers/models.py#class@4:1"
+        ],
+        "exports": {
+          "TrainingCamp": "src/pokedex/trainers/camp.py#class@5:1",
+          "Pokemon": "src/pokedex/trainers/models.py#class@4:1",
+          "TrainerRoster": "src/pokedex/trainers/roster.py#class@12:1"
+        }
+      },
+      {
+        "filePath": "src/pokedex/trainers/gym_camp.py",
+        "codeBlockIds": [
+          "src/pokedex/trainers/gym_camp.py#import@1:1",
+          "src/pokedex/trainers/gym_camp.py#import@2:1",
+          "src/pokedex/trainers/gym_camp.py#class@5:1",
+          "src/pokedex/trainers/gym_camp.py#property@6:5",
+          "src/pokedex/trainers/gym_camp.py#method@8:5",
+          "src/pokedex/trainers/gym_camp.py#root-argument-value@8:22",
+          "src/pokedex/trainers/gym_camp.py#variable@9:9"
+        ],
+        "rootBlockIds": [
+          "src/pokedex/trainers/gym_camp.py#import@1:1",
+          "src/pokedex/trainers/gym_camp.py#import@2:1",
+          "src/pokedex/trainers/gym_camp.py#class@5:1"
+        ],
+        "diffBlockIds": [
+          "src/pokedex/trainers/gym_camp.py#import@1:1",
+          "src/pokedex/trainers/gym_camp.py#import@2:1",
+          "src/pokedex/trainers/gym_camp.py#class@5:1",
+          "src/pokedex/trainers/gym_camp.py#property@6:5",
+          "src/pokedex/trainers/gym_camp.py#method@8:5",
+          "src/pokedex/trainers/gym_camp.py#root-argument-value@8:22",
+          "src/pokedex/trainers/gym_camp.py#variable@9:9"
+        ],
+        "diffContains": [
+          "logic"
+        ],
+        "externalSymbols": [
+          {
+            "blockId": "src/pokedex/trainers/gym_camp.py#class@5:1",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/pokedex/trainers/gym_camp.py#root-argument-value@8:22",
+            "symbolIndex": 0
+          }
+        ],
+        "externalBlockIds": [
+          "src/pokedex/trainers/camp.py#class@5:1",
+          "src/pokedex/trainers/models.py#class@4:1"
+        ],
+        "exports": {
+          "GymCamp": "src/pokedex/trainers/gym_camp.py#class@5:1",
+          "Pokemon": "src/pokedex/trainers/models.py#class@4:1",
+          "TrainingCamp": "src/pokedex/trainers/camp.py#class@5:1"
+        }
+      },
+      {
+        "filePath": "src/pokedex/trainers/models.py",
+        "codeBlockIds": [
+          "src/pokedex/trainers/models.py#import@1:1",
+          "src/pokedex/trainers/models.py#class@4:1",
+          "src/pokedex/trainers/models.py#property@6:5",
+          "src/pokedex/trainers/models.py#property@7:5",
+          "src/pokedex/trainers/models.py#class@10:1",
+          "src/pokedex/trainers/models.py#property@12:5",
+          "src/pokedex/trainers/models.py#property@13:5",
+          "src/pokedex/trainers/models.py#property@14:5"
+        ],
+        "rootBlockIds": [
+          "src/pokedex/trainers/models.py#import@1:1",
+          "src/pokedex/trainers/models.py#class@4:1",
+          "src/pokedex/trainers/models.py#class@10:1"
+        ],
+        "diffBlockIds": [],
+        "diffContains": [],
+        "externalSymbols": [
+          {
+            "blockId": "src/pokedex/trainers/models.py#class@4:1",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/pokedex/trainers/models.py#class@10:1",
+            "symbolIndex": 0
+          }
+        ],
+        "externalBlockIds": [],
+        "exports": {
+          "Pokemon": "src/pokedex/trainers/models.py#class@4:1",
+          "Trainer": "src/pokedex/trainers/models.py#class@10:1"
+        }
+      },
+      {
+        "filePath": "src/pokedex/trainers/roster.py",
+        "codeBlockIds": [
+          "src/pokedex/trainers/roster.py#import@1:1",
+          "src/pokedex/trainers/roster.py#import@3:1",
+          "src/pokedex/trainers/roster.py#import@4:1",
+          "src/pokedex/trainers/roster.py#root-variable@6:1",
+          "src/pokedex/trainers/roster.py#class@12:1",
+          "src/pokedex/trainers/roster.py#method@13:5",
+          "src/pokedex/trainers/roster.py#property@14:9",
+          "src/pokedex/trainers/roster.py#method@16:5",
+          "src/pokedex/trainers/roster.py#root-argument-value@16:28",
+          "src/pokedex/trainers/roster.py#method@19:5",
+          "src/pokedex/trainers/roster.py#root-argument-value@19:24",
+          "src/pokedex/trainers/roster.py#root-argument-value@19:41",
+          "src/pokedex/trainers/roster.py#variable@20:9",
+          "src/pokedex/trainers/roster.py#condition@21:9",
+          "src/pokedex/trainers/roster.py#external-value@23:9"
+        ],
+        "rootBlockIds": [
+          "src/pokedex/trainers/roster.py#import@1:1",
+          "src/pokedex/trainers/roster.py#import@3:1",
+          "src/pokedex/trainers/roster.py#import@4:1",
+          "src/pokedex/trainers/roster.py#root-variable@6:1",
+          "src/pokedex/trainers/roster.py#class@12:1"
+        ],
+        "diffBlockIds": [
+          "src/pokedex/trainers/roster.py#import@1:1",
+          "src/pokedex/trainers/roster.py#import@3:1",
+          "src/pokedex/trainers/roster.py#method@19:5",
+          "src/pokedex/trainers/roster.py#root-argument-value@19:24",
+          "src/pokedex/trainers/roster.py#root-argument-value@19:41",
+          "src/pokedex/trainers/roster.py#variable@20:9",
+          "src/pokedex/trainers/roster.py#condition@21:9",
+          "src/pokedex/trainers/roster.py#external-value@23:9"
+        ],
+        "diffContains": [
+          "logic"
+        ],
+        "externalSymbols": [
+          {
+            "blockId": "src/pokedex/trainers/roster.py#root-variable@6:1",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/pokedex/trainers/roster.py#root-variable@6:1",
+            "symbolIndex": 1
+          },
+          {
+            "blockId": "src/pokedex/trainers/roster.py#root-variable@6:1",
+            "symbolIndex": 2
+          },
+          {
+            "blockId": "src/pokedex/trainers/roster.py#root-variable@6:1",
+            "symbolIndex": 3
+          },
+          {
+            "blockId": "src/pokedex/trainers/roster.py#root-variable@6:1",
+            "symbolIndex": 4
+          },
+          {
+            "blockId": "src/pokedex/trainers/roster.py#method@16:5",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/pokedex/trainers/roster.py#method@19:5",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/pokedex/trainers/roster.py#method@19:5",
+            "symbolIndex": 3
+          },
+          {
+            "blockId": "src/pokedex/trainers/roster.py#external-value@23:9",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/pokedex/trainers/roster.py#external-value@23:9",
+            "symbolIndex": 2
+          }
+        ],
+        "externalBlockIds": [
+          "src/pokedex/trainers/models.py#class@10:1",
+          "src/pokedex/trainers/models.py#class@4:1",
+          "src/pokedex/config.py#root-variable@1:1"
+        ],
+        "exports": {
+          "TRAINERS": "src/pokedex/trainers/roster.py#root-variable@6:1",
+          "TrainerRoster": "src/pokedex/trainers/roster.py#class@12:1",
+          "MAX_LEVEL": "src/pokedex/config.py#root-variable@1:1",
+          "Pokemon": "src/pokedex/trainers/models.py#class@4:1",
+          "Trainer": "src/pokedex/trainers/models.py#class@10:1"
+        }
+      }
+    ],
+    "rootASTGraphFilePaths": [
+      "src/pokedex/cli.py"
+    ],
+    "codeBlocks": [
+      {
+        "id": "src/pokedex/cli.py#import@1:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 39
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 1,
+              "column": 16
+            },
+            "end": {
+              "line": 1,
+              "column": 39
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 1,
+                "column": 16
+              },
+              "end": {
+                "line": 1,
+                "column": 39
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/cli.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/cli.py#function@4:1",
+        "name": "main",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 4,
+              "column": 1
+            },
+            "end": {
+              "line": 6,
+              "column": 28
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/pokedex/cli.py#external-value@5:5",
+          "src/pokedex/cli.py#call@6:5"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/pokedex/cli.py"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [
+          "src/pokedex/cli.py#external-value@5:5",
+          "src/pokedex/cli.py#call@6:5",
+          "src/pokedex/trainers/camp.py#method@10:5",
+          "src/pokedex/trainers/camp.py#condition@12:9",
+          "src/pokedex/trainers/camp.py#method@17:5",
+          "src/pokedex/trainers/gym_camp.py#class@5:1",
+          "src/pokedex/trainers/gym_camp.py#method@8:5",
+          "src/pokedex/trainers/roster.py#method@19:5",
+          "src/pokedex/trainers/roster.py#condition@21:9",
+          "src/pokedex/trainers/roster.py#external-value@23:9"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/pokedex/cli.py#call@10:5"
+        ],
+        "nextBlockIds": [
+          "src/pokedex/cli.py#external-value@5:5",
+          "src/pokedex/cli.py#call@6:5"
+        ],
+        "handedFrom": [],
+        "filePath": "src/pokedex/cli.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/cli.py#external-value@5:5",
+        "name": "camp",
+        "type": "external-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 5,
+              "column": 5
+            },
+            "end": {
+              "line": 5,
+              "column": 21
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/cli.py#function@4:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 5,
+              "column": 5
+            },
+            "end": {
+              "line": 5,
+              "column": 19
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 5,
+                "column": 5
+              },
+              "end": {
+                "line": 5,
+                "column": 19
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 5,
+                "column": 12
+              },
+              "end": {
+                "line": 5,
+                "column": 19
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/pokedex/cli.py#external-value@5:5",
+          "src/pokedex/trainers/gym_camp.py#class@5:1",
+          "src/pokedex/trainers/gym_camp.py#method@8:5"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 5,
+                "column": 12
+              },
+              "end": {
+                "line": 5,
+                "column": 19
+              }
+            },
+            "use": "call",
+            "type": "external-block",
+            "codeBlockId": "src/pokedex/trainers/gym_camp.py#class@5:1"
+          }
+        ],
+        "usedByIds": [
+          "src/pokedex/cli.py#call@6:5"
+        ],
+        "nextBlockIds": [
+          "src/pokedex/trainers/gym_camp.py#class@5:1"
+        ],
+        "handedFrom": [],
+        "filePath": "src/pokedex/cli.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/cli.py#call@6:5",
+        "name": "print",
+        "type": "call",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 6,
+              "column": 5
+            },
+            "end": {
+              "line": 6,
+              "column": 28
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/cli.py#function@4:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 6,
+              "column": 11
+            },
+            "end": {
+              "line": 6,
+              "column": 26
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 6,
+                "column": 11
+              },
+              "end": {
+                "line": 6,
+                "column": 26
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 6,
+                "column": 11
+              },
+              "end": {
+                "line": 6,
+                "column": 21
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/pokedex/cli.py#call@6:5",
+          "src/pokedex/trainers/camp.py#method@10:5",
+          "src/pokedex/trainers/camp.py#condition@12:9",
+          "src/pokedex/trainers/camp.py#method@17:5",
+          "src/pokedex/trainers/roster.py#method@19:5",
+          "src/pokedex/trainers/roster.py#condition@21:9",
+          "src/pokedex/trainers/roster.py#external-value@23:9"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 6,
+                "column": 11
+              },
+              "end": {
+                "line": 6,
+                "column": 21
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "train"
+              ],
+              "blockId": "src/pokedex/trainers/camp.py#method@10:5"
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/cli.py#external-value@5:5"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/pokedex/trainers/camp.py#method@10:5"
+        ],
+        "handedFrom": [],
+        "filePath": "src/pokedex/cli.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/cli.py#root-statement@9:1",
+        "type": "root-statement",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 9,
+              "column": 1
+            },
+            "end": {
+              "line": 10,
+              "column": 11
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/pokedex/cli.py#condition@9:1"
+        ],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [
+          "src/pokedex/cli.py#external-value@5:5",
+          "src/pokedex/cli.py#call@6:5",
+          "src/pokedex/trainers/camp.py#method@10:5",
+          "src/pokedex/trainers/camp.py#condition@12:9",
+          "src/pokedex/trainers/camp.py#method@17:5",
+          "src/pokedex/trainers/gym_camp.py#class@5:1",
+          "src/pokedex/trainers/gym_camp.py#method@8:5",
+          "src/pokedex/trainers/roster.py#method@19:5",
+          "src/pokedex/trainers/roster.py#condition@21:9",
+          "src/pokedex/trainers/roster.py#external-value@23:9"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/pokedex/cli.py#condition@9:1"
+        ],
+        "handedFrom": [],
+        "filePath": "src/pokedex/cli.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/cli.py#condition@9:1",
+        "type": "condition",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 9,
+              "column": 1
+            },
+            "end": {
+              "line": 10,
+              "column": 11
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/cli.py#root-statement@9:1",
+        "childrenBlockIds": [
+          "src/pokedex/cli.py#call@10:5"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [
+          "src/pokedex/cli.py#external-value@5:5",
+          "src/pokedex/cli.py#call@6:5",
+          "src/pokedex/trainers/camp.py#method@10:5",
+          "src/pokedex/trainers/camp.py#condition@12:9",
+          "src/pokedex/trainers/camp.py#method@17:5",
+          "src/pokedex/trainers/gym_camp.py#class@5:1",
+          "src/pokedex/trainers/gym_camp.py#method@8:5",
+          "src/pokedex/trainers/roster.py#method@19:5",
+          "src/pokedex/trainers/roster.py#condition@21:9",
+          "src/pokedex/trainers/roster.py#external-value@23:9"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/pokedex/cli.py#call@10:5"
+        ],
+        "handedFrom": [],
+        "filePath": "src/pokedex/cli.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/cli.py#call@10:5",
+        "name": "main",
+        "type": "call",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 10,
+              "column": 5
+            },
+            "end": {
+              "line": 10,
+              "column": 11
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/cli.py#condition@9:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 10,
+                "column": 5
+              },
+              "end": {
+                "line": 10,
+                "column": 9
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/pokedex/cli.py#external-value@5:5",
+          "src/pokedex/cli.py#call@6:5",
+          "src/pokedex/trainers/camp.py#method@10:5",
+          "src/pokedex/trainers/camp.py#condition@12:9",
+          "src/pokedex/trainers/camp.py#method@17:5",
+          "src/pokedex/trainers/gym_camp.py#class@5:1",
+          "src/pokedex/trainers/gym_camp.py#method@8:5",
+          "src/pokedex/trainers/roster.py#method@19:5",
+          "src/pokedex/trainers/roster.py#condition@21:9",
+          "src/pokedex/trainers/roster.py#external-value@23:9"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 10,
+                "column": 5
+              },
+              "end": {
+                "line": 10,
+                "column": 9
+              }
+            },
+            "use": "call",
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/cli.py#function@4:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/pokedex/cli.py#function@4:1"
+        ],
+        "handedFrom": [],
+        "filePath": "src/pokedex/cli.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/config.py#root-variable@1:1",
+        "name": "MAX_LEVEL",
+        "type": "root-variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 16
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": true,
+        "isPlain": true,
+        "exportedByFilePaths": [
+          "src/pokedex/config.py",
+          "src/pokedex/trainers/roster.py"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/pokedex/trainers/roster.py#external-value@23:9"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/config.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/trainers/camp.py#import@1:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 28
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 28
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 1,
+                "column": 1
+              },
+              "end": {
+                "line": 1,
+                "column": 28
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/trainers/camp.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/trainers/camp.py#import@2:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 2,
+              "column": 1
+            },
+            "end": {
+              "line": 2,
+              "column": 34
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 2,
+              "column": 1
+            },
+            "end": {
+              "line": 2,
+              "column": 34
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 2,
+                "column": 1
+              },
+              "end": {
+                "line": 2,
+                "column": 34
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/trainers/camp.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/trainers/camp.py#class@5:1",
+        "name": "TrainingCamp",
+        "type": "class",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 5,
+              "column": 1
+            },
+            "end": {
+              "line": 18,
+              "column": 46
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/pokedex/trainers/camp.py#method@6:5",
+          "src/pokedex/trainers/camp.py#method@10:5",
+          "src/pokedex/trainers/camp.py#method@17:5"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/pokedex/trainers/camp.py",
+          "src/pokedex/trainers/gym_camp.py"
+        ],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 5,
+              "column": 1
+            },
+            "end": {
+              "line": 5,
+              "column": 20
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 5,
+                "column": 1
+              },
+              "end": {
+                "line": 5,
+                "column": 20
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/pokedex/trainers/camp.py#class@5:1",
+          "src/pokedex/trainers/camp.py#method@6:5",
+          "src/pokedex/trainers/camp.py#method@10:5",
+          "src/pokedex/trainers/camp.py#condition@12:9",
+          "src/pokedex/trainers/camp.py#method@17:5",
+          "src/pokedex/trainers/roster.py#method@19:5",
+          "src/pokedex/trainers/roster.py#condition@21:9",
+          "src/pokedex/trainers/roster.py#external-value@23:9"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/pokedex/trainers/gym_camp.py#class@5:1"
+        ],
+        "nextBlockIds": [
+          "src/pokedex/trainers/camp.py#method@6:5",
+          "src/pokedex/trainers/camp.py#method@10:5",
+          "src/pokedex/trainers/camp.py#method@17:5"
+        ],
+        "handedFrom": [],
+        "filePath": "src/pokedex/trainers/camp.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/trainers/camp.py#method@6:5",
+        "name": "TrainingCamp.__init__",
+        "type": "method",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 6,
+              "column": 5
+            },
+            "end": {
+              "line": 8,
+              "column": 26
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/trainers/camp.py#class@5:1",
+        "childrenBlockIds": [
+          "src/pokedex/trainers/camp.py#property@7:9",
+          "src/pokedex/trainers/camp.py#property@8:9"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 6,
+              "column": 5
+            },
+            "end": {
+              "line": 6,
+              "column": 32
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 6,
+                "column": 5
+              },
+              "end": {
+                "line": 6,
+                "column": 32
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/pokedex/trainers/camp.py#method@6:5",
+          "src/pokedex/trainers/roster.py#method@19:5",
+          "src/pokedex/trainers/roster.py#condition@21:9",
+          "src/pokedex/trainers/roster.py#external-value@23:9"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/pokedex/trainers/camp.py#property@7:9"
+        ],
+        "handedFrom": [],
+        "filePath": "src/pokedex/trainers/camp.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/trainers/camp.py#property@7:9",
+        "name": "TrainingCamp.roster",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 7,
+              "column": 9
+            },
+            "end": {
+              "line": 7,
+              "column": 53
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/trainers/camp.py#method@6:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 7,
+              "column": 9
+            },
+            "end": {
+              "line": 7,
+              "column": 53
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 7,
+                "column": 9
+              },
+              "end": {
+                "line": 7,
+                "column": 53
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 7,
+                "column": 22
+              },
+              "end": {
+                "line": 7,
+                "column": 35
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 7,
+                "column": 38
+              },
+              "end": {
+                "line": 7,
+                "column": 51
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/pokedex/trainers/roster.py#method@19:5",
+          "src/pokedex/trainers/roster.py#condition@21:9",
+          "src/pokedex/trainers/roster.py#external-value@23:9"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 7,
+                "column": 22
+              },
+              "end": {
+                "line": 7,
+                "column": 35
+              }
+            },
+            "use": "type",
+            "type": "external-block",
+            "codeBlockId": "src/pokedex/trainers/roster.py#class@12:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 7,
+                "column": 38
+              },
+              "end": {
+                "line": 7,
+                "column": 51
+              }
+            },
+            "use": "call",
+            "type": "external-block",
+            "codeBlockId": "src/pokedex/trainers/roster.py#class@12:1"
+          }
+        ],
+        "usedByIds": [
+          "src/pokedex/trainers/camp.py#variable@11:9"
+        ],
+        "nextBlockIds": [
+          "src/pokedex/trainers/roster.py#class@12:1"
+        ],
+        "handedFrom": [],
+        "filePath": "src/pokedex/trainers/camp.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/trainers/camp.py#property@8:9",
+        "name": "TrainingCamp.sessions",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 8,
+              "column": 9
+            },
+            "end": {
+              "line": 8,
+              "column": 26
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/trainers/camp.py#method@6:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 8,
+              "column": 9
+            },
+            "end": {
+              "line": 8,
+              "column": 26
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 8,
+                "column": 9
+              },
+              "end": {
+                "line": 8,
+                "column": 26
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/pokedex/trainers/camp.py#method@10:5"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/trainers/camp.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/trainers/camp.py#method@10:5",
+        "name": "TrainingCamp.train",
+        "type": "method",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 10,
+              "column": 5
+            },
+            "end": {
+              "line": 15,
+              "column": 33
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/trainers/camp.py#class@5:1",
+        "childrenBlockIds": [
+          "src/pokedex/trainers/camp.py#root-argument-value@10:21",
+          "src/pokedex/trainers/camp.py#root-argument-value@10:38",
+          "src/pokedex/trainers/camp.py#variable@11:9",
+          "src/pokedex/trainers/camp.py#condition@12:9"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "returnsAt": [
+          {
+            "line": 15,
+            "column": 9
+          }
+        ],
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 10,
+              "column": 5
+            },
+            "end": {
+              "line": 10,
+              "column": 21
+            }
+          },
+          {
+            "start": {
+              "line": 10,
+              "column": 36
+            },
+            "end": {
+              "line": 10,
+              "column": 38
+            }
+          },
+          {
+            "start": {
+              "line": 10,
+              "column": 49
+            },
+            "end": {
+              "line": 10,
+              "column": 58
+            }
+          },
+          {
+            "start": {
+              "line": 14,
+              "column": 9
+            },
+            "end": {
+              "line": 14,
+              "column": 27
+            }
+          },
+          {
+            "start": {
+              "line": 15,
+              "column": 9
+            },
+            "end": {
+              "line": 15,
+              "column": 33
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 10,
+                "column": 5
+              },
+              "end": {
+                "line": 10,
+                "column": 21
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 10,
+                "column": 36
+              },
+              "end": {
+                "line": 10,
+                "column": 38
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 10,
+                "column": 49
+              },
+              "end": {
+                "line": 10,
+                "column": 58
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 14,
+                "column": 9
+              },
+              "end": {
+                "line": 14,
+                "column": 27
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 14,
+                "column": 9
+              },
+              "end": {
+                "line": 14,
+                "column": 22
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 15,
+                "column": 9
+              },
+              "end": {
+                "line": 15,
+                "column": 33
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 15,
+                "column": 16
+              },
+              "end": {
+                "line": 15,
+                "column": 27
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/pokedex/trainers/camp.py#method@10:5",
+          "src/pokedex/trainers/camp.py#condition@12:9",
+          "src/pokedex/trainers/camp.py#method@17:5",
+          "src/pokedex/trainers/roster.py#method@19:5",
+          "src/pokedex/trainers/roster.py#condition@21:9",
+          "src/pokedex/trainers/roster.py#external-value@23:9"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 14,
+                "column": 9
+              },
+              "end": {
+                "line": 14,
+                "column": 22
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/trainers/camp.py#property@8:9"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 15,
+                "column": 16
+              },
+              "end": {
+                "line": 15,
+                "column": 27
+              }
+            },
+            "use": "call",
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/trainers/camp.py#method@17:5"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 15,
+                "column": 28
+              },
+              "end": {
+                "line": 15,
+                "column": 32
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/trainers/camp.py#variable@11:9"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/pokedex/trainers/camp.py#variable@11:9",
+          "src/pokedex/trainers/camp.py#condition@12:9",
+          "src/pokedex/trainers/camp.py#method@17:5"
+        ],
+        "handedFrom": [],
+        "filePath": "src/pokedex/trainers/camp.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/trainers/camp.py#root-argument-value@10:21",
+        "name": "trainer_id",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 10,
+              "column": 21
+            },
+            "end": {
+              "line": 10,
+              "column": 36
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/trainers/camp.py#method@10:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 10,
+              "column": 21
+            },
+            "end": {
+              "line": 10,
+              "column": 36
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 10,
+                "column": 21
+              },
+              "end": {
+                "line": 10,
+                "column": 36
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/pokedex/trainers/camp.py#variable@11:9",
+          "src/pokedex/trainers/camp.py#condition@12:9"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/trainers/camp.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/trainers/camp.py#root-argument-value@10:38",
+        "name": "levels",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 10,
+              "column": 38
+            },
+            "end": {
+              "line": 10,
+              "column": 49
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/trainers/camp.py#method@10:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 10,
+              "column": 38
+            },
+            "end": {
+              "line": 10,
+              "column": 49
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 10,
+                "column": 38
+              },
+              "end": {
+                "line": 10,
+                "column": 49
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/pokedex/trainers/camp.py#variable@11:9"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/trainers/camp.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/trainers/camp.py#variable@11:9",
+        "name": "team",
+        "type": "variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 11,
+              "column": 9
+            },
+            "end": {
+              "line": 11,
+              "column": 56
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/trainers/camp.py#method@10:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 11,
+              "column": 9
+            },
+            "end": {
+              "line": 11,
+              "column": 56
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 11,
+                "column": 9
+              },
+              "end": {
+                "line": 11,
+                "column": 56
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 11,
+                "column": 16
+              },
+              "end": {
+                "line": 11,
+                "column": 36
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/pokedex/trainers/roster.py#method@19:5",
+          "src/pokedex/trainers/roster.py#condition@21:9",
+          "src/pokedex/trainers/roster.py#external-value@23:9"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 11,
+                "column": 16
+              },
+              "end": {
+                "line": 11,
+                "column": 36
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "level_up"
+              ],
+              "blockId": "src/pokedex/trainers/roster.py#method@19:5"
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/trainers/camp.py#property@7:9"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 11,
+                "column": 37
+              },
+              "end": {
+                "line": 11,
+                "column": 47
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/trainers/camp.py#root-argument-value@10:21"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 11,
+                "column": 49
+              },
+              "end": {
+                "line": 11,
+                "column": 55
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/trainers/camp.py#root-argument-value@10:38"
+          }
+        ],
+        "usedByIds": [
+          "src/pokedex/trainers/camp.py#condition@12:9",
+          "src/pokedex/trainers/camp.py#method@10:5"
+        ],
+        "nextBlockIds": [
+          "src/pokedex/trainers/roster.py#method@19:5"
+        ],
+        "handedFrom": [],
+        "filePath": "src/pokedex/trainers/camp.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/trainers/camp.py#condition@12:9",
+        "type": "condition",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 12,
+              "column": 9
+            },
+            "end": {
+              "line": 13,
+              "column": 67
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/trainers/camp.py#method@10:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "returnsAt": [
+          {
+            "line": 13,
+            "column": 13
+          }
+        ],
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 12,
+              "column": 9
+            },
+            "end": {
+              "line": 12,
+              "column": 21
+            }
+          },
+          {
+            "start": {
+              "line": 13,
+              "column": 13
+            },
+            "end": {
+              "line": 13,
+              "column": 67
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 12,
+                "column": 9
+              },
+              "end": {
+                "line": 12,
+                "column": 21
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 12,
+                "column": 16
+              },
+              "end": {
+                "line": 12,
+                "column": 20
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 13,
+                "column": 13
+              },
+              "end": {
+                "line": 13,
+                "column": 67
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/pokedex/trainers/camp.py#condition@12:9"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 12,
+                "column": 16
+              },
+              "end": {
+                "line": 12,
+                "column": 20
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/trainers/camp.py#variable@11:9"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 13,
+                "column": 31
+              },
+              "end": {
+                "line": 13,
+                "column": 41
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/trainers/camp.py#root-argument-value@10:21"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/trainers/camp.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/trainers/camp.py#method@17:5",
+        "name": "TrainingCamp.report",
+        "type": "method",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 17,
+              "column": 5
+            },
+            "end": {
+              "line": 18,
+              "column": 46
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/trainers/camp.py#class@5:1",
+        "childrenBlockIds": [
+          "src/pokedex/trainers/camp.py#root-argument-value@17:22"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "returnsAt": [
+          {
+            "line": 18,
+            "column": 9
+          }
+        ],
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 17,
+              "column": 5
+            },
+            "end": {
+              "line": 17,
+              "column": 22
+            }
+          },
+          {
+            "start": {
+              "line": 17,
+              "column": 41
+            },
+            "end": {
+              "line": 17,
+              "column": 50
+            }
+          },
+          {
+            "start": {
+              "line": 18,
+              "column": 9
+            },
+            "end": {
+              "line": 18,
+              "column": 46
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 17,
+                "column": 5
+              },
+              "end": {
+                "line": 17,
+                "column": 22
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 17,
+                "column": 41
+              },
+              "end": {
+                "line": 17,
+                "column": 50
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 18,
+                "column": 9
+              },
+              "end": {
+                "line": 18,
+                "column": 46
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/pokedex/trainers/camp.py#method@17:5"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 18,
+                "column": 23
+              },
+              "end": {
+                "line": 18,
+                "column": 27
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/trainers/camp.py#root-argument-value@17:22"
+          }
+        ],
+        "usedByIds": [
+          "src/pokedex/trainers/camp.py#method@10:5"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/trainers/camp.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/trainers/camp.py#root-argument-value@17:22",
+        "name": "team",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 17,
+              "column": 22
+            },
+            "end": {
+              "line": 17,
+              "column": 41
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/trainers/camp.py#method@17:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 17,
+              "column": 22
+            },
+            "end": {
+              "line": 17,
+              "column": 41
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 17,
+                "column": 22
+              },
+              "end": {
+                "line": 17,
+                "column": 41
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 17,
+                "column": 33
+              },
+              "end": {
+                "line": 17,
+                "column": 40
+              }
+            },
+            "use": "type",
+            "type": "external-block",
+            "codeBlockId": "src/pokedex/trainers/models.py#class@4:1"
+          }
+        ],
+        "usedByIds": [
+          "src/pokedex/trainers/camp.py#method@17:5"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/trainers/camp.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/trainers/gym_camp.py#import@1:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 28
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 28
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 1,
+                "column": 1
+              },
+              "end": {
+                "line": 1,
+                "column": 28
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/trainers/gym_camp.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/trainers/gym_camp.py#import@2:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 2,
+              "column": 1
+            },
+            "end": {
+              "line": 2,
+              "column": 31
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 2,
+              "column": 1
+            },
+            "end": {
+              "line": 2,
+              "column": 31
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 2,
+                "column": 1
+              },
+              "end": {
+                "line": 2,
+                "column": 31
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/trainers/gym_camp.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/trainers/gym_camp.py#class@5:1",
+        "name": "GymCamp",
+        "type": "class",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 5,
+              "column": 1
+            },
+            "end": {
+              "line": 10,
+              "column": 103
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/pokedex/trainers/gym_camp.py#property@6:5",
+          "src/pokedex/trainers/gym_camp.py#method@8:5"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/pokedex/cli.py",
+          "src/pokedex/trainers/gym_camp.py"
+        ],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 5,
+              "column": 1
+            },
+            "end": {
+              "line": 5,
+              "column": 29
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 5,
+                "column": 1
+              },
+              "end": {
+                "line": 5,
+                "column": 29
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 5,
+                "column": 15
+              },
+              "end": {
+                "line": 5,
+                "column": 27
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/pokedex/trainers/gym_camp.py#class@5:1",
+          "src/pokedex/trainers/gym_camp.py#method@8:5"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 5,
+                "column": 15
+              },
+              "end": {
+                "line": 5,
+                "column": 27
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "external-block",
+            "codeBlockId": "src/pokedex/trainers/camp.py#class@5:1"
+          }
+        ],
+        "usedByIds": [
+          "src/pokedex/cli.py#external-value@5:5"
+        ],
+        "nextBlockIds": [
+          "src/pokedex/trainers/gym_camp.py#method@8:5"
+        ],
+        "handedFrom": [],
+        "filePath": "src/pokedex/trainers/gym_camp.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/trainers/gym_camp.py#property@6:5",
+        "name": "GymCamp.badge",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 6,
+              "column": 5
+            },
+            "end": {
+              "line": 6,
+              "column": 28
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/trainers/gym_camp.py#class@5:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 6,
+              "column": 5
+            },
+            "end": {
+              "line": 6,
+              "column": 28
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 6,
+                "column": 5
+              },
+              "end": {
+                "line": 6,
+                "column": 28
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/pokedex/trainers/gym_camp.py#method@8:5"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/trainers/gym_camp.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/trainers/gym_camp.py#method@8:5",
+        "name": "GymCamp.report",
+        "type": "method",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 8,
+              "column": 5
+            },
+            "end": {
+              "line": 10,
+              "column": 103
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/trainers/gym_camp.py#class@5:1",
+        "childrenBlockIds": [
+          "src/pokedex/trainers/gym_camp.py#root-argument-value@8:22",
+          "src/pokedex/trainers/gym_camp.py#variable@9:9"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "returnsAt": [
+          {
+            "line": 10,
+            "column": 9
+          }
+        ],
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 8,
+              "column": 5
+            },
+            "end": {
+              "line": 8,
+              "column": 22
+            }
+          },
+          {
+            "start": {
+              "line": 8,
+              "column": 41
+            },
+            "end": {
+              "line": 8,
+              "column": 50
+            }
+          },
+          {
+            "start": {
+              "line": 10,
+              "column": 9
+            },
+            "end": {
+              "line": 10,
+              "column": 103
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 8,
+                "column": 5
+              },
+              "end": {
+                "line": 8,
+                "column": 22
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 8,
+                "column": 41
+              },
+              "end": {
+                "line": 8,
+                "column": 50
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 10,
+                "column": 9
+              },
+              "end": {
+                "line": 10,
+                "column": 103
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 10,
+                "column": 55
+              },
+              "end": {
+                "line": 10,
+                "column": 65
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/pokedex/trainers/gym_camp.py#method@8:5"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 10,
+                "column": 23
+              },
+              "end": {
+                "line": 10,
+                "column": 27
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/trainers/gym_camp.py#root-argument-value@8:22"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 10,
+                "column": 55
+              },
+              "end": {
+                "line": 10,
+                "column": 65
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/trainers/gym_camp.py#property@6:5"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 10,
+                "column": 92
+              },
+              "end": {
+                "line": 10,
+                "column": 101
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/trainers/gym_camp.py#variable@9:9"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/trainers/gym_camp.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/trainers/gym_camp.py#root-argument-value@8:22",
+        "name": "team",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 8,
+              "column": 22
+            },
+            "end": {
+              "line": 8,
+              "column": 41
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/trainers/gym_camp.py#method@8:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 8,
+              "column": 22
+            },
+            "end": {
+              "line": 8,
+              "column": 41
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 8,
+                "column": 22
+              },
+              "end": {
+                "line": 8,
+                "column": 41
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 8,
+                "column": 33
+              },
+              "end": {
+                "line": 8,
+                "column": 40
+              }
+            },
+            "use": "type",
+            "type": "external-block",
+            "codeBlockId": "src/pokedex/trainers/models.py#class@4:1"
+          }
+        ],
+        "usedByIds": [
+          "src/pokedex/trainers/gym_camp.py#variable@9:9",
+          "src/pokedex/trainers/gym_camp.py#method@8:5"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/trainers/gym_camp.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/trainers/gym_camp.py#variable@9:9",
+        "name": "strongest",
+        "type": "variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 9,
+              "column": 9
+            },
+            "end": {
+              "line": 9,
+              "column": 59
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/trainers/gym_camp.py#method@8:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 9,
+              "column": 9
+            },
+            "end": {
+              "line": 9,
+              "column": 59
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 9,
+                "column": 9
+              },
+              "end": {
+                "line": 9,
+                "column": 59
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 9,
+                "column": 54
+              },
+              "end": {
+                "line": 9,
+                "column": 58
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/trainers/gym_camp.py#root-argument-value@8:22"
+          }
+        ],
+        "usedByIds": [
+          "src/pokedex/trainers/gym_camp.py#method@8:5"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/trainers/gym_camp.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/trainers/models.py#import@1:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 34
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/trainers/models.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/trainers/models.py#class@4:1",
+        "name": "Pokemon",
+        "type": "class",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 4,
+              "column": 1
+            },
+            "end": {
+              "line": 7,
+              "column": 15
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/pokedex/trainers/models.py#property@6:5",
+          "src/pokedex/trainers/models.py#property@7:5"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/pokedex/trainers/camp.py",
+          "src/pokedex/trainers/gym_camp.py",
+          "src/pokedex/trainers/models.py",
+          "src/pokedex/trainers/roster.py"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 4,
+                "column": 2
+              },
+              "end": {
+                "line": 4,
+                "column": 11
+              }
+            },
+            "use": "call",
+            "type": "unopened-import",
+            "specifier": "dataclasses:dataclass",
+            "importedName": "dataclass",
+            "isLibrary": true
+          }
+        ],
+        "usedByIds": [
+          "src/pokedex/trainers/camp.py#root-argument-value@17:22",
+          "src/pokedex/trainers/gym_camp.py#root-argument-value@8:22",
+          "src/pokedex/trainers/models.py#property@14:5",
+          "src/pokedex/trainers/roster.py#root-variable@6:1",
+          "src/pokedex/trainers/roster.py#method@19:5"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/trainers/models.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/trainers/models.py#property@6:5",
+        "name": "Pokemon.name",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 6,
+              "column": 5
+            },
+            "end": {
+              "line": 6,
+              "column": 14
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/trainers/models.py#class@4:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/trainers/models.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/trainers/models.py#property@7:5",
+        "name": "Pokemon.level",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 7,
+              "column": 5
+            },
+            "end": {
+              "line": 7,
+              "column": 15
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/trainers/models.py#class@4:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/trainers/models.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/trainers/models.py#class@10:1",
+        "name": "Trainer",
+        "type": "class",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 10,
+              "column": 1
+            },
+            "end": {
+              "line": 14,
+              "column": 24
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/pokedex/trainers/models.py#property@12:5",
+          "src/pokedex/trainers/models.py#property@13:5",
+          "src/pokedex/trainers/models.py#property@14:5"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/pokedex/trainers/models.py",
+          "src/pokedex/trainers/roster.py"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 10,
+                "column": 2
+              },
+              "end": {
+                "line": 10,
+                "column": 11
+              }
+            },
+            "use": "call",
+            "type": "unopened-import",
+            "specifier": "dataclasses:dataclass",
+            "importedName": "dataclass",
+            "isLibrary": true
+          }
+        ],
+        "usedByIds": [
+          "src/pokedex/trainers/roster.py#root-variable@6:1",
+          "src/pokedex/trainers/roster.py#method@16:5"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/trainers/models.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/trainers/models.py#property@12:5",
+        "name": "Trainer.id",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 12,
+              "column": 5
+            },
+            "end": {
+              "line": 12,
+              "column": 12
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/trainers/models.py#class@10:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/trainers/models.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/trainers/models.py#property@13:5",
+        "name": "Trainer.name",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 13,
+              "column": 5
+            },
+            "end": {
+              "line": 13,
+              "column": 14
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/trainers/models.py#class@10:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/trainers/models.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/trainers/models.py#property@14:5",
+        "name": "Trainer.team",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 14,
+              "column": 5
+            },
+            "end": {
+              "line": 14,
+              "column": 24
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/trainers/models.py#class@10:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 14,
+                "column": 16
+              },
+              "end": {
+                "line": 14,
+                "column": 23
+              }
+            },
+            "use": "type",
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/trainers/models.py#class@4:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/trainers/models.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/trainers/roster.py#import@1:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 32
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 32
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 1,
+                "column": 1
+              },
+              "end": {
+                "line": 1,
+                "column": 32
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/trainers/roster.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/trainers/roster.py#import@3:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 3,
+              "column": 1
+            },
+            "end": {
+              "line": 3,
+              "column": 31
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 3,
+              "column": 1
+            },
+            "end": {
+              "line": 3,
+              "column": 31
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 3,
+                "column": 1
+              },
+              "end": {
+                "line": 3,
+                "column": 31
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/trainers/roster.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/trainers/roster.py#import@4:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 4,
+              "column": 1
+            },
+            "end": {
+              "line": 4,
+              "column": 37
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/trainers/roster.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/trainers/roster.py#root-variable@6:1",
+        "name": "TRAINERS",
+        "type": "root-variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 6,
+              "column": 1
+            },
+            "end": {
+              "line": 9,
+              "column": 2
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/pokedex/trainers/roster.py"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 7,
+                "column": 5
+              },
+              "end": {
+                "line": 7,
+                "column": 12
+              }
+            },
+            "use": "call",
+            "type": "external-block",
+            "codeBlockId": "src/pokedex/trainers/models.py#class@10:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 7,
+                "column": 37
+              },
+              "end": {
+                "line": 7,
+                "column": 44
+              }
+            },
+            "use": "call",
+            "type": "external-block",
+            "codeBlockId": "src/pokedex/trainers/models.py#class@4:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 7,
+                "column": 72
+              },
+              "end": {
+                "line": 7,
+                "column": 79
+              }
+            },
+            "use": "call",
+            "type": "external-block",
+            "codeBlockId": "src/pokedex/trainers/models.py#class@4:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 8,
+                "column": 5
+              },
+              "end": {
+                "line": 8,
+                "column": 12
+              }
+            },
+            "use": "call",
+            "type": "external-block",
+            "codeBlockId": "src/pokedex/trainers/models.py#class@10:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 8,
+                "column": 39
+              },
+              "end": {
+                "line": 8,
+                "column": 46
+              }
+            },
+            "use": "call",
+            "type": "external-block",
+            "codeBlockId": "src/pokedex/trainers/models.py#class@4:1"
+          }
+        ],
+        "usedByIds": [
+          "src/pokedex/trainers/roster.py#property@14:9"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/trainers/roster.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/trainers/roster.py#class@12:1",
+        "name": "TrainerRoster",
+        "type": "class",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 12,
+              "column": 1
+            },
+            "end": {
+              "line": 25,
+              "column": 20
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/pokedex/trainers/roster.py#method@13:5",
+          "src/pokedex/trainers/roster.py#method@16:5",
+          "src/pokedex/trainers/roster.py#method@19:5"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/pokedex/trainers/camp.py",
+          "src/pokedex/trainers/roster.py"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [
+          "src/pokedex/trainers/roster.py#method@19:5",
+          "src/pokedex/trainers/roster.py#condition@21:9",
+          "src/pokedex/trainers/roster.py#external-value@23:9"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/pokedex/trainers/camp.py#property@7:9"
+        ],
+        "nextBlockIds": [
+          "src/pokedex/trainers/roster.py#method@19:5"
+        ],
+        "handedFrom": [],
+        "filePath": "src/pokedex/trainers/roster.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/trainers/roster.py#method@13:5",
+        "name": "TrainerRoster.__init__",
+        "type": "method",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 13,
+              "column": 5
+            },
+            "end": {
+              "line": 14,
+              "column": 76
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/trainers/roster.py#class@12:1",
+        "childrenBlockIds": [
+          "src/pokedex/trainers/roster.py#property@14:9"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/trainers/roster.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/trainers/roster.py#property@14:9",
+        "name": "TrainerRoster.trainers_by_id",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 14,
+              "column": 9
+            },
+            "end": {
+              "line": 14,
+              "column": 76
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/trainers/roster.py#method@13:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 14,
+                "column": 67
+              },
+              "end": {
+                "line": 14,
+                "column": 75
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/trainers/roster.py#root-variable@6:1"
+          }
+        ],
+        "usedByIds": [
+          "src/pokedex/trainers/roster.py#method@16:5",
+          "src/pokedex/trainers/roster.py#method@19:5"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/trainers/roster.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/trainers/roster.py#method@16:5",
+        "name": "TrainerRoster.find_trainer",
+        "type": "method",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 16,
+              "column": 5
+            },
+            "end": {
+              "line": 17,
+              "column": 51
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/trainers/roster.py#class@12:1",
+        "childrenBlockIds": [
+          "src/pokedex/trainers/roster.py#root-argument-value@16:28"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "returnsAt": [
+          {
+            "line": 17,
+            "column": 9
+          }
+        ],
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 16,
+                "column": 48
+              },
+              "end": {
+                "line": 16,
+                "column": 55
+              }
+            },
+            "use": "type",
+            "type": "external-block",
+            "codeBlockId": "src/pokedex/trainers/models.py#class@10:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 17,
+                "column": 16
+              },
+              "end": {
+                "line": 17,
+                "column": 39
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "get"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/trainers/roster.py#property@14:9"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 17,
+                "column": 40
+              },
+              "end": {
+                "line": 17,
+                "column": 50
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/trainers/roster.py#root-argument-value@16:28"
+          }
+        ],
+        "usedByIds": [
+          "src/pokedex/trainers/roster.py#variable@20:9"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/trainers/roster.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/trainers/roster.py#root-argument-value@16:28",
+        "name": "trainer_id",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 16,
+              "column": 28
+            },
+            "end": {
+              "line": 16,
+              "column": 43
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/trainers/roster.py#method@16:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/pokedex/trainers/roster.py#method@16:5"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/trainers/roster.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/trainers/roster.py#method@19:5",
+        "name": "TrainerRoster.level_up",
+        "type": "method",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 19,
+              "column": 5
+            },
+            "end": {
+              "line": 25,
+              "column": 20
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/trainers/roster.py#class@12:1",
+        "childrenBlockIds": [
+          "src/pokedex/trainers/roster.py#root-argument-value@19:24",
+          "src/pokedex/trainers/roster.py#root-argument-value@19:41",
+          "src/pokedex/trainers/roster.py#variable@20:9",
+          "src/pokedex/trainers/roster.py#condition@21:9",
+          "src/pokedex/trainers/roster.py#external-value@23:9"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "returnsAt": [
+          {
+            "line": 25,
+            "column": 9
+          }
+        ],
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 19,
+              "column": 5
+            },
+            "end": {
+              "line": 19,
+              "column": 24
+            }
+          },
+          {
+            "start": {
+              "line": 19,
+              "column": 39
+            },
+            "end": {
+              "line": 19,
+              "column": 41
+            }
+          },
+          {
+            "start": {
+              "line": 19,
+              "column": 52
+            },
+            "end": {
+              "line": 19,
+              "column": 71
+            }
+          },
+          {
+            "start": {
+              "line": 24,
+              "column": 9
+            },
+            "end": {
+              "line": 24,
+              "column": 70
+            }
+          },
+          {
+            "start": {
+              "line": 25,
+              "column": 9
+            },
+            "end": {
+              "line": 25,
+              "column": 20
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 19,
+                "column": 5
+              },
+              "end": {
+                "line": 19,
+                "column": 24
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 19,
+                "column": 39
+              },
+              "end": {
+                "line": 19,
+                "column": 41
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 19,
+                "column": 52
+              },
+              "end": {
+                "line": 19,
+                "column": 71
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 24,
+                "column": 9
+              },
+              "end": {
+                "line": 24,
+                "column": 70
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 25,
+                "column": 9
+              },
+              "end": {
+                "line": 25,
+                "column": 20
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/pokedex/trainers/roster.py#method@19:5",
+          "src/pokedex/trainers/roster.py#condition@21:9",
+          "src/pokedex/trainers/roster.py#external-value@23:9"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 19,
+                "column": 62
+              },
+              "end": {
+                "line": 19,
+                "column": 69
+              }
+            },
+            "use": "type",
+            "type": "external-block",
+            "codeBlockId": "src/pokedex/trainers/models.py#class@4:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 24,
+                "column": 9
+              },
+              "end": {
+                "line": 24,
+                "column": 28
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/trainers/roster.py#property@14:9"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 24,
+                "column": 29
+              },
+              "end": {
+                "line": 24,
+                "column": 39
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/trainers/roster.py#root-argument-value@19:24"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 24,
+                "column": 43
+              },
+              "end": {
+                "line": 24,
+                "column": 50
+              }
+            },
+            "use": "call",
+            "type": "unopened-import",
+            "specifier": "dataclasses:replace",
+            "importedName": "replace",
+            "isLibrary": true
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 24,
+                "column": 51
+              },
+              "end": {
+                "line": 24,
+                "column": 58
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/trainers/roster.py#variable@20:9"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 24,
+                "column": 65
+              },
+              "end": {
+                "line": 24,
+                "column": 69
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/trainers/roster.py#external-value@23:9"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 25,
+                "column": 16
+              },
+              "end": {
+                "line": 25,
+                "column": 20
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/trainers/roster.py#external-value@23:9"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/pokedex/trainers/roster.py#condition@21:9",
+          "src/pokedex/trainers/roster.py#external-value@23:9"
+        ],
+        "handedFrom": [],
+        "filePath": "src/pokedex/trainers/roster.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/trainers/roster.py#root-argument-value@19:24",
+        "name": "trainer_id",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 19,
+              "column": 24
+            },
+            "end": {
+              "line": 19,
+              "column": 39
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/trainers/roster.py#method@19:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 19,
+              "column": 24
+            },
+            "end": {
+              "line": 19,
+              "column": 39
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 19,
+                "column": 24
+              },
+              "end": {
+                "line": 19,
+                "column": 39
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/pokedex/trainers/roster.py#variable@20:9",
+          "src/pokedex/trainers/roster.py#method@19:5"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/trainers/roster.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/trainers/roster.py#root-argument-value@19:41",
+        "name": "levels",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 19,
+              "column": 41
+            },
+            "end": {
+              "line": 19,
+              "column": 52
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/trainers/roster.py#method@19:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 19,
+              "column": 41
+            },
+            "end": {
+              "line": 19,
+              "column": 52
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 19,
+                "column": 41
+              },
+              "end": {
+                "line": 19,
+                "column": 52
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/pokedex/trainers/roster.py#external-value@23:9"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/trainers/roster.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/trainers/roster.py#variable@20:9",
+        "name": "trainer",
+        "type": "variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 20,
+              "column": 9
+            },
+            "end": {
+              "line": 20,
+              "column": 48
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/trainers/roster.py#method@19:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 20,
+              "column": 9
+            },
+            "end": {
+              "line": 20,
+              "column": 48
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 20,
+                "column": 9
+              },
+              "end": {
+                "line": 20,
+                "column": 48
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 20,
+                "column": 19
+              },
+              "end": {
+                "line": 20,
+                "column": 36
+              }
+            },
+            "use": "call",
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/trainers/roster.py#method@16:5"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 20,
+                "column": 37
+              },
+              "end": {
+                "line": 20,
+                "column": 47
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/trainers/roster.py#root-argument-value@19:24"
+          }
+        ],
+        "usedByIds": [
+          "src/pokedex/trainers/roster.py#condition@21:9",
+          "src/pokedex/trainers/roster.py#external-value@23:9",
+          "src/pokedex/trainers/roster.py#method@19:5"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/trainers/roster.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/trainers/roster.py#condition@21:9",
+        "type": "condition",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 21,
+              "column": 9
+            },
+            "end": {
+              "line": 22,
+              "column": 22
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/trainers/roster.py#method@19:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "returnsAt": [
+          {
+            "line": 22,
+            "column": 13
+          }
+        ],
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 21,
+              "column": 9
+            },
+            "end": {
+              "line": 21,
+              "column": 28
+            }
+          },
+          {
+            "start": {
+              "line": 22,
+              "column": 13
+            },
+            "end": {
+              "line": 22,
+              "column": 22
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 21,
+                "column": 9
+              },
+              "end": {
+                "line": 21,
+                "column": 28
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 21,
+                "column": 12
+              },
+              "end": {
+                "line": 21,
+                "column": 19
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 22,
+                "column": 13
+              },
+              "end": {
+                "line": 22,
+                "column": 22
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/pokedex/trainers/roster.py#condition@21:9"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 21,
+                "column": 12
+              },
+              "end": {
+                "line": 21,
+                "column": 19
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/trainers/roster.py#variable@20:9"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/trainers/roster.py",
+        "catalogue": null
+      },
+      {
+        "id": "src/pokedex/trainers/roster.py#external-value@23:9",
+        "name": "team",
+        "type": "external-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 23,
+              "column": 9
+            },
+            "end": {
+              "line": 23,
+              "column": 108
+            }
+          }
+        ],
+        "parentBlockId": "src/pokedex/trainers/roster.py#method@19:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 23,
+              "column": 9
+            },
+            "end": {
+              "line": 23,
+              "column": 108
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 23,
+                "column": 9
+              },
+              "end": {
+                "line": 23,
+                "column": 108
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 23,
+                "column": 95
+              },
+              "end": {
+                "line": 23,
+                "column": 107
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/pokedex/trainers/roster.py#external-value@23:9"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 23,
+                "column": 17
+              },
+              "end": {
+                "line": 23,
+                "column": 24
+              }
+            },
+            "use": "call",
+            "type": "unopened-import",
+            "specifier": "dataclasses:replace",
+            "importedName": "replace",
+            "isLibrary": true
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 23,
+                "column": 60
+              },
+              "end": {
+                "line": 23,
+                "column": 66
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/trainers/roster.py#root-argument-value@19:41"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 23,
+                "column": 68
+              },
+              "end": {
+                "line": 23,
+                "column": 77
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "external-block",
+            "codeBlockId": "src/pokedex/config.py#root-variable@1:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 23,
+                "column": 95
+              },
+              "end": {
+                "line": 23,
+                "column": 107
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "team"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/pokedex/trainers/roster.py#variable@20:9"
+          }
+        ],
+        "usedByIds": [
+          "src/pokedex/trainers/roster.py#method@19:5"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/pokedex/trainers/roster.py",
+        "catalogue": null
+      }
+    ],
+    "diffBlockIds": [
+      "src/pokedex/cli.py#import@1:1",
+      "src/pokedex/cli.py#external-value@5:5",
+      "src/pokedex/cli.py#call@6:5",
+      "src/pokedex/trainers/camp.py#import@1:1",
+      "src/pokedex/trainers/camp.py#import@2:1",
+      "src/pokedex/trainers/camp.py#class@5:1",
+      "src/pokedex/trainers/camp.py#method@6:5",
+      "src/pokedex/trainers/camp.py#property@7:9",
+      "src/pokedex/trainers/camp.py#property@8:9",
+      "src/pokedex/trainers/camp.py#method@10:5",
+      "src/pokedex/trainers/camp.py#root-argument-value@10:21",
+      "src/pokedex/trainers/camp.py#root-argument-value@10:38",
+      "src/pokedex/trainers/camp.py#variable@11:9",
+      "src/pokedex/trainers/camp.py#condition@12:9",
+      "src/pokedex/trainers/camp.py#method@17:5",
+      "src/pokedex/trainers/camp.py#root-argument-value@17:22",
+      "src/pokedex/trainers/gym_camp.py#import@1:1",
+      "src/pokedex/trainers/gym_camp.py#import@2:1",
+      "src/pokedex/trainers/gym_camp.py#class@5:1",
+      "src/pokedex/trainers/gym_camp.py#property@6:5",
+      "src/pokedex/trainers/gym_camp.py#method@8:5",
+      "src/pokedex/trainers/gym_camp.py#root-argument-value@8:22",
+      "src/pokedex/trainers/gym_camp.py#variable@9:9",
+      "src/pokedex/trainers/roster.py#import@1:1",
+      "src/pokedex/trainers/roster.py#import@3:1",
+      "src/pokedex/trainers/roster.py#method@19:5",
+      "src/pokedex/trainers/roster.py#root-argument-value@19:24",
+      "src/pokedex/trainers/roster.py#root-argument-value@19:41",
+      "src/pokedex/trainers/roster.py#variable@20:9",
+      "src/pokedex/trainers/roster.py#condition@21:9",
+      "src/pokedex/trainers/roster.py#external-value@23:9"
+    ],
+    "diffContains": [
+      "logic"
+    ],
+    "chainContains": [
+      "logic"
+    ],
+    "diffChainIds": [
+      "src/pokedex/cli.py#root-statement@9:1",
+      "src/pokedex/trainers/camp.py#class@5:1"
+    ]
+  }
+]

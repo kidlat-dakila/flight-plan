@@ -1,3 +1,4 @@
+import { existsSync } from "node:fs"
 import { join } from "node:path"
 import { getAllFixtureCases, getAllReviewArtifactFixturesByCase } from "@flightplan/playground-fixtures"
 import { codeBlocksPathOf, listFixtureNames, storedCodeBlocksOf } from "@flightplan/playground-fixtures/test-setup"
@@ -19,11 +20,25 @@ const PLAYGROUNDS_FOLDER = "playgrounds"
 const ID_SEPARATOR = "/"
 const PLAYGROUNDS_PATH = join(LAB_PATH, PLAYGROUNDS_FOLDER)
 
-const LANGUAGES = await getAllFixtureCases(PLAYGROUNDS_PATH)
+const REPOSITORY_FOLDER = "repo"
+
+const childFolderOf = ({ label, path }: CasesFolder, name: string): CasesFolder => ({ label: [label, name].join(ID_SEPARATOR), path: join(path, name) })
+
+const isVariantGroup = ({ path }: CasesFolder): boolean => !existsSync(join(path, REPOSITORY_FOLDER))
+
+const listVariantGroups = async (languageFolder: CasesFolder): Promise<CasesFolder[]> =>
+  (await getAllFixtureCases(languageFolder.path)).map((name) => childFolderOf(languageFolder, name)).filter(isVariantGroup)
+
+const PLAYGROUNDS_ROOT: CasesFolder = { label: PLAYGROUNDS_FOLDER, path: PLAYGROUNDS_PATH }
+
+const LANGUAGE_FOLDERS = (await getAllFixtureCases(PLAYGROUNDS_PATH)).map((language) => childFolderOf(PLAYGROUNDS_ROOT, language))
+
+const VARIANT_GROUPS = (await Promise.all(LANGUAGE_FOLDERS.map(listVariantGroups))).flat()
 
 const CASES_FOLDERS: readonly CasesFolder[] = [
   { label: CASES_FOLDER, path: join(LAB_PATH, CASES_FOLDER) },
-  ...LANGUAGES.map((language) => ({ label: [PLAYGROUNDS_FOLDER, language].join(ID_SEPARATOR), path: join(PLAYGROUNDS_PATH, language) })),
+  ...LANGUAGE_FOLDERS,
+  ...VARIANT_GROUPS,
 ]
 
 const listFolderFixtures = async ({ label, path }: CasesFolder): Promise<FolderFixture[]> =>

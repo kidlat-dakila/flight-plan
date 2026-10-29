@@ -1,13 +1,26 @@
 import type { Point } from "@/lib/diagram-path"
 
-export type LayoutRowKind = "heading" | "parameters" | "row" | "two-line-row" | "card"
+export type LayoutRowKind
+  = | "heading"
+    | "parameters"
+    | "row"
+    | "two-line-row"
+    | "argument-row"
+    | "site-row"
+    | "callee"
+    | "card"
+    | "render-group"
+    | "render-return"
+    | "render-row"
+    | "render-rail"
 
-type DrawnRowKind = Exclude<LayoutRowKind, "card">
+type DrawnRowKind = Exclude<LayoutRowKind, "card" | "callee" | "render-group" | "render-rail">
 
 export interface LayoutRow {
   readonly id: string
   readonly kind: LayoutRowKind
   readonly lineCount?: number
+  readonly rows?: readonly LayoutRow[]
 }
 
 export interface LayoutNode {
@@ -131,6 +144,19 @@ export const TWO_LINE_ROW_HEIGHT = 48
 export const ROW_HEADING_HEIGHT = 16
 export const PARAMETER_LINE_HEIGHT = 20
 export const PARAMETER_LINE_GAP = 4
+export const ARGUMENT_ROW_HEIGHT = 28
+export const SITE_ROW_HEIGHT = 60
+export const CALLEE_HEAD_HEIGHT = 24
+export const CALLEE_INSET = 5
+export const RENDER_RETURN_HEIGHT = 52
+export const RENDER_ROW_HEIGHT = 48
+export const RENDER_GROUP_GAP = 14
+export const RAIL_INDENT = 22
+export const RAIL_LINE_OFFSET = 6
+export const RAIL_LINE_WIDTH = 1
+export const RAIL_GAP = 4
+export const RAIL_PADDING = 2
+export const RAIL_ITEM_GAP = 8
 export const EDGE_APPROACH = 24
 export const EDGE_SPACING = 18
 const ARRIVAL_INSET = 6
@@ -142,61 +168,164 @@ export const NODE_GAP = 32
 export const MARGIN = 24
 const HALF = 2
 const NOTHING_PLACED: Placement = { nodes: [], rows: [], lanes: [] }
+const RAIL_ID_SUFFIX = ":rail"
 
 export const innerWidthOf = (cardWidth: number): number => cardWidth - INSET * HALF
 
 export const nestedCardWidthOf = (cardWidth: number): number => Math.max(NODE_WIDTH, innerWidthOf(cardWidth))
 
+export const railCardWidthOf = (cardWidth: number): number => Math.max(NODE_WIDTH, innerWidthOf(cardWidth) - RAIL_INDENT)
+
+export const railIdOf = (renderGroupId: string): string => `${renderGroupId}${RAIL_ID_SUFFIX}`
+
 const sumOf = (numbers: readonly number[]): number => numbers.reduce((total, one) => total + one, 0)
 
-const ROW_HEIGHTS: Readonly<Record<Exclude<DrawnRowKind, "parameters">, number>> = { "heading": ROW_HEADING_HEIGHT, "row": ROW_HEIGHT, "two-line-row": TWO_LINE_ROW_HEIGHT }
+const ROW_HEIGHTS: Readonly<Record<Exclude<DrawnRowKind, "parameters">, number>> = {
+  "heading": ROW_HEADING_HEIGHT,
+  "row": ROW_HEIGHT,
+  "two-line-row": TWO_LINE_ROW_HEIGHT,
+  "argument-row": ARGUMENT_ROW_HEIGHT,
+  "site-row": SITE_ROW_HEIGHT,
+  "render-return": RENDER_RETURN_HEIGHT,
+  "render-row": RENDER_ROW_HEIGHT,
+}
 const ONE_LINE = 1
 
 const rowHeightOf = ({ kind, lineCount = ONE_LINE }: LayoutRow & { readonly kind: DrawnRowKind }): number =>
   kind === "parameters" ? lineCount * PARAMETER_LINE_HEIGHT + (lineCount - ONE_LINE) * PARAMETER_LINE_GAP : ROW_HEIGHTS[kind]
 const CARD_ROW: LayoutRowKind = "card"
+const CALLEE_ROW: LayoutRowKind = "callee"
+const RENDER_GROUP_ROW: LayoutRowKind = "render-group"
+const RENDER_RETURN_ROW: LayoutRowKind = "render-return"
+const RAIL_ROW: LayoutRowKind = "render-rail"
 
-type LayoutPart = { readonly kind: "row", readonly row: LayoutRow & { readonly kind: DrawnRowKind } } | { readonly kind: "card", readonly node: LayoutNode }
+type DrawnRow = LayoutRow & { readonly kind: DrawnRowKind }
+
+type PlainPart
+  = | { readonly kind: "row", readonly row: DrawnRow }
+    | { readonly kind: "card", readonly node: LayoutNode }
+
+type LayoutPart
+  = | PlainPart
+    | { readonly kind: "callee", readonly row: LayoutRow, readonly rows: readonly DrawnRow[] }
+    | { readonly kind: "render-group", readonly row: LayoutRow, readonly heads: readonly DrawnRow[], readonly railParts: readonly PlainPart[] }
+
+interface SpacedPart {
+  readonly part: LayoutPart
+  readonly height: number
+}
 
 interface PartsPlacement {
   readonly top: number
   readonly placed: Placement
 }
 
-const isDrawnRow = (row: LayoutRow): row is LayoutRow & { readonly kind: DrawnRowKind } => row.kind !== CARD_ROW
+const UNDRAWN_ROW_KINDS: ReadonlySet<LayoutRowKind> = new Set([CARD_ROW, CALLEE_ROW, RENDER_GROUP_ROW, RAIL_ROW])
+
+const isDrawnRow = (row: LayoutRow): row is DrawnRow => !UNDRAWN_ROW_KINDS.has(row.kind)
+
+const isCardRow = (row: LayoutRow): boolean => row.kind === CARD_ROW
+
+const isRenderGroupRow = (row: LayoutRow): boolean => row.kind === RENDER_GROUP_ROW
+
+const railRowsOf = (node: LayoutNode): LayoutRow[] => node.rows.filter(isRenderGroupRow).flatMap((row) => row.rows ?? [])
+
+export const railChildIdsOf = (node: LayoutNode): ReadonlySet<string> => new Set(railRowsOf(node).filter(isCardRow).map((row) => row.id))
+
+const stackedTopsOf = (heights: readonly number[], top: number, gap: number): readonly number[] =>
+  heights.reduce<OffsetStack>(
+    ({ bottom, offsets }, height) => ({ bottom: bottom + height + gap, offsets: [...offsets, bottom] }),
+    { bottom: top, offsets: [] },
+  ).offsets
+
+const calleeHeightOf = (rows: readonly DrawnRow[]): number =>
+  CALLEE_HEAD_HEIGHT + sumOf(rows.map(rowHeightOf)) + ROW_GAP * Math.max(0, rows.length - ONE_LINE) + CALLEE_INSET
 
 const partsOf = (node: LayoutNode): LayoutPart[] => {
   const childById = new Map(node.children.map((child) => [child.id, child] as const))
-  const placedIds = new Set(node.rows.filter((row) => row.kind === CARD_ROW).map((row) => row.id))
+  const placedIds = new Set([...node.rows, ...railRowsOf(node)].filter(isCardRow).map((row) => row.id))
+  const plainPartsOf = (rows: readonly LayoutRow[]): PlainPart[] =>
+    rows.flatMap((row): PlainPart[] => {
+      if (isDrawnRow(row)) return [{ kind: "row", row }]
+      const child = isCardRow(row) ? childById.get(row.id) : undefined
+      return child === undefined ? [] : [{ kind: "card", node: child }]
+    })
+  const renderGroupOf = (row: LayoutRow): LayoutPart => {
+    const rows = row.rows ?? []
+    const isHead = (inside: LayoutRow): boolean => inside.kind === RENDER_RETURN_ROW
+    return { kind: "render-group", row, heads: rows.filter(isHead).filter(isDrawnRow), railParts: plainPartsOf(rows.filter((inside) => !isHead(inside))) }
+  }
   return [
     ...node.rows.flatMap((row): LayoutPart[] => {
-      if (isDrawnRow(row)) return [{ kind: "row", row }]
-      const child = childById.get(row.id)
-      return child === undefined ? [] : [{ kind: "card", node: child }]
+      if (row.kind === CALLEE_ROW) return [{ kind: "callee", row, rows: (row.rows ?? []).filter(isDrawnRow) }]
+      return isRenderGroupRow(row) ? [renderGroupOf(row)] : plainPartsOf([row])
     }),
     ...node.children.filter((child) => !placedIds.has(child.id)).map((child): LayoutPart => ({ kind: "card", node: child })),
   ]
 }
 
-const heightOfPart = (part: LayoutPart): number => (part.kind === "row" ? rowHeightOf(part.row) : sizeOf(part.node).height) + ROW_GAP
+const plainPartHeightOf = (part: PlainPart): number => (part.kind === "row" ? rowHeightOf(part.row) : sizeOf(part.node).height)
+
+const railHeightOf = (railParts: readonly PlainPart[]): number =>
+  RAIL_PADDING * HALF + sumOf(railParts.map(plainPartHeightOf)) + RAIL_ITEM_GAP * Math.max(0, railParts.length - ONE_LINE)
+
+const headsHeightOf = (heads: readonly DrawnRow[]): number => sumOf(heads.map(rowHeightOf))
+
+const renderGroupHeightOf = (heads: readonly DrawnRow[], railParts: readonly PlainPart[]): number =>
+  headsHeightOf(heads) + (railParts.length === 0 ? 0 : RAIL_GAP + railHeightOf(railParts))
+
+const partHeightOf = (part: LayoutPart): number => {
+  if (part.kind === "callee") return calleeHeightOf(part.rows)
+  return part.kind === "render-group" ? renderGroupHeightOf(part.heads, part.railParts) : plainPartHeightOf(part)
+}
+
+const gapBetween = (part: LayoutPart, next: LayoutPart | undefined): number =>
+  part.kind === "render-group" && next?.kind === "render-group" ? RENDER_GROUP_GAP : ROW_GAP
+
+const spacedPartsOf = (node: LayoutNode): SpacedPart[] =>
+  partsOf(node).map((part, index, parts) => ({ part, height: partHeightOf(part) + gapBetween(part, parts[index + 1]) }))
+
+const childWidthWithin = (child: LayoutNode, railChildIds: ReadonlySet<string>): number =>
+  sizeOf(child).width + INSET * HALF + (railChildIds.has(child.id) ? RAIL_INDENT : 0)
 
 const sizeOf = (node: LayoutNode): Size => {
-  const childSizes = node.children.map(sizeOf)
+  const railChildIds = railChildIdsOf(node)
   return {
-    width: Math.max(NODE_WIDTH, node.requestedWidth ?? NODE_WIDTH, ...childSizes.map((size) => size.width + INSET * HALF)),
-    height: NODE_HEAD_HEIGHT + sumOf(partsOf(node).map(heightOfPart)) + BOTTOM_PADDING,
+    width: Math.max(NODE_WIDTH, node.requestedWidth ?? NODE_WIDTH, ...node.children.map((child) => childWidthWithin(child, railChildIds))),
+    height: NODE_HEAD_HEIGHT + sumOf(spacedPartsOf(node).map(({ height }) => height)) + BOTTOM_PADDING,
   }
 }
 
 const placeNode = (node: LayoutNode, box: Omit<Box, "height">, depth: number, topId: string): Placement => {
   const { height } = sizeOf(node)
   const inner = { x: box.x + INSET, width: innerWidthOf(box.width) }
-  const placeOne = (part: LayoutPart, y: number): Placement =>
-    part.kind === "row"
-      ? { nodes: [], rows: [{ id: part.row.id, kind: part.row.kind, nodeId: node.id, ...inner, y, height: rowHeightOf(part.row) }], lanes: [] }
-      : placeNode(part.node, { ...inner, y }, depth + 1, topId)
-  const { placed } = partsOf(node).reduce<PartsPlacement>(
-    ({ top, placed: soFar }, part) => ({ top: top + heightOfPart(part), placed: mergePlacements([soFar, placeOne(part, top)]) }),
+  const placeRow = (row: DrawnRow, area: Omit<Box, "height">): PlacedRow => ({ id: row.id, kind: row.kind, nodeId: node.id, ...area, height: rowHeightOf(row) })
+  const placeCallee = (row: LayoutRow, rows: readonly DrawnRow[], y: number): PlacedRow[] => {
+    const within = { x: inner.x + CALLEE_INSET, width: inner.width - CALLEE_INSET * HALF }
+    const { placed } = rows.reduce<{ readonly top: number, readonly placed: readonly PlacedRow[] }>(
+      ({ top, placed: soFar }, inside) => ({ top: top + rowHeightOf(inside) + ROW_GAP, placed: [...soFar, placeRow(inside, { ...within, y: top })] }),
+      { top: y + CALLEE_HEAD_HEIGHT, placed: [] },
+    )
+    return [{ id: row.id, kind: row.kind, nodeId: node.id, ...inner, y, height: calleeHeightOf(rows) }, ...placed]
+  }
+  const placePlainPart = (part: PlainPart, area: Omit<Box, "height">): Placement =>
+    part.kind === "row" ? { nodes: [], rows: [placeRow(part.row, area)], lanes: [] } : placeNode(part.node, area, depth + 1, topId)
+  const placeRenderGroup = (heads: readonly DrawnRow[], railParts: readonly PlainPart[], row: LayoutRow, y: number): Placement => {
+    const headRows = stackedTopsOf(heads.map(rowHeightOf), y, 0).map((top, index) => placeRow(heads[index], { ...inner, y: top }))
+    if (railParts.length === 0) return { nodes: [], rows: headRows, lanes: [] }
+    const railTop = y + headsHeightOf(heads) + RAIL_GAP
+    const railArea = { x: inner.x + RAIL_INDENT, width: inner.width - RAIL_INDENT }
+    const rail: PlacedRow = { id: railIdOf(row.id), kind: RAIL_ROW, nodeId: node.id, x: inner.x + RAIL_LINE_OFFSET, width: RAIL_LINE_WIDTH, y: railTop, height: railHeightOf(railParts) }
+    const railPlacements = stackedTopsOf(railParts.map(plainPartHeightOf), railTop + RAIL_PADDING, RAIL_ITEM_GAP).map((top, index) => placePlainPart(railParts[index], { ...railArea, y: top }))
+    return mergePlacements([{ nodes: [], rows: [...headRows, rail], lanes: [] }, ...railPlacements])
+  }
+  const placeOne = (part: LayoutPart, y: number): Placement => {
+    if (part.kind === "callee") return { nodes: [], rows: placeCallee(part.row, part.rows, y), lanes: [] }
+    if (part.kind === "render-group") return placeRenderGroup(part.heads, part.railParts, part.row, y)
+    return placePlainPart(part, { ...inner, y })
+  }
+  const { placed } = spacedPartsOf(node).reduce<PartsPlacement>(
+    ({ top, placed: soFar }, { part, height: spacedHeight }) => ({ top: top + spacedHeight, placed: mergePlacements([soFar, placeOne(part, top)]) }),
     { top: box.y + NODE_HEAD_HEIGHT, placed: NOTHING_PLACED },
   )
   return {
@@ -334,11 +463,7 @@ const itemWidthOf = ({ node }: ColumnItem, columnWidth: number, laneWidth: numbe
   return isResized(node) ? sizeOf(node).width : columnWidth
 }
 
-const offsetsWithin = (members: readonly WantedItem[]): readonly number[] =>
-  members.reduce<OffsetStack>(
-    ({ bottom, offsets }, { item }) => ({ bottom: bottom + item.height + NODE_GAP, offsets: [...offsets, bottom] }),
-    { bottom: 0, offsets: [] },
-  ).offsets
+const offsetsWithin = (members: readonly WantedItem[]): readonly number[] => stackedTopsOf(members.map(({ item }) => item.height), 0, NODE_GAP)
 
 const heightOfCluster = ({ members }: Cluster): number => sumOf(members.map(({ item }) => item.height)) + NODE_GAP * (members.length - 1)
 

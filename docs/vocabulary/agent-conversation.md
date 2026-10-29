@@ -65,7 +65,7 @@ The reviewer can ask the agent for the write-up of one part of the review from t
 |---|---|
 | `{ kind: "waypoint", waypointId }` | The waypoint: its title and reading |
 | `{ kind: "root-block", rootBlockId }` (the id the page gives the root code block, `src/price.ts#function:priceOf`) | Every unwritten waypoint in it, steps included |
-| `{ kind: "trace-node", segmentId, nodeId }` | The card: its label and the labels of its trigger labels and listed blocks ("Explaining the card") |
+| `{ kind: "trace-node", segmentId, nodeId }` | The card: its label, its trigger labels and its block labels, each block label by its `codeBlockId` and its `at` ("Explaining the card") |
 | `{ kind: "blast-file", segmentId, path }` | The file's impact type and reason ("Assessing the file"). A file of the change has none and is refused. With segments off the page shows one Blast Diagram joined from every segment under the first segment's id, so when that segment has no such file the file is looked for in the segment that holds it. |
 
 | What happens | When |

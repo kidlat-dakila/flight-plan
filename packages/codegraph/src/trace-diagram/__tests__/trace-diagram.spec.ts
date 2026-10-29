@@ -1,7 +1,6 @@
 import { codeOf, rangeAt } from "@/code-blocks/__tests__/group-fixture"
 import { nameOfBlock } from "@/trace/names"
 import { listTraceNodes } from "@/trace-diagram"
-import { listTracePaths } from "@/trace-diagram/paths"
 import { flattenTraceNodes, linkTraceDiagram, storeTraceDiagram } from "@/trace-diagram/stored"
 import type { TraceNode } from "@flightplan/configurations"
 import { diagramOf, outlineOfNodes, presentDiagramOf } from "./diagram-fixture"
@@ -24,8 +23,10 @@ const ORDERS_CHANGE = { "src/orders.ts": [rangeAt(2, 10, 2, 12)] }
 const ORDERS_VIEW = codeOf("import { loadOrders } from \"./orders\"", "export const showOrders = () => {", "  return loadOrders()", "}")
 const ORDERS_VIEW_EDGE = { id: "src/orders-view.ts#function@2:1 -> src/orders.ts#function@2:1", from: "src/orders-view.ts#function@2:1", to: "src/orders.ts#function@2:1" }
 
-const rowIdsOf = (nodes: readonly TraceNode[], nodeId: string): string[] =>
-  (nodes.find((node) => node.id === nodeId)?.blockLabels ?? []).map(({ codeBlock }) => codeBlock.id)
+const ORDERS_KEY_ID = "src/orders.ts#root-variable@1:1"
+
+const holdsBlock = (nodes: readonly TraceNode[], nodeId: string, blockId: string): boolean =>
+  (nodes.find((node) => node.id === nodeId)?.codeBlocks ?? []).some((block) => block.id === blockId)
 
 describe("the Trace Diagram of a group", () => {
   it("makes one node per root block on a chain, typed as that block, and an edge where a chain steps from one root block into another", () => {
@@ -113,7 +114,7 @@ describe("the Trace Diagram of a group", () => {
     expect(diagramOf({ "src/pricing.ts": prices }, { "src/pricing.ts": [rangeAt(2, 3, 2, 9), rangeAt(5, 3, 5, 9)] })).toBeNull()
   })
 
-  it("gives a value at the top level of a file that is not exported no node, and lists it as a step of every node that reads it", () => {
+  it("gives a value at the top level of a file that is not exported no node, and folds it into every node that reads it", () => {
     const orders = codeOf(
       "const ORDERS_KEY = [\"orders\"]",
       "export const loadOrders = () => {",
@@ -128,19 +129,16 @@ describe("the Trace Diagram of a group", () => {
 
     expect(outlineOfNodes(diagram)).toStrictEqual(["function countOrders (changed)", "function showOrders", "function loadOrders (changed)"])
     expect(diagram?.traceNodeEdges).toStrictEqual([ORDERS_VIEW_EDGE])
-    expect([rowIdsOf(nodes, "src/orders.ts#function@2:1"), rowIdsOf(nodes, "src/orders.ts#function@5:1")]).toStrictEqual([
-      ["src/orders.ts#root-variable@1:1"],
-      ["src/orders.ts#root-variable@1:1"],
-    ])
+    expect([holdsBlock(nodes, "src/orders.ts#function@2:1", ORDERS_KEY_ID), holdsBlock(nodes, "src/orders.ts#function@5:1", ORDERS_KEY_ID)]).toStrictEqual([true, true])
   })
 
-  it("gives an exported value that is plain no node, and lists it as a step of every node that reads it", () => {
+  it("gives an exported value that is plain no node, and folds it into every node that reads it", () => {
     const orders = codeOf("export const ORDERS_KEY = [\"orders\"]", "export const loadOrders = () => {", "  return ORDERS_KEY", "}")
     const diagram = diagramOf({ "src/orders.ts": orders, "src/orders-view.ts": ORDERS_VIEW }, { "src/orders.ts": [rangeAt(1, 27, 1, 36)] })
 
     expect(outlineOfNodes(diagram)).toStrictEqual(["function showOrders", "function loadOrders (changed)"])
     expect(diagram?.traceNodeEdges).toStrictEqual([ORDERS_VIEW_EDGE])
-    expect(rowIdsOf(diagram?.traceNodes ?? [], "src/orders.ts#function@2:1")).toStrictEqual(["src/orders.ts#root-variable@1:1"])
+    expect(holdsBlock(diagram?.traceNodes ?? [], "src/orders.ts#function@2:1", ORDERS_KEY_ID)).toBe(true)
   })
 
   it("keeps a node for an exported value made by a call", () => {
@@ -439,6 +437,39 @@ describe("the nodes inside a root block", () => {
   })
 })
 
+describe("the memos and the effects of a component", () => {
+  const files = {
+    "src/team.ts": codeOf("export const findStrongest = (team) => team", "export const saveTeam = (id) => id"),
+    "src/team-page.tsx": codeOf(
+      "import { useCallback, useEffect, useMemo } from \"react\"",
+      "import { findStrongest, saveTeam } from \"./team\"",
+      "export const TeamPage = ({ team }) => {",
+      "  const strongest = useMemo(() => findStrongest(team), [team])",
+      "  const save = useCallback(() => saveTeam(team), [team])",
+      "  useEffect(() => { saveTeam(strongest) }, [strongest])",
+      "  return <button onClick={save}>{strongest}</button>",
+      "}",
+    ),
+  }
+  const change = { "src/team.ts": [rangeAt(1, 40, 1, 44), rangeAt(2, 34, 2, 36)] }
+
+  it("makes a node of a memo and of an effect, and none of the callback of either: the callback is in the node of its memo or effect", () => {
+    const nodes = listTraceNodes(presentDiagramOf(files, change).traceNodes)
+    const nodeOfBlock = (blockId: string): string | undefined => nodes.find((node) => node.codeBlocks.some((block) => block.id === blockId))?.id
+
+    expect(nodes.map((node) => [node.type, nameOfBlock(node.codeBlocks[0])])).toStrictEqual(expect.arrayContaining([
+      ["derived", "strongest"],
+      ["external-value", "save"],
+      ["component-effect", "useEffect"],
+    ]))
+    expect(nodes.map((node) => node.type)).not.toContain("effect-callback")
+    expect([nodeOfBlock("src/team-page.tsx#effect-callback@4:29"), nodeOfBlock("src/team-page.tsx#effect-callback@6:13")]).toStrictEqual([
+      "src/team-page.tsx#derived@4:3",
+      "src/team-page.tsx#component-effect@6:3",
+    ])
+  })
+})
+
 describe("the forms of a Trace Diagram", () => {
   it("stores every block as its id and links the stored form back to the same blocks", () => {
     const diagram = presentDiagramOf(SHOP, ORDERS_CHANGE)
@@ -461,12 +492,5 @@ describe("the forms of a Trace Diagram", () => {
     ])
     expect(flat.every((node) => !("children" in node))).toBe(true)
     expect(flat[1].triggerLabels).toStrictEqual([{ label: null, codeBlockId: "src/order-list.tsx#render-event@3:14" }])
-  })
-
-  it("lists every path of a diagram as a line, from a node nothing leads to down to its last node", () => {
-    expect(listTracePaths(presentDiagramOf(SHOP, ORDERS_CHANGE))).toStrictEqual([
-      "src/orders-page.tsx#component@2:1 → src/order-list.tsx#component@2:1 → src/orders.ts#function@1:1",
-      "src/orders-page.tsx#component@2:1 → src/order-list.tsx#component@2:1 → src/order-list.tsx#render-event@3:14 → src/orders.ts#function@1:1",
-    ])
   })
 })

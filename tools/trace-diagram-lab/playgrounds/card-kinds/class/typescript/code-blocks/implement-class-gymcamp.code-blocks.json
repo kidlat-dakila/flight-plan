@@ -1,0 +1,5585 @@
+[
+  {
+    "astGraphs": [
+      {
+        "filePath": "src/config.ts",
+        "codeBlockIds": [
+          "src/config.ts#root-variable@1:1"
+        ],
+        "rootBlockIds": [
+          "src/config.ts#root-variable@1:1"
+        ],
+        "diffBlockIds": [],
+        "diffContains": [],
+        "externalSymbols": [],
+        "externalBlockIds": [],
+        "exports": {
+          "MAX_LEVEL": "src/config.ts#root-variable@1:1"
+        }
+      },
+      {
+        "filePath": "src/main.ts",
+        "codeBlockIds": [
+          "src/main.ts#import@1:1",
+          "src/main.ts#root-variable@3:1",
+          "src/main.ts#root-statement@5:1",
+          "src/main.ts#telemetry@5:1"
+        ],
+        "rootBlockIds": [
+          "src/main.ts#import@1:1",
+          "src/main.ts#root-variable@3:1",
+          "src/main.ts#root-statement@5:1"
+        ],
+        "diffBlockIds": [
+          "src/main.ts#import@1:1",
+          "src/main.ts#root-variable@3:1",
+          "src/main.ts#telemetry@5:1"
+        ],
+        "diffContains": [
+          "logic"
+        ],
+        "externalSymbols": [
+          {
+            "blockId": "src/main.ts#root-variable@3:1",
+            "symbolIndex": 0
+          }
+        ],
+        "externalBlockIds": [
+          "src/training/gym-camp.ts#class@4:1"
+        ],
+        "exports": {}
+      },
+      {
+        "filePath": "src/trainers/roster.ts",
+        "codeBlockIds": [
+          "src/trainers/roster.ts#import@1:1",
+          "src/trainers/roster.ts#import@2:1",
+          "src/trainers/roster.ts#root-variable@4:1",
+          "src/trainers/roster.ts#property@5:5",
+          "src/trainers/roster.ts#property@5:12",
+          "src/trainers/roster.ts#property@5:25",
+          "src/trainers/roster.ts#property@5:34",
+          "src/trainers/roster.ts#property@5:51",
+          "src/trainers/roster.ts#property@5:66",
+          "src/trainers/roster.ts#property@5:85",
+          "src/trainers/roster.ts#property@6:5",
+          "src/trainers/roster.ts#property@6:12",
+          "src/trainers/roster.ts#property@6:27",
+          "src/trainers/roster.ts#property@6:36",
+          "src/trainers/roster.ts#property@6:53",
+          "src/trainers/roster.ts#class@9:1",
+          "src/trainers/roster.ts#property@10:3",
+          "src/trainers/roster.ts#function@10:56",
+          "src/trainers/roster.ts#variable@10:57",
+          "src/trainers/roster.ts#method@12:3",
+          "src/trainers/roster.ts#root-argument-value@12:15",
+          "src/trainers/roster.ts#method@16:3",
+          "src/trainers/roster.ts#root-argument-value@16:11",
+          "src/trainers/roster.ts#root-argument-value@16:23",
+          "src/trainers/roster.ts#variable@17:5",
+          "src/trainers/roster.ts#condition@18:5",
+          "src/trainers/roster.ts#external-value@19:5",
+          "src/trainers/roster.ts#function@19:35",
+          "src/trainers/roster.ts#variable@19:36",
+          "src/trainers/roster.ts#property@19:63",
+          "src/trainers/roster.ts#call@20:5",
+          "src/trainers/roster.ts#property@20:45"
+        ],
+        "rootBlockIds": [
+          "src/trainers/roster.ts#import@1:1",
+          "src/trainers/roster.ts#import@2:1",
+          "src/trainers/roster.ts#root-variable@4:1",
+          "src/trainers/roster.ts#class@9:1"
+        ],
+        "diffBlockIds": [
+          "src/trainers/roster.ts#import@1:1",
+          "src/trainers/roster.ts#import@2:1",
+          "src/trainers/roster.ts#method@16:3",
+          "src/trainers/roster.ts#root-argument-value@16:11",
+          "src/trainers/roster.ts#root-argument-value@16:23",
+          "src/trainers/roster.ts#variable@17:5",
+          "src/trainers/roster.ts#condition@18:5",
+          "src/trainers/roster.ts#external-value@19:5",
+          "src/trainers/roster.ts#function@19:35",
+          "src/trainers/roster.ts#variable@19:36",
+          "src/trainers/roster.ts#property@19:63",
+          "src/trainers/roster.ts#call@20:5",
+          "src/trainers/roster.ts#property@20:45"
+        ],
+        "diffContains": [
+          "logic"
+        ],
+        "externalSymbols": [
+          {
+            "blockId": "src/trainers/roster.ts#root-variable@4:1",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/trainers/roster.ts#method@12:3",
+            "symbolIndex": 1
+          },
+          {
+            "blockId": "src/trainers/roster.ts#method@16:3",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/trainers/roster.ts#property@19:63",
+            "symbolIndex": 2
+          }
+        ],
+        "externalBlockIds": [
+          "src/trainers/trainer.ts#type-declaration@6:1",
+          "src/trainers/trainer.ts#type-declaration@1:1",
+          "src/config.ts#root-variable@1:1"
+        ],
+        "exports": {
+          "TrainerRoster": "src/trainers/roster.ts#class@9:1"
+        }
+      },
+      {
+        "filePath": "src/trainers/trainer.ts",
+        "codeBlockIds": [
+          "src/trainers/trainer.ts#type-declaration@1:1",
+          "src/trainers/trainer.ts#type-declaration@6:1"
+        ],
+        "rootBlockIds": [
+          "src/trainers/trainer.ts#type-declaration@1:1",
+          "src/trainers/trainer.ts#type-declaration@6:1"
+        ],
+        "diffBlockIds": [],
+        "diffContains": [],
+        "externalSymbols": [],
+        "externalBlockIds": [],
+        "exports": {
+          "Pokemon": "src/trainers/trainer.ts#type-declaration@1:1",
+          "Trainer": "src/trainers/trainer.ts#type-declaration@6:1"
+        }
+      },
+      {
+        "filePath": "src/training/camp.ts",
+        "codeBlockIds": [
+          "src/training/camp.ts#import@1:1",
+          "src/training/camp.ts#import@2:1",
+          "src/training/camp.ts#class@4:1",
+          "src/training/camp.ts#property@5:3",
+          "src/training/camp.ts#method@7:3",
+          "src/training/camp.ts#root-argument-value@7:15",
+          "src/training/camp.ts#method@9:3",
+          "src/training/camp.ts#root-argument-value@9:9",
+          "src/training/camp.ts#root-argument-value@9:28",
+          "src/training/camp.ts#variable@10:5",
+          "src/training/camp.ts#condition@11:5",
+          "src/training/camp.ts#method@16:3",
+          "src/training/camp.ts#root-argument-value@16:10",
+          "src/training/camp.ts#root-argument-value@17:15"
+        ],
+        "rootBlockIds": [
+          "src/training/camp.ts#import@1:1",
+          "src/training/camp.ts#import@2:1",
+          "src/training/camp.ts#class@4:1"
+        ],
+        "diffBlockIds": [
+          "src/training/camp.ts#import@1:1",
+          "src/training/camp.ts#import@2:1",
+          "src/training/camp.ts#class@4:1",
+          "src/training/camp.ts#property@5:3",
+          "src/training/camp.ts#method@7:3",
+          "src/training/camp.ts#root-argument-value@7:15",
+          "src/training/camp.ts#method@9:3",
+          "src/training/camp.ts#root-argument-value@9:9",
+          "src/training/camp.ts#root-argument-value@9:28",
+          "src/training/camp.ts#variable@10:5",
+          "src/training/camp.ts#condition@11:5",
+          "src/training/camp.ts#method@16:3",
+          "src/training/camp.ts#root-argument-value@16:10",
+          "src/training/camp.ts#root-argument-value@17:15"
+        ],
+        "diffContains": [
+          "logic"
+        ],
+        "externalSymbols": [
+          {
+            "blockId": "src/training/camp.ts#root-argument-value@7:15",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/training/camp.ts#root-argument-value@7:15",
+            "symbolIndex": 1
+          },
+          {
+            "blockId": "src/training/camp.ts#root-argument-value@16:10",
+            "symbolIndex": 0
+          }
+        ],
+        "externalBlockIds": [
+          "src/trainers/roster.ts#class@9:1",
+          "src/trainers/trainer.ts#type-declaration@1:1"
+        ],
+        "exports": {
+          "TrainingCamp": "src/training/camp.ts#class@4:1"
+        }
+      },
+      {
+        "filePath": "src/training/gym-camp.ts",
+        "codeBlockIds": [
+          "src/training/gym-camp.ts#import@1:1",
+          "src/training/gym-camp.ts#import@2:1",
+          "src/training/gym-camp.ts#class@4:1",
+          "src/training/gym-camp.ts#property@5:3",
+          "src/training/gym-camp.ts#method@7:3",
+          "src/training/gym-camp.ts#root-argument-value@7:10",
+          "src/training/gym-camp.ts#root-argument-value@8:35",
+          "src/training/gym-camp.ts#root-argument-value@9:15",
+          "src/training/gym-camp.ts#variable@8:5",
+          "src/training/gym-camp.ts#function@8:44",
+          "src/training/gym-camp.ts#variable@8:45"
+        ],
+        "rootBlockIds": [
+          "src/training/gym-camp.ts#import@1:1",
+          "src/training/gym-camp.ts#import@2:1",
+          "src/training/gym-camp.ts#class@4:1"
+        ],
+        "diffBlockIds": [
+          "src/training/gym-camp.ts#import@1:1",
+          "src/training/gym-camp.ts#import@2:1",
+          "src/training/gym-camp.ts#class@4:1",
+          "src/training/gym-camp.ts#property@5:3",
+          "src/training/gym-camp.ts#method@7:3",
+          "src/training/gym-camp.ts#root-argument-value@7:10",
+          "src/training/gym-camp.ts#root-argument-value@8:35",
+          "src/training/gym-camp.ts#root-argument-value@9:15",
+          "src/training/gym-camp.ts#variable@8:5",
+          "src/training/gym-camp.ts#function@8:44",
+          "src/training/gym-camp.ts#variable@8:45"
+        ],
+        "diffContains": [
+          "logic"
+        ],
+        "externalSymbols": [
+          {
+            "blockId": "src/training/gym-camp.ts#class@4:1",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/training/gym-camp.ts#root-argument-value@7:10",
+            "symbolIndex": 0
+          }
+        ],
+        "externalBlockIds": [
+          "src/training/camp.ts#class@4:1",
+          "src/trainers/trainer.ts#type-declaration@1:1"
+        ],
+        "exports": {
+          "GymCamp": "src/training/gym-camp.ts#class@4:1"
+        }
+      }
+    ],
+    "rootASTGraphFilePaths": [
+      "src/main.ts"
+    ],
+    "codeBlocks": [
+      {
+        "id": "src/config.ts#root-variable@1:1",
+        "name": "MAX_LEVEL",
+        "type": "root-variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 29
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": true,
+        "isPlain": true,
+        "exportedByFilePaths": [
+          "src/config.ts"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/trainers/roster.ts#property@19:63"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/config.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/main.ts#import@1:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 46
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 1,
+              "column": 10
+            },
+            "end": {
+              "line": 1,
+              "column": 45
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 1,
+                "column": 10
+              },
+              "end": {
+                "line": 1,
+                "column": 45
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/main.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/main.ts#root-variable@3:1",
+        "name": "camp",
+        "type": "root-variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 3,
+              "column": 1
+            },
+            "end": {
+              "line": 3,
+              "column": 27
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "isPlain": true,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 3,
+              "column": 7
+            },
+            "end": {
+              "line": 3,
+              "column": 25
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 3,
+                "column": 7
+              },
+              "end": {
+                "line": 3,
+                "column": 25
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 3,
+                "column": 18
+              },
+              "end": {
+                "line": 3,
+                "column": 25
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/main.ts#root-variable@3:1",
+          "src/training/gym-camp.ts#class@4:1",
+          "src/training/gym-camp.ts#method@7:3",
+          "src/training/gym-camp.ts#function@8:44"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 3,
+                "column": 18
+              },
+              "end": {
+                "line": 3,
+                "column": 25
+              }
+            },
+            "use": "call",
+            "type": "external-block",
+            "codeBlockId": "src/training/gym-camp.ts#class@4:1"
+          }
+        ],
+        "usedByIds": [
+          "src/main.ts#telemetry@5:1"
+        ],
+        "nextBlockIds": [
+          "src/training/gym-camp.ts#class@4:1"
+        ],
+        "handedFrom": [],
+        "filePath": "src/main.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/main.ts#root-statement@5:1",
+        "type": "root-statement",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 5,
+              "column": 1
+            },
+            "end": {
+              "line": 5,
+              "column": 30
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/main.ts#telemetry@5:1"
+        ],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [
+          "src/main.ts#telemetry@5:1",
+          "src/trainers/roster.ts#method@16:3",
+          "src/trainers/roster.ts#condition@18:5",
+          "src/trainers/roster.ts#external-value@19:5",
+          "src/trainers/roster.ts#function@19:35",
+          "src/trainers/roster.ts#call@20:5",
+          "src/training/camp.ts#method@9:3",
+          "src/training/camp.ts#condition@11:5",
+          "src/training/camp.ts#method@16:3"
+        ],
+        "classifications": [
+          "telemetry"
+        ],
+        "diffClassifications": [
+          "telemetry"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/main.ts#telemetry@5:1"
+        ],
+        "handedFrom": [],
+        "filePath": "src/main.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/main.ts#telemetry@5:1",
+        "type": "telemetry",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 5,
+              "column": 1
+            },
+            "end": {
+              "line": 5,
+              "column": 30
+            }
+          }
+        ],
+        "parentBlockId": "src/main.ts#root-statement@5:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 5,
+              "column": 13
+            },
+            "end": {
+              "line": 5,
+              "column": 29
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 5,
+                "column": 13
+              },
+              "end": {
+                "line": 5,
+                "column": 29
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 5,
+                "column": 13
+              },
+              "end": {
+                "line": 5,
+                "column": 23
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/main.ts#telemetry@5:1",
+          "src/trainers/roster.ts#method@16:3",
+          "src/trainers/roster.ts#condition@18:5",
+          "src/trainers/roster.ts#external-value@19:5",
+          "src/trainers/roster.ts#function@19:35",
+          "src/trainers/roster.ts#call@20:5",
+          "src/training/camp.ts#method@9:3",
+          "src/training/camp.ts#condition@11:5",
+          "src/training/camp.ts#method@16:3"
+        ],
+        "classifications": [
+          "telemetry"
+        ],
+        "diffClassifications": [
+          "telemetry"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 5,
+                "column": 13
+              },
+              "end": {
+                "line": 5,
+                "column": 23
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "train"
+              ],
+              "blockId": "src/training/camp.ts#method@9:3"
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/main.ts#root-variable@3:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/training/camp.ts#method@9:3"
+        ],
+        "handedFrom": [],
+        "filePath": "src/main.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/trainers/roster.ts#import@1:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 37
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 37
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 1,
+                "column": 1
+              },
+              "end": {
+                "line": 1,
+                "column": 37
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/trainers/roster.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/trainers/roster.ts#import@2:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 2,
+              "column": 1
+            },
+            "end": {
+              "line": 2,
+              "column": 50
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 2,
+              "column": 1
+            },
+            "end": {
+              "line": 2,
+              "column": 50
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 2,
+                "column": 1
+              },
+              "end": {
+                "line": 2,
+                "column": 50
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/trainers/roster.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/trainers/roster.ts#root-variable@4:1",
+        "name": "TRAINERS",
+        "type": "root-variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 4,
+              "column": 1
+            },
+            "end": {
+              "line": 7,
+              "column": 2
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/trainers/roster.ts#property@5:5",
+          "src/trainers/roster.ts#property@5:12",
+          "src/trainers/roster.ts#property@5:25",
+          "src/trainers/roster.ts#property@6:5",
+          "src/trainers/roster.ts#property@6:12",
+          "src/trainers/roster.ts#property@6:27"
+        ],
+        "isRoot": true,
+        "isExported": false,
+        "isPlain": true,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 4,
+                "column": 17
+              },
+              "end": {
+                "line": 4,
+                "column": 24
+              }
+            },
+            "use": "type",
+            "type": "external-block",
+            "codeBlockId": "src/trainers/trainer.ts#type-declaration@6:1"
+          }
+        ],
+        "usedByIds": [
+          "src/trainers/roster.ts#property@10:3"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/trainers/roster.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/trainers/roster.ts#property@5:5",
+        "name": "id",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 5,
+              "column": 5
+            },
+            "end": {
+              "line": 5,
+              "column": 10
+            }
+          }
+        ],
+        "parentBlockId": "src/trainers/roster.ts#root-variable@4:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/trainers/roster.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/trainers/roster.ts#property@5:12",
+        "name": "name",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 5,
+              "column": 12
+            },
+            "end": {
+              "line": 5,
+              "column": 23
+            }
+          }
+        ],
+        "parentBlockId": "src/trainers/roster.ts#root-variable@4:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/trainers/roster.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/trainers/roster.ts#property@5:25",
+        "name": "team",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 5,
+              "column": 25
+            },
+            "end": {
+              "line": 5,
+              "column": 97
+            }
+          }
+        ],
+        "parentBlockId": "src/trainers/roster.ts#root-variable@4:1",
+        "childrenBlockIds": [
+          "src/trainers/roster.ts#property@5:34",
+          "src/trainers/roster.ts#property@5:51",
+          "src/trainers/roster.ts#property@5:66",
+          "src/trainers/roster.ts#property@5:85"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/trainers/roster.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/trainers/roster.ts#property@5:34",
+        "name": "name",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 5,
+              "column": 34
+            },
+            "end": {
+              "line": 5,
+              "column": 49
+            }
+          }
+        ],
+        "parentBlockId": "src/trainers/roster.ts#property@5:25",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/trainers/roster.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/trainers/roster.ts#property@5:51",
+        "name": "level",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 5,
+              "column": 51
+            },
+            "end": {
+              "line": 5,
+              "column": 60
+            }
+          }
+        ],
+        "parentBlockId": "src/trainers/roster.ts#property@5:25",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/trainers/roster.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/trainers/roster.ts#property@5:66",
+        "name": "name",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 5,
+              "column": 66
+            },
+            "end": {
+              "line": 5,
+              "column": 83
+            }
+          }
+        ],
+        "parentBlockId": "src/trainers/roster.ts#property@5:25",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/trainers/roster.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/trainers/roster.ts#property@5:85",
+        "name": "level",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 5,
+              "column": 85
+            },
+            "end": {
+              "line": 5,
+              "column": 94
+            }
+          }
+        ],
+        "parentBlockId": "src/trainers/roster.ts#property@5:25",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/trainers/roster.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/trainers/roster.ts#property@6:5",
+        "name": "id",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 6,
+              "column": 5
+            },
+            "end": {
+              "line": 6,
+              "column": 10
+            }
+          }
+        ],
+        "parentBlockId": "src/trainers/roster.ts#root-variable@4:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/trainers/roster.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/trainers/roster.ts#property@6:12",
+        "name": "name",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 6,
+              "column": 12
+            },
+            "end": {
+              "line": 6,
+              "column": 25
+            }
+          }
+        ],
+        "parentBlockId": "src/trainers/roster.ts#root-variable@4:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/trainers/roster.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/trainers/roster.ts#property@6:27",
+        "name": "team",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 6,
+              "column": 27
+            },
+            "end": {
+              "line": 6,
+              "column": 65
+            }
+          }
+        ],
+        "parentBlockId": "src/trainers/roster.ts#root-variable@4:1",
+        "childrenBlockIds": [
+          "src/trainers/roster.ts#property@6:36",
+          "src/trainers/roster.ts#property@6:53"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/trainers/roster.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/trainers/roster.ts#property@6:36",
+        "name": "name",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 6,
+              "column": 36
+            },
+            "end": {
+              "line": 6,
+              "column": 51
+            }
+          }
+        ],
+        "parentBlockId": "src/trainers/roster.ts#property@6:27",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/trainers/roster.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/trainers/roster.ts#property@6:53",
+        "name": "level",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 6,
+              "column": 53
+            },
+            "end": {
+              "line": 6,
+              "column": 62
+            }
+          }
+        ],
+        "parentBlockId": "src/trainers/roster.ts#property@6:27",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/trainers/roster.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/trainers/roster.ts#class@9:1",
+        "name": "TrainerRoster",
+        "type": "class",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 9,
+              "column": 1
+            },
+            "end": {
+              "line": 23,
+              "column": 2
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/trainers/roster.ts#property@10:3",
+          "src/trainers/roster.ts#method@12:3",
+          "src/trainers/roster.ts#method@16:3"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/trainers/roster.ts"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [
+          "src/trainers/roster.ts#method@16:3",
+          "src/trainers/roster.ts#condition@18:5",
+          "src/trainers/roster.ts#external-value@19:5",
+          "src/trainers/roster.ts#function@19:35",
+          "src/trainers/roster.ts#call@20:5"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/training/camp.ts#root-argument-value@7:15"
+        ],
+        "nextBlockIds": [
+          "src/trainers/roster.ts#method@16:3"
+        ],
+        "handedFrom": [],
+        "filePath": "src/trainers/roster.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/trainers/roster.ts#property@10:3",
+        "name": "TrainerRoster.trainersById",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 10,
+              "column": 3
+            },
+            "end": {
+              "line": 10,
+              "column": 92
+            }
+          }
+        ],
+        "parentBlockId": "src/trainers/roster.ts#class@9:1",
+        "childrenBlockIds": [
+          "src/trainers/roster.ts#function@10:56"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 10,
+                "column": 43
+              },
+              "end": {
+                "line": 10,
+                "column": 55
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "map"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/trainers/roster.ts#root-variable@4:1"
+          }
+        ],
+        "usedByIds": [
+          "src/trainers/roster.ts#method@12:3",
+          "src/trainers/roster.ts#call@20:5"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/trainers/roster.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/trainers/roster.ts#function@10:56",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 10,
+              "column": 56
+            },
+            "end": {
+              "line": 10,
+              "column": 90
+            }
+          }
+        ],
+        "parentBlockId": "src/trainers/roster.ts#property@10:3",
+        "childrenBlockIds": [
+          "src/trainers/roster.ts#variable@10:57"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 10,
+                "column": 70
+              },
+              "end": {
+                "line": 10,
+                "column": 80
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "id"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/trainers/roster.ts#variable@10:57"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 10,
+                "column": 82
+              },
+              "end": {
+                "line": 10,
+                "column": 89
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/trainers/roster.ts#variable@10:57"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/trainers/roster.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/trainers/roster.ts#variable@10:57",
+        "name": "trainer",
+        "type": "variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 10,
+              "column": 57
+            },
+            "end": {
+              "line": 10,
+              "column": 64
+            }
+          }
+        ],
+        "parentBlockId": "src/trainers/roster.ts#function@10:56",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/trainers/roster.ts#function@10:56"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/trainers/roster.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/trainers/roster.ts#method@12:3",
+        "name": "TrainerRoster.findTrainer",
+        "type": "method",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 12,
+              "column": 3
+            },
+            "end": {
+              "line": 14,
+              "column": 4
+            }
+          }
+        ],
+        "parentBlockId": "src/trainers/roster.ts#class@9:1",
+        "childrenBlockIds": [
+          "src/trainers/roster.ts#root-argument-value@12:15"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "returnsAt": [
+          {
+            "line": 13,
+            "column": 5
+          }
+        ],
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 13,
+                "column": 12
+              },
+              "end": {
+                "line": 13,
+                "column": 33
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "get"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/trainers/roster.ts#property@10:3"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 12,
+                "column": 28
+              },
+              "end": {
+                "line": 12,
+                "column": 35
+              }
+            },
+            "use": "type",
+            "type": "external-block",
+            "codeBlockId": "src/trainers/trainer.ts#type-declaration@6:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 13,
+                "column": 34
+              },
+              "end": {
+                "line": 13,
+                "column": 36
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/trainers/roster.ts#root-argument-value@12:15"
+          }
+        ],
+        "usedByIds": [
+          "src/trainers/roster.ts#variable@17:5"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/trainers/roster.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/trainers/roster.ts#root-argument-value@12:15",
+        "name": "id",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 12,
+              "column": 15
+            },
+            "end": {
+              "line": 12,
+              "column": 25
+            }
+          }
+        ],
+        "parentBlockId": "src/trainers/roster.ts#method@12:3",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/trainers/roster.ts#method@12:3"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/trainers/roster.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/trainers/roster.ts#method@16:3",
+        "name": "TrainerRoster.levelUp",
+        "type": "method",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 16,
+              "column": 3
+            },
+            "end": {
+              "line": 22,
+              "column": 4
+            }
+          }
+        ],
+        "parentBlockId": "src/trainers/roster.ts#class@9:1",
+        "childrenBlockIds": [
+          "src/trainers/roster.ts#root-argument-value@16:11",
+          "src/trainers/roster.ts#root-argument-value@16:23",
+          "src/trainers/roster.ts#variable@17:5",
+          "src/trainers/roster.ts#condition@18:5",
+          "src/trainers/roster.ts#external-value@19:5",
+          "src/trainers/roster.ts#call@20:5"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "returnsAt": [
+          {
+            "line": 21,
+            "column": 5
+          }
+        ],
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 16,
+              "column": 3
+            },
+            "end": {
+              "line": 16,
+              "column": 11
+            }
+          },
+          {
+            "start": {
+              "line": 16,
+              "column": 21
+            },
+            "end": {
+              "line": 16,
+              "column": 23
+            }
+          },
+          {
+            "start": {
+              "line": 16,
+              "column": 37
+            },
+            "end": {
+              "line": 16,
+              "column": 51
+            }
+          },
+          {
+            "start": {
+              "line": 21,
+              "column": 5
+            },
+            "end": {
+              "line": 21,
+              "column": 16
+            }
+          },
+          {
+            "start": {
+              "line": 22,
+              "column": 3
+            },
+            "end": {
+              "line": 22,
+              "column": 4
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 16,
+                "column": 3
+              },
+              "end": {
+                "line": 16,
+                "column": 11
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 16,
+                "column": 21
+              },
+              "end": {
+                "line": 16,
+                "column": 23
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 16,
+                "column": 37
+              },
+              "end": {
+                "line": 16,
+                "column": 51
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 21,
+                "column": 5
+              },
+              "end": {
+                "line": 21,
+                "column": 16
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 22,
+                "column": 3
+              },
+              "end": {
+                "line": 22,
+                "column": 4
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/trainers/roster.ts#method@16:3",
+          "src/trainers/roster.ts#condition@18:5",
+          "src/trainers/roster.ts#external-value@19:5",
+          "src/trainers/roster.ts#function@19:35",
+          "src/trainers/roster.ts#call@20:5"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 16,
+                "column": 40
+              },
+              "end": {
+                "line": 16,
+                "column": 47
+              }
+            },
+            "use": "type",
+            "type": "external-block",
+            "codeBlockId": "src/trainers/trainer.ts#type-declaration@1:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 21,
+                "column": 12
+              },
+              "end": {
+                "line": 21,
+                "column": 16
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/trainers/roster.ts#external-value@19:5"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/trainers/roster.ts#condition@18:5",
+          "src/trainers/roster.ts#external-value@19:5",
+          "src/trainers/roster.ts#call@20:5"
+        ],
+        "handedFrom": [],
+        "filePath": "src/trainers/roster.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/trainers/roster.ts#root-argument-value@16:11",
+        "name": "id",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 16,
+              "column": 11
+            },
+            "end": {
+              "line": 16,
+              "column": 21
+            }
+          }
+        ],
+        "parentBlockId": "src/trainers/roster.ts#method@16:3",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 16,
+              "column": 11
+            },
+            "end": {
+              "line": 16,
+              "column": 21
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 16,
+                "column": 11
+              },
+              "end": {
+                "line": 16,
+                "column": 21
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/trainers/roster.ts#variable@17:5",
+          "src/trainers/roster.ts#call@20:5"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/trainers/roster.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/trainers/roster.ts#root-argument-value@16:23",
+        "name": "levels",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 16,
+              "column": 23
+            },
+            "end": {
+              "line": 16,
+              "column": 37
+            }
+          }
+        ],
+        "parentBlockId": "src/trainers/roster.ts#method@16:3",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 16,
+              "column": 23
+            },
+            "end": {
+              "line": 16,
+              "column": 37
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 16,
+                "column": 23
+              },
+              "end": {
+                "line": 16,
+                "column": 37
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/trainers/roster.ts#property@19:63"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/trainers/roster.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/trainers/roster.ts#variable@17:5",
+        "name": "trainer",
+        "type": "variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 17,
+              "column": 5
+            },
+            "end": {
+              "line": 17,
+              "column": 41
+            }
+          }
+        ],
+        "parentBlockId": "src/trainers/roster.ts#method@16:3",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 17,
+              "column": 5
+            },
+            "end": {
+              "line": 17,
+              "column": 41
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 17,
+                "column": 5
+              },
+              "end": {
+                "line": 17,
+                "column": 41
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 17,
+                "column": 21
+              },
+              "end": {
+                "line": 17,
+                "column": 37
+              }
+            },
+            "use": "call",
+            "type": "internal-code-block",
+            "codeBlockId": "src/trainers/roster.ts#method@12:3"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 17,
+                "column": 38
+              },
+              "end": {
+                "line": 17,
+                "column": 40
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/trainers/roster.ts#root-argument-value@16:11"
+          }
+        ],
+        "usedByIds": [
+          "src/trainers/roster.ts#condition@18:5",
+          "src/trainers/roster.ts#external-value@19:5",
+          "src/trainers/roster.ts#call@20:5"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/trainers/roster.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/trainers/roster.ts#condition@18:5",
+        "type": "condition",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 18,
+              "column": 5
+            },
+            "end": {
+              "line": 18,
+              "column": 41
+            }
+          }
+        ],
+        "parentBlockId": "src/trainers/roster.ts#method@16:3",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "returnsAt": [
+          {
+            "line": 18,
+            "column": 32
+          }
+        ],
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 18,
+              "column": 5
+            },
+            "end": {
+              "line": 18,
+              "column": 41
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 18,
+                "column": 5
+              },
+              "end": {
+                "line": 18,
+                "column": 41
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 18,
+                "column": 9
+              },
+              "end": {
+                "line": 18,
+                "column": 16
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/trainers/roster.ts#condition@18:5"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 18,
+                "column": 9
+              },
+              "end": {
+                "line": 18,
+                "column": 16
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/trainers/roster.ts#variable@17:5"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/trainers/roster.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/trainers/roster.ts#external-value@19:5",
+        "name": "team",
+        "type": "external-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 19,
+              "column": 5
+            },
+            "end": {
+              "line": 19,
+              "column": 117
+            }
+          }
+        ],
+        "parentBlockId": "src/trainers/roster.ts#method@16:3",
+        "childrenBlockIds": [
+          "src/trainers/roster.ts#function@19:35"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 19,
+              "column": 5
+            },
+            "end": {
+              "line": 19,
+              "column": 35
+            }
+          },
+          {
+            "start": {
+              "line": 19,
+              "column": 116
+            },
+            "end": {
+              "line": 19,
+              "column": 117
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 19,
+                "column": 5
+              },
+              "end": {
+                "line": 19,
+                "column": 35
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 19,
+                "column": 18
+              },
+              "end": {
+                "line": 19,
+                "column": 34
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 19,
+                "column": 116
+              },
+              "end": {
+                "line": 19,
+                "column": 117
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/trainers/roster.ts#external-value@19:5",
+          "src/trainers/roster.ts#function@19:35"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 19,
+                "column": 18
+              },
+              "end": {
+                "line": 19,
+                "column": 34
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "team",
+                "map"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/trainers/roster.ts#variable@17:5"
+          }
+        ],
+        "usedByIds": [
+          "src/trainers/roster.ts#property@20:45",
+          "src/trainers/roster.ts#method@16:3"
+        ],
+        "nextBlockIds": [
+          "src/trainers/roster.ts#function@19:35"
+        ],
+        "handedFrom": [],
+        "filePath": "src/trainers/roster.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/trainers/roster.ts#function@19:35",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 19,
+              "column": 35
+            },
+            "end": {
+              "line": 19,
+              "column": 116
+            }
+          }
+        ],
+        "parentBlockId": "src/trainers/roster.ts#external-value@19:5",
+        "childrenBlockIds": [
+          "src/trainers/roster.ts#variable@19:36",
+          "src/trainers/roster.ts#property@19:63"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 19,
+              "column": 35
+            },
+            "end": {
+              "line": 19,
+              "column": 36
+            }
+          },
+          {
+            "start": {
+              "line": 19,
+              "column": 43
+            },
+            "end": {
+              "line": 19,
+              "column": 63
+            }
+          },
+          {
+            "start": {
+              "line": 19,
+              "column": 113
+            },
+            "end": {
+              "line": 19,
+              "column": 116
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 19,
+                "column": 35
+              },
+              "end": {
+                "line": 19,
+                "column": 36
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 19,
+                "column": 43
+              },
+              "end": {
+                "line": 19,
+                "column": 63
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 19,
+                "column": 113
+              },
+              "end": {
+                "line": 19,
+                "column": 116
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/trainers/roster.ts#function@19:35"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 19,
+                "column": 54
+              },
+              "end": {
+                "line": 19,
+                "column": 61
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/trainers/roster.ts#variable@19:36"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/trainers/roster.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/trainers/roster.ts#variable@19:36",
+        "name": "pokemon",
+        "type": "variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 19,
+              "column": 36
+            },
+            "end": {
+              "line": 19,
+              "column": 43
+            }
+          }
+        ],
+        "parentBlockId": "src/trainers/roster.ts#function@19:35",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 19,
+              "column": 36
+            },
+            "end": {
+              "line": 19,
+              "column": 43
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 19,
+                "column": 36
+              },
+              "end": {
+                "line": 19,
+                "column": 43
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/trainers/roster.ts#function@19:35",
+          "src/trainers/roster.ts#property@19:63"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/trainers/roster.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/trainers/roster.ts#property@19:63",
+        "name": "level",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 19,
+              "column": 63
+            },
+            "end": {
+              "line": 19,
+              "column": 113
+            }
+          }
+        ],
+        "parentBlockId": "src/trainers/roster.ts#function@19:35",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 19,
+              "column": 63
+            },
+            "end": {
+              "line": 19,
+              "column": 113
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 19,
+                "column": 63
+              },
+              "end": {
+                "line": 19,
+                "column": 113
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 19,
+                "column": 79
+              },
+              "end": {
+                "line": 19,
+                "column": 92
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 19,
+                "column": 79
+              },
+              "end": {
+                "line": 19,
+                "column": 92
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "level"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/trainers/roster.ts#variable@19:36"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 19,
+                "column": 95
+              },
+              "end": {
+                "line": 19,
+                "column": 101
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/trainers/roster.ts#root-argument-value@16:23"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 19,
+                "column": 103
+              },
+              "end": {
+                "line": 19,
+                "column": 112
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "external-block",
+            "codeBlockId": "src/config.ts#root-variable@1:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/trainers/roster.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/trainers/roster.ts#call@20:5",
+        "name": "this.trainersById.set",
+        "type": "call",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 20,
+              "column": 5
+            },
+            "end": {
+              "line": 20,
+              "column": 52
+            }
+          }
+        ],
+        "parentBlockId": "src/trainers/roster.ts#method@16:3",
+        "childrenBlockIds": [
+          "src/trainers/roster.ts#property@20:45"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 20,
+              "column": 5
+            },
+            "end": {
+              "line": 20,
+              "column": 45
+            }
+          },
+          {
+            "start": {
+              "line": 20,
+              "column": 49
+            },
+            "end": {
+              "line": 20,
+              "column": 52
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 20,
+                "column": 5
+              },
+              "end": {
+                "line": 20,
+                "column": 45
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 20,
+                "column": 36
+              },
+              "end": {
+                "line": 20,
+                "column": 43
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 20,
+                "column": 49
+              },
+              "end": {
+                "line": 20,
+                "column": 52
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/trainers/roster.ts#external-value@19:5",
+          "src/trainers/roster.ts#function@19:35",
+          "src/trainers/roster.ts#call@20:5"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 20,
+                "column": 5
+              },
+              "end": {
+                "line": 20,
+                "column": 26
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "set"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/trainers/roster.ts#property@10:3"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 20,
+                "column": 27
+              },
+              "end": {
+                "line": 20,
+                "column": 29
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/trainers/roster.ts#root-argument-value@16:11"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 20,
+                "column": 36
+              },
+              "end": {
+                "line": 20,
+                "column": 43
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/trainers/roster.ts#variable@17:5"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/trainers/roster.ts#property@20:45"
+        ],
+        "handedFrom": [],
+        "filePath": "src/trainers/roster.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/trainers/roster.ts#property@20:45",
+        "name": "team",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 20,
+              "column": 45
+            },
+            "end": {
+              "line": 20,
+              "column": 49
+            }
+          }
+        ],
+        "parentBlockId": "src/trainers/roster.ts#call@20:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 20,
+              "column": 45
+            },
+            "end": {
+              "line": 20,
+              "column": 49
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 20,
+                "column": 45
+              },
+              "end": {
+                "line": 20,
+                "column": 49
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 20,
+                "column": 45
+              },
+              "end": {
+                "line": 20,
+                "column": 49
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/trainers/roster.ts#external-value@19:5",
+          "src/trainers/roster.ts#function@19:35"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 20,
+                "column": 45
+              },
+              "end": {
+                "line": 20,
+                "column": 49
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/trainers/roster.ts#external-value@19:5"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/trainers/roster.ts#external-value@19:5"
+        ],
+        "handedFrom": [],
+        "filePath": "src/trainers/roster.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/trainers/trainer.ts#type-declaration@1:1",
+        "name": "Pokemon",
+        "type": "type-declaration",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 4,
+              "column": 2
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/trainers/trainer.ts"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "data-model"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/trainers/roster.ts#method@16:3",
+          "src/trainers/trainer.ts#type-declaration@6:1",
+          "src/training/camp.ts#root-argument-value@16:10",
+          "src/training/gym-camp.ts#root-argument-value@7:10"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/trainers/trainer.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/trainers/trainer.ts#type-declaration@6:1",
+        "name": "Trainer",
+        "type": "type-declaration",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 6,
+              "column": 1
+            },
+            "end": {
+              "line": 10,
+              "column": 2
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/trainers/trainer.ts"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "data-model"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 9,
+                "column": 9
+              },
+              "end": {
+                "line": 9,
+                "column": 16
+              }
+            },
+            "use": "type",
+            "type": "internal-code-block",
+            "codeBlockId": "src/trainers/trainer.ts#type-declaration@1:1"
+          }
+        ],
+        "usedByIds": [
+          "src/trainers/roster.ts#root-variable@4:1",
+          "src/trainers/roster.ts#method@12:3"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/trainers/trainer.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/training/camp.ts#import@1:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 50
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 50
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 1,
+                "column": 1
+              },
+              "end": {
+                "line": 1,
+                "column": 50
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/training/camp.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/training/camp.ts#import@2:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 2,
+              "column": 1
+            },
+            "end": {
+              "line": 2,
+              "column": 50
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 2,
+              "column": 1
+            },
+            "end": {
+              "line": 2,
+              "column": 50
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 2,
+                "column": 1
+              },
+              "end": {
+                "line": 2,
+                "column": 50
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/training/camp.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/training/camp.ts#class@4:1",
+        "name": "TrainingCamp",
+        "type": "class",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 4,
+              "column": 1
+            },
+            "end": {
+              "line": 19,
+              "column": 2
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/training/camp.ts#property@5:3",
+          "src/training/camp.ts#method@7:3",
+          "src/training/camp.ts#method@9:3",
+          "src/training/camp.ts#method@16:3"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/training/camp.ts"
+        ],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 4,
+              "column": 1
+            },
+            "end": {
+              "line": 4,
+              "column": 28
+            }
+          },
+          {
+            "start": {
+              "line": 19,
+              "column": 1
+            },
+            "end": {
+              "line": 19,
+              "column": 2
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 4,
+                "column": 1
+              },
+              "end": {
+                "line": 4,
+                "column": 28
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 19,
+                "column": 1
+              },
+              "end": {
+                "line": 19,
+                "column": 2
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/trainers/roster.ts#method@16:3",
+          "src/trainers/roster.ts#condition@18:5",
+          "src/trainers/roster.ts#external-value@19:5",
+          "src/trainers/roster.ts#function@19:35",
+          "src/trainers/roster.ts#call@20:5",
+          "src/training/camp.ts#class@4:1",
+          "src/training/camp.ts#method@7:3",
+          "src/training/camp.ts#method@9:3",
+          "src/training/camp.ts#condition@11:5",
+          "src/training/camp.ts#method@16:3"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/training/gym-camp.ts#class@4:1"
+        ],
+        "nextBlockIds": [
+          "src/training/camp.ts#method@7:3",
+          "src/training/camp.ts#method@9:3",
+          "src/training/camp.ts#method@16:3"
+        ],
+        "handedFrom": [],
+        "filePath": "src/training/camp.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/training/camp.ts#property@5:3",
+        "name": "TrainingCamp.sessions",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 5,
+              "column": 3
+            },
+            "end": {
+              "line": 5,
+              "column": 15
+            }
+          }
+        ],
+        "parentBlockId": "src/training/camp.ts#class@4:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 5,
+              "column": 3
+            },
+            "end": {
+              "line": 5,
+              "column": 15
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 5,
+                "column": 3
+              },
+              "end": {
+                "line": 5,
+                "column": 15
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/training/camp.ts#method@9:3"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/training/camp.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/training/camp.ts#method@7:3",
+        "name": "TrainingCamp.constructor",
+        "type": "method",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 7,
+              "column": 3
+            },
+            "end": {
+              "line": 7,
+              "column": 79
+            }
+          }
+        ],
+        "parentBlockId": "src/training/camp.ts#class@4:1",
+        "childrenBlockIds": [
+          "src/training/camp.ts#root-argument-value@7:15"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 7,
+              "column": 3
+            },
+            "end": {
+              "line": 7,
+              "column": 15
+            }
+          },
+          {
+            "start": {
+              "line": 7,
+              "column": 75
+            },
+            "end": {
+              "line": 7,
+              "column": 79
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 7,
+                "column": 3
+              },
+              "end": {
+                "line": 7,
+                "column": 15
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 7,
+                "column": 75
+              },
+              "end": {
+                "line": 7,
+                "column": 79
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/training/camp.ts#method@7:3"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/training/camp.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/training/camp.ts#root-argument-value@7:15",
+        "name": "roster",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 7,
+              "column": 15
+            },
+            "end": {
+              "line": 7,
+              "column": 75
+            }
+          }
+        ],
+        "parentBlockId": "src/training/camp.ts#method@7:3",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "isParameterProperty": true,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 7,
+              "column": 15
+            },
+            "end": {
+              "line": 7,
+              "column": 75
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 7,
+                "column": 15
+              },
+              "end": {
+                "line": 7,
+                "column": 75
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 7,
+                "column": 40
+              },
+              "end": {
+                "line": 7,
+                "column": 53
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 7,
+                "column": 60
+              },
+              "end": {
+                "line": 7,
+                "column": 73
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 7,
+                "column": 40
+              },
+              "end": {
+                "line": 7,
+                "column": 53
+              }
+            },
+            "use": "type",
+            "type": "external-block",
+            "codeBlockId": "src/trainers/roster.ts#class@9:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 7,
+                "column": 60
+              },
+              "end": {
+                "line": 7,
+                "column": 73
+              }
+            },
+            "use": "call",
+            "type": "external-block",
+            "codeBlockId": "src/trainers/roster.ts#class@9:1"
+          }
+        ],
+        "usedByIds": [
+          "src/training/camp.ts#variable@10:5"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/training/camp.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/training/camp.ts#method@9:3",
+        "name": "TrainingCamp.train",
+        "type": "method",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 9,
+              "column": 3
+            },
+            "end": {
+              "line": 14,
+              "column": 4
+            }
+          }
+        ],
+        "parentBlockId": "src/training/camp.ts#class@4:1",
+        "childrenBlockIds": [
+          "src/training/camp.ts#root-argument-value@9:9",
+          "src/training/camp.ts#root-argument-value@9:28",
+          "src/training/camp.ts#variable@10:5",
+          "src/training/camp.ts#condition@11:5"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "returnsAt": [
+          {
+            "line": 13,
+            "column": 5
+          }
+        ],
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 9,
+              "column": 3
+            },
+            "end": {
+              "line": 9,
+              "column": 9
+            }
+          },
+          {
+            "start": {
+              "line": 9,
+              "column": 26
+            },
+            "end": {
+              "line": 9,
+              "column": 28
+            }
+          },
+          {
+            "start": {
+              "line": 9,
+              "column": 42
+            },
+            "end": {
+              "line": 9,
+              "column": 53
+            }
+          },
+          {
+            "start": {
+              "line": 12,
+              "column": 5
+            },
+            "end": {
+              "line": 12,
+              "column": 23
+            }
+          },
+          {
+            "start": {
+              "line": 13,
+              "column": 5
+            },
+            "end": {
+              "line": 13,
+              "column": 29
+            }
+          },
+          {
+            "start": {
+              "line": 14,
+              "column": 3
+            },
+            "end": {
+              "line": 14,
+              "column": 4
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 9,
+                "column": 3
+              },
+              "end": {
+                "line": 9,
+                "column": 9
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 9,
+                "column": 26
+              },
+              "end": {
+                "line": 9,
+                "column": 28
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 9,
+                "column": 42
+              },
+              "end": {
+                "line": 9,
+                "column": 53
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 12,
+                "column": 5
+              },
+              "end": {
+                "line": 12,
+                "column": 23
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 12,
+                "column": 5
+              },
+              "end": {
+                "line": 12,
+                "column": 18
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 13,
+                "column": 5
+              },
+              "end": {
+                "line": 13,
+                "column": 29
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 13,
+                "column": 12
+              },
+              "end": {
+                "line": 13,
+                "column": 23
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 14,
+                "column": 3
+              },
+              "end": {
+                "line": 14,
+                "column": 4
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/trainers/roster.ts#method@16:3",
+          "src/trainers/roster.ts#condition@18:5",
+          "src/trainers/roster.ts#external-value@19:5",
+          "src/trainers/roster.ts#function@19:35",
+          "src/trainers/roster.ts#call@20:5",
+          "src/training/camp.ts#method@9:3",
+          "src/training/camp.ts#condition@11:5",
+          "src/training/camp.ts#method@16:3"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 12,
+                "column": 5
+              },
+              "end": {
+                "line": 12,
+                "column": 18
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/training/camp.ts#property@5:3"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 13,
+                "column": 12
+              },
+              "end": {
+                "line": 13,
+                "column": 23
+              }
+            },
+            "use": "call",
+            "type": "internal-code-block",
+            "codeBlockId": "src/training/camp.ts#method@16:3"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 13,
+                "column": 24
+              },
+              "end": {
+                "line": 13,
+                "column": 28
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/training/camp.ts#variable@10:5"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/training/camp.ts#variable@10:5",
+          "src/training/camp.ts#condition@11:5",
+          "src/training/camp.ts#method@16:3"
+        ],
+        "handedFrom": [],
+        "filePath": "src/training/camp.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/training/camp.ts#root-argument-value@9:9",
+        "name": "trainerId",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 9,
+              "column": 9
+            },
+            "end": {
+              "line": 9,
+              "column": 26
+            }
+          }
+        ],
+        "parentBlockId": "src/training/camp.ts#method@9:3",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 9,
+              "column": 9
+            },
+            "end": {
+              "line": 9,
+              "column": 26
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 9,
+                "column": 9
+              },
+              "end": {
+                "line": 9,
+                "column": 26
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/training/camp.ts#variable@10:5",
+          "src/training/camp.ts#condition@11:5"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/training/camp.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/training/camp.ts#root-argument-value@9:28",
+        "name": "levels",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 9,
+              "column": 28
+            },
+            "end": {
+              "line": 9,
+              "column": 42
+            }
+          }
+        ],
+        "parentBlockId": "src/training/camp.ts#method@9:3",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 9,
+              "column": 28
+            },
+            "end": {
+              "line": 9,
+              "column": 42
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 9,
+                "column": 28
+              },
+              "end": {
+                "line": 9,
+                "column": 42
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/training/camp.ts#variable@10:5"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/training/camp.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/training/camp.ts#variable@10:5",
+        "name": "team",
+        "type": "variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 10,
+              "column": 5
+            },
+            "end": {
+              "line": 10,
+              "column": 56
+            }
+          }
+        ],
+        "parentBlockId": "src/training/camp.ts#method@9:3",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 10,
+              "column": 5
+            },
+            "end": {
+              "line": 10,
+              "column": 56
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 10,
+                "column": 5
+              },
+              "end": {
+                "line": 10,
+                "column": 56
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 10,
+                "column": 18
+              },
+              "end": {
+                "line": 10,
+                "column": 37
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/trainers/roster.ts#method@16:3",
+          "src/trainers/roster.ts#condition@18:5",
+          "src/trainers/roster.ts#external-value@19:5",
+          "src/trainers/roster.ts#function@19:35",
+          "src/trainers/roster.ts#call@20:5"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 10,
+                "column": 18
+              },
+              "end": {
+                "line": 10,
+                "column": 37
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "levelUp"
+              ],
+              "blockId": "src/trainers/roster.ts#method@16:3"
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/training/camp.ts#root-argument-value@7:15"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 10,
+                "column": 38
+              },
+              "end": {
+                "line": 10,
+                "column": 47
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/training/camp.ts#root-argument-value@9:9"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 10,
+                "column": 49
+              },
+              "end": {
+                "line": 10,
+                "column": 55
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/training/camp.ts#root-argument-value@9:28"
+          }
+        ],
+        "usedByIds": [
+          "src/training/camp.ts#condition@11:5",
+          "src/training/camp.ts#method@9:3"
+        ],
+        "nextBlockIds": [
+          "src/trainers/roster.ts#method@16:3"
+        ],
+        "handedFrom": [],
+        "filePath": "src/training/camp.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/training/camp.ts#condition@11:5",
+        "type": "condition",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 11,
+              "column": 5
+            },
+            "end": {
+              "line": 11,
+              "column": 81
+            }
+          }
+        ],
+        "parentBlockId": "src/training/camp.ts#method@9:3",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "returnsAt": [
+          {
+            "line": 11,
+            "column": 28
+          }
+        ],
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 11,
+              "column": 5
+            },
+            "end": {
+              "line": 11,
+              "column": 81
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 11,
+                "column": 5
+              },
+              "end": {
+                "line": 11,
+                "column": 81
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 11,
+                "column": 9
+              },
+              "end": {
+                "line": 11,
+                "column": 20
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/training/camp.ts#condition@11:5"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 11,
+                "column": 9
+              },
+              "end": {
+                "line": 11,
+                "column": 20
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "length"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/training/camp.ts#variable@10:5"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 11,
+                "column": 46
+              },
+              "end": {
+                "line": 11,
+                "column": 55
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/training/camp.ts#root-argument-value@9:9"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/training/camp.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/training/camp.ts#method@16:3",
+        "name": "TrainingCamp.report",
+        "type": "method",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 16,
+              "column": 3
+            },
+            "end": {
+              "line": 18,
+              "column": 4
+            }
+          }
+        ],
+        "parentBlockId": "src/training/camp.ts#class@4:1",
+        "childrenBlockIds": [
+          "src/training/camp.ts#root-argument-value@16:10"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "returnsAt": [
+          {
+            "line": 17,
+            "column": 5
+          }
+        ],
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 16,
+              "column": 3
+            },
+            "end": {
+              "line": 16,
+              "column": 10
+            }
+          },
+          {
+            "start": {
+              "line": 16,
+              "column": 25
+            },
+            "end": {
+              "line": 16,
+              "column": 36
+            }
+          },
+          {
+            "start": {
+              "line": 17,
+              "column": 5
+            },
+            "end": {
+              "line": 17,
+              "column": 15
+            }
+          },
+          {
+            "start": {
+              "line": 17,
+              "column": 26
+            },
+            "end": {
+              "line": 17,
+              "column": 44
+            }
+          },
+          {
+            "start": {
+              "line": 18,
+              "column": 3
+            },
+            "end": {
+              "line": 18,
+              "column": 4
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 16,
+                "column": 3
+              },
+              "end": {
+                "line": 16,
+                "column": 10
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 16,
+                "column": 25
+              },
+              "end": {
+                "line": 16,
+                "column": 36
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 17,
+                "column": 5
+              },
+              "end": {
+                "line": 17,
+                "column": 15
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 17,
+                "column": 26
+              },
+              "end": {
+                "line": 17,
+                "column": 44
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 18,
+                "column": 3
+              },
+              "end": {
+                "line": 18,
+                "column": 4
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/training/camp.ts#method@16:3"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 17,
+                "column": 15
+              },
+              "end": {
+                "line": 17,
+                "column": 26
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "length"
+              ],
+              "blockId": "src/training/camp.ts#root-argument-value@17:15"
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/training/camp.ts#root-argument-value@16:10"
+          }
+        ],
+        "usedByIds": [
+          "src/training/camp.ts#method@9:3"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/training/camp.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/training/camp.ts#root-argument-value@16:10",
+        "name": "team",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 16,
+              "column": 10
+            },
+            "end": {
+              "line": 16,
+              "column": 25
+            }
+          }
+        ],
+        "parentBlockId": "src/training/camp.ts#method@16:3",
+        "childrenBlockIds": [
+          "src/training/camp.ts#root-argument-value@17:15"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 16,
+              "column": 10
+            },
+            "end": {
+              "line": 16,
+              "column": 25
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 16,
+                "column": 10
+              },
+              "end": {
+                "line": 16,
+                "column": 25
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 16,
+                "column": 16
+              },
+              "end": {
+                "line": 16,
+                "column": 23
+              }
+            },
+            "use": "type",
+            "type": "external-block",
+            "codeBlockId": "src/trainers/trainer.ts#type-declaration@1:1"
+          }
+        ],
+        "usedByIds": [
+          "src/training/camp.ts#method@16:3"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/training/camp.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/training/camp.ts#root-argument-value@17:15",
+        "name": "length",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 17,
+              "column": 15
+            },
+            "end": {
+              "line": 17,
+              "column": 26
+            }
+          }
+        ],
+        "parentBlockId": "src/training/camp.ts#root-argument-value@16:10",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 17,
+              "column": 15
+            },
+            "end": {
+              "line": 17,
+              "column": 26
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 17,
+                "column": 15
+              },
+              "end": {
+                "line": 17,
+                "column": 26
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/training/camp.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/training/gym-camp.ts#import@1:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 50
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 50
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 1,
+                "column": 1
+              },
+              "end": {
+                "line": 1,
+                "column": 50
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/training/gym-camp.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/training/gym-camp.ts#import@2:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 2,
+              "column": 1
+            },
+            "end": {
+              "line": 2,
+              "column": 38
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 2,
+              "column": 1
+            },
+            "end": {
+              "line": 2,
+              "column": 38
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 2,
+                "column": 1
+              },
+              "end": {
+                "line": 2,
+                "column": 38
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/training/gym-camp.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/training/gym-camp.ts#class@4:1",
+        "name": "GymCamp",
+        "type": "class",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 4,
+              "column": 1
+            },
+            "end": {
+              "line": 11,
+              "column": 2
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/training/gym-camp.ts#property@5:3",
+          "src/training/gym-camp.ts#method@7:3"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/training/gym-camp.ts"
+        ],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 4,
+              "column": 1
+            },
+            "end": {
+              "line": 4,
+              "column": 44
+            }
+          },
+          {
+            "start": {
+              "line": 11,
+              "column": 1
+            },
+            "end": {
+              "line": 11,
+              "column": 2
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 4,
+                "column": 1
+              },
+              "end": {
+                "line": 4,
+                "column": 44
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 4,
+                "column": 30
+              },
+              "end": {
+                "line": 4,
+                "column": 42
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 11,
+                "column": 1
+              },
+              "end": {
+                "line": 11,
+                "column": 2
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/training/gym-camp.ts#class@4:1",
+          "src/training/gym-camp.ts#method@7:3",
+          "src/training/gym-camp.ts#function@8:44"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 4,
+                "column": 30
+              },
+              "end": {
+                "line": 4,
+                "column": 42
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "external-block",
+            "codeBlockId": "src/training/camp.ts#class@4:1"
+          }
+        ],
+        "usedByIds": [
+          "src/main.ts#root-variable@3:1"
+        ],
+        "nextBlockIds": [
+          "src/training/gym-camp.ts#method@7:3"
+        ],
+        "handedFrom": [],
+        "filePath": "src/training/gym-camp.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/training/gym-camp.ts#property@5:3",
+        "name": "GymCamp.badge",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 5,
+              "column": 3
+            },
+            "end": {
+              "line": 5,
+              "column": 26
+            }
+          }
+        ],
+        "parentBlockId": "src/training/gym-camp.ts#class@4:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 5,
+              "column": 3
+            },
+            "end": {
+              "line": 5,
+              "column": 26
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 5,
+                "column": 3
+              },
+              "end": {
+                "line": 5,
+                "column": 26
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/training/gym-camp.ts#method@7:3"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/training/gym-camp.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/training/gym-camp.ts#method@7:3",
+        "name": "GymCamp.report",
+        "type": "method",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 7,
+              "column": 3
+            },
+            "end": {
+              "line": 10,
+              "column": 4
+            }
+          }
+        ],
+        "parentBlockId": "src/training/gym-camp.ts#class@4:1",
+        "childrenBlockIds": [
+          "src/training/gym-camp.ts#root-argument-value@7:10",
+          "src/training/gym-camp.ts#variable@8:5"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "returnsAt": [
+          {
+            "line": 9,
+            "column": 5
+          }
+        ],
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 7,
+              "column": 3
+            },
+            "end": {
+              "line": 7,
+              "column": 10
+            }
+          },
+          {
+            "start": {
+              "line": 7,
+              "column": 25
+            },
+            "end": {
+              "line": 7,
+              "column": 36
+            }
+          },
+          {
+            "start": {
+              "line": 9,
+              "column": 5
+            },
+            "end": {
+              "line": 9,
+              "column": 15
+            }
+          },
+          {
+            "start": {
+              "line": 9,
+              "column": 26
+            },
+            "end": {
+              "line": 9,
+              "column": 103
+            }
+          },
+          {
+            "start": {
+              "line": 10,
+              "column": 3
+            },
+            "end": {
+              "line": 10,
+              "column": 4
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 7,
+                "column": 3
+              },
+              "end": {
+                "line": 7,
+                "column": 10
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 7,
+                "column": 25
+              },
+              "end": {
+                "line": 7,
+                "column": 36
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 9,
+                "column": 5
+              },
+              "end": {
+                "line": 9,
+                "column": 15
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 9,
+                "column": 26
+              },
+              "end": {
+                "line": 9,
+                "column": 103
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 9,
+                "column": 54
+              },
+              "end": {
+                "line": 9,
+                "column": 64
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 10,
+                "column": 3
+              },
+              "end": {
+                "line": 10,
+                "column": 4
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/training/gym-camp.ts#method@7:3",
+          "src/training/gym-camp.ts#function@8:44"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 9,
+                "column": 54
+              },
+              "end": {
+                "line": 9,
+                "column": 64
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/training/gym-camp.ts#property@5:3"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 9,
+                "column": 15
+              },
+              "end": {
+                "line": 9,
+                "column": 26
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "length"
+              ],
+              "blockId": "src/training/gym-camp.ts#root-argument-value@9:15"
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/training/gym-camp.ts#root-argument-value@7:10"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 9,
+                "column": 92
+              },
+              "end": {
+                "line": 9,
+                "column": 101
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/training/gym-camp.ts#variable@8:5"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/training/gym-camp.ts#variable@8:5"
+        ],
+        "handedFrom": [],
+        "filePath": "src/training/gym-camp.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/training/gym-camp.ts#root-argument-value@7:10",
+        "name": "team",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 7,
+              "column": 10
+            },
+            "end": {
+              "line": 7,
+              "column": 25
+            }
+          }
+        ],
+        "parentBlockId": "src/training/gym-camp.ts#method@7:3",
+        "childrenBlockIds": [
+          "src/training/gym-camp.ts#root-argument-value@8:35",
+          "src/training/gym-camp.ts#root-argument-value@9:15"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 7,
+              "column": 10
+            },
+            "end": {
+              "line": 7,
+              "column": 25
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 7,
+                "column": 10
+              },
+              "end": {
+                "line": 7,
+                "column": 25
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 7,
+                "column": 16
+              },
+              "end": {
+                "line": 7,
+                "column": 23
+              }
+            },
+            "use": "type",
+            "type": "external-block",
+            "codeBlockId": "src/trainers/trainer.ts#type-declaration@1:1"
+          }
+        ],
+        "usedByIds": [
+          "src/training/gym-camp.ts#variable@8:5",
+          "src/training/gym-camp.ts#method@7:3"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/training/gym-camp.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/training/gym-camp.ts#root-argument-value@8:35",
+        "name": "map",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 8,
+              "column": 35
+            },
+            "end": {
+              "line": 8,
+              "column": 43
+            }
+          }
+        ],
+        "parentBlockId": "src/training/gym-camp.ts#root-argument-value@7:10",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 8,
+              "column": 35
+            },
+            "end": {
+              "line": 8,
+              "column": 43
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 8,
+                "column": 35
+              },
+              "end": {
+                "line": 8,
+                "column": 43
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/training/gym-camp.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/training/gym-camp.ts#root-argument-value@9:15",
+        "name": "length",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 9,
+              "column": 15
+            },
+            "end": {
+              "line": 9,
+              "column": 26
+            }
+          }
+        ],
+        "parentBlockId": "src/training/gym-camp.ts#root-argument-value@7:10",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 9,
+              "column": 15
+            },
+            "end": {
+              "line": 9,
+              "column": 26
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 9,
+                "column": 15
+              },
+              "end": {
+                "line": 9,
+                "column": 26
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/training/gym-camp.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/training/gym-camp.ts#variable@8:5",
+        "name": "strongest",
+        "type": "variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 8,
+              "column": 5
+            },
+            "end": {
+              "line": 8,
+              "column": 72
+            }
+          }
+        ],
+        "parentBlockId": "src/training/gym-camp.ts#method@7:3",
+        "childrenBlockIds": [
+          "src/training/gym-camp.ts#function@8:44"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 8,
+              "column": 5
+            },
+            "end": {
+              "line": 8,
+              "column": 35
+            }
+          },
+          {
+            "start": {
+              "line": 8,
+              "column": 43
+            },
+            "end": {
+              "line": 8,
+              "column": 44
+            }
+          },
+          {
+            "start": {
+              "line": 8,
+              "column": 70
+            },
+            "end": {
+              "line": 8,
+              "column": 72
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 8,
+                "column": 5
+              },
+              "end": {
+                "line": 8,
+                "column": 35
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 8,
+                "column": 43
+              },
+              "end": {
+                "line": 8,
+                "column": 44
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 8,
+                "column": 70
+              },
+              "end": {
+                "line": 8,
+                "column": 72
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/training/gym-camp.ts#function@8:44"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 8,
+                "column": 35
+              },
+              "end": {
+                "line": 8,
+                "column": 43
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "map"
+              ],
+              "blockId": "src/training/gym-camp.ts#root-argument-value@8:35"
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/training/gym-camp.ts#root-argument-value@7:10"
+          }
+        ],
+        "usedByIds": [
+          "src/training/gym-camp.ts#method@7:3"
+        ],
+        "nextBlockIds": [
+          "src/training/gym-camp.ts#function@8:44"
+        ],
+        "handedFrom": [],
+        "filePath": "src/training/gym-camp.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/training/gym-camp.ts#function@8:44",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 8,
+              "column": 44
+            },
+            "end": {
+              "line": 8,
+              "column": 70
+            }
+          }
+        ],
+        "parentBlockId": "src/training/gym-camp.ts#variable@8:5",
+        "childrenBlockIds": [
+          "src/training/gym-camp.ts#variable@8:45"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 8,
+              "column": 44
+            },
+            "end": {
+              "line": 8,
+              "column": 45
+            }
+          },
+          {
+            "start": {
+              "line": 8,
+              "column": 52
+            },
+            "end": {
+              "line": 8,
+              "column": 70
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 8,
+                "column": 44
+              },
+              "end": {
+                "line": 8,
+                "column": 45
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 8,
+                "column": 52
+              },
+              "end": {
+                "line": 8,
+                "column": 70
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/training/gym-camp.ts#function@8:44"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 8,
+                "column": 57
+              },
+              "end": {
+                "line": 8,
+                "column": 70
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "level"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/training/gym-camp.ts#variable@8:45"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/training/gym-camp.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/training/gym-camp.ts#variable@8:45",
+        "name": "pokemon",
+        "type": "variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 8,
+              "column": 45
+            },
+            "end": {
+              "line": 8,
+              "column": 52
+            }
+          }
+        ],
+        "parentBlockId": "src/training/gym-camp.ts#function@8:44",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 8,
+              "column": 45
+            },
+            "end": {
+              "line": 8,
+              "column": 52
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 8,
+                "column": 45
+              },
+              "end": {
+                "line": 8,
+                "column": 52
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/training/gym-camp.ts#function@8:44"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/training/gym-camp.ts",
+        "catalogue": null
+      }
+    ],
+    "diffBlockIds": [
+      "src/main.ts#import@1:1",
+      "src/main.ts#root-variable@3:1",
+      "src/main.ts#telemetry@5:1",
+      "src/trainers/roster.ts#import@1:1",
+      "src/trainers/roster.ts#import@2:1",
+      "src/trainers/roster.ts#method@16:3",
+      "src/trainers/roster.ts#root-argument-value@16:11",
+      "src/trainers/roster.ts#root-argument-value@16:23",
+      "src/trainers/roster.ts#variable@17:5",
+      "src/trainers/roster.ts#condition@18:5",
+      "src/trainers/roster.ts#external-value@19:5",
+      "src/trainers/roster.ts#function@19:35",
+      "src/trainers/roster.ts#variable@19:36",
+      "src/trainers/roster.ts#property@19:63",
+      "src/trainers/roster.ts#call@20:5",
+      "src/trainers/roster.ts#property@20:45",
+      "src/training/camp.ts#import@1:1",
+      "src/training/camp.ts#import@2:1",
+      "src/training/camp.ts#class@4:1",
+      "src/training/camp.ts#property@5:3",
+      "src/training/camp.ts#method@7:3",
+      "src/training/camp.ts#root-argument-value@7:15",
+      "src/training/camp.ts#method@9:3",
+      "src/training/camp.ts#root-argument-value@9:9",
+      "src/training/camp.ts#root-argument-value@9:28",
+      "src/training/camp.ts#variable@10:5",
+      "src/training/camp.ts#condition@11:5",
+      "src/training/camp.ts#method@16:3",
+      "src/training/camp.ts#root-argument-value@16:10",
+      "src/training/camp.ts#root-argument-value@17:15",
+      "src/training/gym-camp.ts#import@1:1",
+      "src/training/gym-camp.ts#import@2:1",
+      "src/training/gym-camp.ts#class@4:1",
+      "src/training/gym-camp.ts#property@5:3",
+      "src/training/gym-camp.ts#method@7:3",
+      "src/training/gym-camp.ts#root-argument-value@7:10",
+      "src/training/gym-camp.ts#root-argument-value@8:35",
+      "src/training/gym-camp.ts#root-argument-value@9:15",
+      "src/training/gym-camp.ts#variable@8:5",
+      "src/training/gym-camp.ts#function@8:44",
+      "src/training/gym-camp.ts#variable@8:45"
+    ],
+    "diffContains": [
+      "logic"
+    ],
+    "chainContains": [
+      "logic"
+    ],
+    "diffChainIds": [
+      "src/main.ts#root-variable@3:1",
+      "src/main.ts#root-statement@5:1",
+      "src/training/camp.ts#class@4:1",
+      "src/trainers/roster.ts#class@9:1"
+    ]
+  }
+]

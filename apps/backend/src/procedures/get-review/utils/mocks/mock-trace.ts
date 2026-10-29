@@ -1,5 +1,15 @@
 import { classificationOfType, diffKindsOf } from "@flightplan/codegraph"
-import type { CodeBlock, CodeBlockClassification, CodeBlockType, TraceDiagram, TraceNode, SourceFile } from "@flightplan/configurations"
+import type {
+  BlockLabel,
+  CodeBlock,
+  CodeBlockClassification,
+  CodeBlockType,
+  Position,
+  SourceFile,
+  SourceRange,
+  TraceDiagram,
+  TraceNode,
+} from "@flightplan/configurations"
 
 export interface MockTraceNode {
   readonly id: string
@@ -10,7 +20,7 @@ export interface MockTraceNode {
   readonly label: string | null
   readonly description: string | null
   readonly triggers?: readonly MockTrigger[]
-  readonly listedBlocks?: readonly MockTrigger[]
+  readonly listedBlocks?: readonly MockListedBlock[]
   readonly children?: readonly MockTraceNode[]
 }
 
@@ -19,6 +29,11 @@ export interface MockTrigger {
   readonly type: CodeBlockType
   readonly name: string
   readonly label: string | null
+}
+
+export interface MockListedBlock extends MockTrigger {
+  readonly at?: Position
+  readonly range?: SourceRange
 }
 
 export type MockTraceEdge = readonly [from: string, to: string]
@@ -39,11 +54,14 @@ interface MockBlock {
   readonly path: string
   readonly name: string
   readonly lines: readonly [number, number]
+  readonly range?: SourceRange | undefined
   readonly isChanged: boolean
 }
 
-const blockOf = ({ id, type, path, name, lines: [lineStart, lineEnd], isChanged }: MockBlock): CodeBlock => {
-  const range = { start: { line: lineStart, column: FIRST_COLUMN }, end: { line: lineEnd, column: FIRST_COLUMN } }
+const rangeOfLines = ([lineStart, lineEnd]: readonly [number, number]): SourceRange =>
+  ({ start: { line: lineStart, column: FIRST_COLUMN }, end: { line: lineEnd, column: FIRST_COLUMN } })
+
+const blockOf = ({ id, type, path, name, lines, range = rangeOfLines(lines), isChanged }: MockBlock): CodeBlock => {
   const classifications = [classificationOfType(type) ?? FALLBACK_CLASSIFICATION]
   return {
     id,
@@ -69,6 +87,9 @@ const blockOf = ({ id, type, path, name, lines: [lineStart, lineEnd], isChanged 
   }
 }
 
+const listedBlockOf = ({ codeBlockId, type, name, range }: MockListedBlock, path: string, lines: readonly [number, number]): CodeBlock =>
+  blockOf({ id: codeBlockId, type, path, name, lines, range, isChanged: false })
+
 const nodeOf = (mock: MockTraceNode, sources: readonly SourceFile[]): TraceNode => {
   const lines = linesOf(sources, mock.path, mock.declaration)
   const block = blockOf({ id: mock.id, type: mock.type, path: mock.path, name: mock.declaration, lines, isChanged: mock.isChanged })
@@ -76,10 +97,10 @@ const nodeOf = (mock: MockTraceNode, sources: readonly SourceFile[]): TraceNode 
     label,
     codeBlock: blockOf({ id: codeBlockId, type, path: mock.path, name, lines, isChanged: false }),
   }))
-  const blockLabels = (mock.listedBlocks ?? []).map(({ codeBlockId, type, name, label }) => ({
-    label,
-    codeBlock: blockOf({ id: codeBlockId, type, path: mock.path, name, lines, isChanged: false }),
-  }))
+  const blockLabels = (mock.listedBlocks ?? []).map((listed): BlockLabel => {
+    const codeBlock = listedBlockOf(listed, mock.path, lines)
+    return listed.at === undefined ? { label: listed.label, codeBlock } : { label: listed.label, codeBlock, at: listed.at }
+  })
   return {
     id: mock.id,
     type: mock.type,

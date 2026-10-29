@@ -1,0 +1,6 @@
+{
+  "title": "State card in XState Store",
+  "packages": ["react", "react-dom", "@xstate/store"],
+  "language": "typescript",
+  "mainFramework": "react"
+}

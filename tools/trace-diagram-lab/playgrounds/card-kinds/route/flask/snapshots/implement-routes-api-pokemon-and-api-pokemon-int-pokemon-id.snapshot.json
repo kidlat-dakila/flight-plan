@@ -1,0 +1,1417 @@
+{
+  "title": "Implement routes /api/pokemon and /api/pokemon/<int:pokemon_id>",
+  "diff": [
+    "diff --git a/src/pokedex/pokemon/views.py b/src/pokedex/pokemon/views.py",
+    "new file mode 100644",
+    "--- /dev/null",
+    "+++ b/src/pokedex/pokemon/views.py",
+    "@@ -0,0 +1,47 @@",
+    "+from dataclasses import asdict",
+    "+",
+    "+from flask import Blueprint, abort, request",
+    "+from flask.views import MethodView",
+    "+",
+    "+from pokedex.pokemon.store import Pokemon, find_pokemon, list_pokemon, remove_pokemon, save_pokemon",
+    "+from pokedex.settings import API_KEY",
+    "+",
+    "+bp = Blueprint(\"pokemon\", __name__, url_prefix=\"/pokemon\")",
+    "+",
+    "+",
+    "+@bp.before_request",
+    "+def require_api_key():",
+    "+    if request.headers.get(\"X-Api-Key\") != API_KEY:",
+    "+        abort(401)",
+    "+",
+    "+",
+    "+@bp.route(\"/\", methods=[\"GET\", \"POST\"])",
+    "+def party():",
+    "+    trainer = request.headers[\"X-Trainer\"]",
+    "+    if request.method == \"POST\":",
+    "+        body = request.get_json()",
+    "+        pokemon = Pokemon(id=len(list_pokemon(trainer)) + 1, trainer=trainer, name=body[\"name\"], level=body[\"level\"])",
+    "+        return asdict(save_pokemon(pokemon)), 201",
+    "+    return [asdict(pokemon) for pokemon in list_pokemon(trainer)]",
+    "+",
+    "+",
+    "+class PokemonAPI(MethodView):",
+    "+    def get(self, pokemon_id):",
+    "+        pokemon = find_pokemon(pokemon_id)",
+    "+        if pokemon is None:",
+    "+            abort(404)",
+    "+        return asdict(pokemon)",
+    "+",
+    "+    def patch(self, pokemon_id):",
+    "+        pokemon = find_pokemon(pokemon_id)",
+    "+        if pokemon is None:",
+    "+            abort(404)",
+    "+        level = request.get_json()[\"level\"]",
+    "+        return asdict(save_pokemon(Pokemon(id=pokemon.id, trainer=pokemon.trainer, name=pokemon.name, level=level)))",
+    "+",
+    "+    def delete(self, pokemon_id):",
+    "+        remove_pokemon(pokemon_id)",
+    "+        return \"\", 204",
+    "+",
+    "+",
+    "+bp.add_url_rule(\"/<int:pokemon_id>\", view_func=PokemonAPI.as_view(\"pokemon\"))",
+    "diff --git a/src/pokedex/app.py b/src/pokedex/app.py",
+    "--- a/src/pokedex/app.py",
+    "+++ b/src/pokedex/app.py",
+    "@@ -3,0 +4 @@ from pokedex.health import bp as health_bp",
+    "+from pokedex.pokemon.views import bp as pokemon_bp",
+    "@@ -8,0 +10 @@ api.register_blueprint(health_bp)",
+    "+api.register_blueprint(pokemon_bp)"
+  ],
+  "codegraph": {
+    "segments": [
+      {
+        "title": "New pokemon blueprint and PokemonAPI, modified app",
+        "importGraph": [
+          {
+            "filePath": "src/pokedex/app.py",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "modified",
+            "importedBy": [],
+            "importsTo": [
+              "src/pokedex/health.py",
+              "src/pokedex/pokemon/views.py"
+            ],
+            "importedFilePaths": {
+              "pokedex.health:bp": "src/pokedex/health.py",
+              "pokedex.pokemon.views:bp": "src/pokedex/pokemon/views.py"
+            }
+          },
+          {
+            "filePath": "src/pokedex/health.py",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/pokedex/app.py"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/pokedex/pokemon/store.py",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/pokedex/pokemon/views.py"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/pokedex/pokemon/views.py",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "added",
+            "importedBy": [
+              "src/pokedex/app.py"
+            ],
+            "importsTo": [
+              "src/pokedex/pokemon/store.py",
+              "src/pokedex/settings.py"
+            ],
+            "importedFilePaths": {
+              "pokedex.pokemon.store:Pokemon": "src/pokedex/pokemon/store.py",
+              "pokedex.pokemon.store:find_pokemon": "src/pokedex/pokemon/store.py",
+              "pokedex.pokemon.store:list_pokemon": "src/pokedex/pokemon/store.py",
+              "pokedex.pokemon.store:remove_pokemon": "src/pokedex/pokemon/store.py",
+              "pokedex.pokemon.store:save_pokemon": "src/pokedex/pokemon/store.py",
+              "pokedex.settings:API_KEY": "src/pokedex/settings.py"
+            }
+          },
+          {
+            "filePath": "src/pokedex/settings.py",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/pokedex/pokemon/views.py"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          }
+        ],
+        "traceDiagram": {
+          "title": "Pokemon API requests flow diagram",
+          "description": "This diagram shows how Flask runs `require_api_key()` before every view of the `pokemon` blueprint at `/api/pokemon` and `/api/pokemon/<int:pokemon_id>`. It also shows what happens when a request reaches each method of the two paths, and how the Pokemon reach the party in `pokedex.pokemon.store` through `save_pokemon()`, `find_pokemon()` and `remove_pokemon()`.",
+          "traceNodes": [
+            {
+              "id": "src/pokedex/pokemon/views.py#function@12:1",
+              "type": "function",
+              "label": "Returns a 401 for a wrong API key",
+              "description": "When a client sends any request to `/api/pokemon` or `/api/pokemon/<int:pokemon_id>`, Flask calls this function before the view, because [`@bp.before_request` adds it to the `pokemon` blueprint](code:src/pokedex/pokemon/views.py#L12). A view runs only when this function returns `None`.",
+              "codeBlockIds": [
+                "src/pokedex/pokemon/views.py#function@12:1",
+                "src/pokedex/pokemon/views.py#condition@14:5",
+                "src/pokedex/pokemon/views.py#call@15:9"
+              ],
+              "diffCodeBlockIds": [
+                "src/pokedex/pokemon/views.py#function@12:1",
+                "src/pokedex/pokemon/views.py#condition@14:5",
+                "src/pokedex/pokemon/views.py#call@15:9"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": []
+            },
+            {
+              "id": "src/pokedex/pokemon/views.py#route@/api/pokemon",
+              "type": "route",
+              "label": "Catches a Pokemon or lists the party of a trainer",
+              "description": "When a client sends `GET` or `POST` to `/api/pokemon`, Flask runs `require_api_key()` and then [calls the view that the blueprint routes for both methods](code:src/pokedex/pokemon/views.py#L18).",
+              "codeBlockIds": [
+                "src/pokedex/pokemon/views.py#function@18:1"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [
+                {
+                  "id": "src/pokedex/pokemon/views.py#function@18:1",
+                  "type": "function",
+                  "label": "Saves a new Pokemon, or returns the party of the trainer",
+                  "description": "When a client sends `GET` or `POST` to `/api/pokemon`, Flask calls this view after [`require_api_key()`](code:src/pokedex/pokemon/views.py#L12-15). The view reads `request.method` to choose between the two methods.",
+                  "codeBlockIds": [
+                    "src/pokedex/pokemon/views.py#function@18:1",
+                    "src/pokedex/pokemon/views.py#external-value@20:5",
+                    "src/pokedex/pokemon/views.py#condition@21:5",
+                    "src/pokedex/pokemon/views.py#external-value@22:9",
+                    "src/pokedex/pokemon/views.py#external-value@23:9"
+                  ],
+                  "diffCodeBlockIds": [
+                    "src/pokedex/pokemon/views.py#function@18:1",
+                    "src/pokedex/pokemon/views.py#external-value@20:5",
+                    "src/pokedex/pokemon/views.py#condition@21:5",
+                    "src/pokedex/pokemon/views.py#external-value@22:9",
+                    "src/pokedex/pokemon/views.py#external-value@23:9"
+                  ],
+                  "children": [],
+                  "triggerLabels": [],
+                  "blockLabels": [
+                    {
+                      "label": "Calls Pokemon to make the new Pokemon of the body",
+                      "codeBlockId": "src/pokedex/pokemon/views.py#external-value@23:9",
+                      "at": {
+                        "line": 23,
+                        "column": 19
+                      }
+                    },
+                    {
+                      "label": "Calls list_pokemon to count the Pokemon the trainer has",
+                      "codeBlockId": "src/pokedex/pokemon/views.py#external-value@23:9",
+                      "at": {
+                        "line": 23,
+                        "column": 34
+                      }
+                    },
+                    {
+                      "label": "Returns the saved Pokemon with a 201 when the request is a POST",
+                      "codeBlockId": "src/pokedex/pokemon/views.py#condition@21:5",
+                      "at": {
+                        "line": 24,
+                        "column": 9
+                      }
+                    },
+                    {
+                      "label": "Calls save_pokemon when the request is a POST to store the new Pokemon",
+                      "codeBlockId": "src/pokedex/pokemon/views.py#condition@21:5",
+                      "at": {
+                        "line": 24,
+                        "column": 23
+                      }
+                    },
+                    {
+                      "label": "Returns every Pokemon of the trainer",
+                      "codeBlockId": "src/pokedex/pokemon/views.py#function@18:1",
+                      "at": {
+                        "line": 25,
+                        "column": 5
+                      }
+                    },
+                    {
+                      "label": "Calls list_pokemon to read the Pokemon of the trainer",
+                      "codeBlockId": "src/pokedex/pokemon/views.py#function@18:1",
+                      "at": {
+                        "line": 25,
+                        "column": 44
+                      }
+                    }
+                  ]
+                }
+              ],
+              "triggerLabels": [],
+              "blockLabels": []
+            },
+            {
+              "id": "src/pokedex/pokemon/views.py#root-variable@9:1",
+              "type": "root-variable",
+              "label": "Puts /pokemon before every route of the blueprint",
+              "description": "When a client sends a request below `/api/pokemon`, Flask matches the path below [the `/pokemon` prefix of this blueprint](code:src/pokedex/pokemon/views.py#L9). [`app.py` registers this blueprint on the `api` blueprint](code:src/pokedex/app.py#L10), which [puts `/api` before it](code:src/pokedex/app.py#L7).",
+              "codeBlockIds": [
+                "src/pokedex/pokemon/views.py#root-variable@9:1"
+              ],
+              "diffCodeBlockIds": [
+                "src/pokedex/pokemon/views.py#root-variable@9:1"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": []
+            },
+            {
+              "id": "src/pokedex/pokemon/views.py#route@/api/pokemon/<int:pokemon_id>",
+              "type": "route",
+              "label": "Shows, trains and releases one Pokemon",
+              "description": "When a client sends `GET`, `PATCH` or `DELETE` to `/api/pokemon/<int:pokemon_id>`, Flask runs `require_api_key()`. Flask then calls the method of `PokemonAPI` that [`add_url_rule()` routes for the path](code:src/pokedex/pokemon/views.py#L47), as `MethodView` names each method after an HTTP method.",
+              "codeBlockIds": [
+                "src/pokedex/pokemon/views.py#route@47:1",
+                "src/pokedex/pokemon/views.py#method@29:5",
+                "src/pokedex/pokemon/views.py#method@35:5",
+                "src/pokedex/pokemon/views.py#method@42:5",
+                "src/pokedex/pokemon/views.py#effect-callback@47:48"
+              ],
+              "diffCodeBlockIds": [
+                "src/pokedex/pokemon/views.py#route@47:1",
+                "src/pokedex/pokemon/views.py#method@29:5",
+                "src/pokedex/pokemon/views.py#method@35:5",
+                "src/pokedex/pokemon/views.py#method@42:5",
+                "src/pokedex/pokemon/views.py#effect-callback@47:48"
+              ],
+              "children": [
+                {
+                  "id": "src/pokedex/pokemon/views.py#method@29:5",
+                  "type": "method",
+                  "label": "Returns the Pokemon of the id, or a 404",
+                  "description": "When a client sends `GET /api/pokemon/<int:pokemon_id>`, Flask [reads `pokemon_id` from the path as an `int`](code:src/pokedex/pokemon/views.py#L47) and calls this method.",
+                  "codeBlockIds": [
+                    "src/pokedex/pokemon/views.py#method@29:5",
+                    "src/pokedex/pokemon/views.py#root-argument-value@29:19",
+                    "src/pokedex/pokemon/views.py#external-value@30:9",
+                    "src/pokedex/pokemon/views.py#condition@31:9",
+                    "src/pokedex/pokemon/views.py#call@32:13"
+                  ],
+                  "diffCodeBlockIds": [
+                    "src/pokedex/pokemon/views.py#method@29:5",
+                    "src/pokedex/pokemon/views.py#root-argument-value@29:19",
+                    "src/pokedex/pokemon/views.py#external-value@30:9",
+                    "src/pokedex/pokemon/views.py#condition@31:9",
+                    "src/pokedex/pokemon/views.py#call@32:13"
+                  ],
+                  "children": [],
+                  "triggerLabels": [],
+                  "blockLabels": [
+                    {
+                      "label": "Calls find_pokemon to look up the Pokemon of the id",
+                      "codeBlockId": "src/pokedex/pokemon/views.py#external-value@30:9",
+                      "at": {
+                        "line": 30,
+                        "column": 19
+                      }
+                    },
+                    {
+                      "label": "Returns the Pokemon found",
+                      "codeBlockId": "src/pokedex/pokemon/views.py#method@29:5",
+                      "at": {
+                        "line": 33,
+                        "column": 9
+                      }
+                    }
+                  ]
+                },
+                {
+                  "id": "src/pokedex/pokemon/views.py#method@35:5",
+                  "type": "method",
+                  "label": "Saves the Pokemon with the level of the body",
+                  "description": "When a client sends `PATCH /api/pokemon/<int:pokemon_id>`, Flask [reads `pokemon_id` from the path as an `int`](code:src/pokedex/pokemon/views.py#L47) and calls this method.",
+                  "codeBlockIds": [
+                    "src/pokedex/pokemon/views.py#method@35:5",
+                    "src/pokedex/pokemon/views.py#root-argument-value@35:21",
+                    "src/pokedex/pokemon/views.py#external-value@36:9",
+                    "src/pokedex/pokemon/views.py#condition@37:9",
+                    "src/pokedex/pokemon/views.py#call@38:13",
+                    "src/pokedex/pokemon/views.py#external-value@39:9"
+                  ],
+                  "diffCodeBlockIds": [
+                    "src/pokedex/pokemon/views.py#method@35:5",
+                    "src/pokedex/pokemon/views.py#root-argument-value@35:21",
+                    "src/pokedex/pokemon/views.py#external-value@36:9",
+                    "src/pokedex/pokemon/views.py#condition@37:9",
+                    "src/pokedex/pokemon/views.py#call@38:13",
+                    "src/pokedex/pokemon/views.py#external-value@39:9"
+                  ],
+                  "children": [],
+                  "triggerLabels": [],
+                  "blockLabels": [
+                    {
+                      "label": "Calls find_pokemon to look up the Pokemon of the id",
+                      "codeBlockId": "src/pokedex/pokemon/views.py#external-value@36:9",
+                      "at": {
+                        "line": 36,
+                        "column": 19
+                      }
+                    },
+                    {
+                      "label": "Returns the saved Pokemon",
+                      "codeBlockId": "src/pokedex/pokemon/views.py#method@35:5",
+                      "at": {
+                        "line": 40,
+                        "column": 9
+                      }
+                    },
+                    {
+                      "label": "Calls save_pokemon to store the Pokemon with its new level",
+                      "codeBlockId": "src/pokedex/pokemon/views.py#method@35:5",
+                      "at": {
+                        "line": 40,
+                        "column": 23
+                      }
+                    },
+                    {
+                      "label": "Calls Pokemon to copy the Pokemon with the level of the body",
+                      "codeBlockId": "src/pokedex/pokemon/views.py#method@35:5",
+                      "at": {
+                        "line": 40,
+                        "column": 36
+                      }
+                    }
+                  ]
+                },
+                {
+                  "id": "src/pokedex/pokemon/views.py#method@42:5",
+                  "type": "method",
+                  "label": "Removes the Pokemon from the party",
+                  "description": "When a client sends `DELETE /api/pokemon/<int:pokemon_id>`, Flask [reads `pokemon_id` from the path as an `int`](code:src/pokedex/pokemon/views.py#L47) and calls this method. The method answers with an empty body and a 204.",
+                  "codeBlockIds": [
+                    "src/pokedex/pokemon/views.py#method@42:5",
+                    "src/pokedex/pokemon/views.py#root-argument-value@42:22",
+                    "src/pokedex/pokemon/views.py#call@43:9"
+                  ],
+                  "diffCodeBlockIds": [
+                    "src/pokedex/pokemon/views.py#method@42:5",
+                    "src/pokedex/pokemon/views.py#root-argument-value@42:22",
+                    "src/pokedex/pokemon/views.py#call@43:9"
+                  ],
+                  "children": [],
+                  "triggerLabels": [],
+                  "blockLabels": [
+                    {
+                      "label": "Calls remove_pokemon to take the Pokemon out of the party",
+                      "codeBlockId": "src/pokedex/pokemon/views.py#call@43:9",
+                      "at": {
+                        "line": 43,
+                        "column": 9
+                      }
+                    },
+                    {
+                      "label": "Returns an empty 204 response",
+                      "codeBlockId": "src/pokedex/pokemon/views.py#method@42:5",
+                      "at": {
+                        "line": 44,
+                        "column": 9
+                      }
+                    }
+                  ]
+                }
+              ],
+              "triggerLabels": [],
+              "blockLabels": []
+            }
+          ],
+          "traceNodeEdges": [
+            {
+              "id": "src/pokedex/pokemon/views.py#function@12:1 -> src/pokedex/pokemon/views.py#root-variable@9:1",
+              "from": "src/pokedex/pokemon/views.py#function@12:1",
+              "to": "src/pokedex/pokemon/views.py#root-variable@9:1"
+            },
+            {
+              "id": "src/pokedex/pokemon/views.py#route@/api/pokemon/<int:pokemon_id> -> src/pokedex/pokemon/views.py#method@29:5",
+              "from": "src/pokedex/pokemon/views.py#route@/api/pokemon/<int:pokemon_id>",
+              "to": "src/pokedex/pokemon/views.py#method@29:5"
+            },
+            {
+              "id": "src/pokedex/pokemon/views.py#route@/api/pokemon/<int:pokemon_id> -> src/pokedex/pokemon/views.py#method@35:5",
+              "from": "src/pokedex/pokemon/views.py#route@/api/pokemon/<int:pokemon_id>",
+              "to": "src/pokedex/pokemon/views.py#method@35:5"
+            },
+            {
+              "id": "src/pokedex/pokemon/views.py#route@/api/pokemon/<int:pokemon_id> -> src/pokedex/pokemon/views.py#method@42:5",
+              "from": "src/pokedex/pokemon/views.py#route@/api/pokemon/<int:pokemon_id>",
+              "to": "src/pokedex/pokemon/views.py#method@42:5"
+            },
+            {
+              "id": "src/pokedex/pokemon/views.py#function@12:1 -> src/pokedex/pokemon/views.py#route@/api/pokemon",
+              "from": "src/pokedex/pokemon/views.py#function@12:1",
+              "to": "src/pokedex/pokemon/views.py#route@/api/pokemon"
+            },
+            {
+              "id": "src/pokedex/pokemon/views.py#function@12:1 -> src/pokedex/pokemon/views.py#route@/api/pokemon/<int:pokemon_id>",
+              "from": "src/pokedex/pokemon/views.py#function@12:1",
+              "to": "src/pokedex/pokemon/views.py#route@/api/pokemon/<int:pokemon_id>"
+            },
+            {
+              "id": "src/pokedex/pokemon/views.py#root-variable@9:1 -> src/pokedex/pokemon/views.py#route@/api/pokemon",
+              "from": "src/pokedex/pokemon/views.py#root-variable@9:1",
+              "to": "src/pokedex/pokemon/views.py#route@/api/pokemon"
+            },
+            {
+              "id": "src/pokedex/pokemon/views.py#root-variable@9:1 -> src/pokedex/pokemon/views.py#route@/api/pokemon/<int:pokemon_id>",
+              "from": "src/pokedex/pokemon/views.py#root-variable@9:1",
+              "to": "src/pokedex/pokemon/views.py#route@/api/pokemon/<int:pokemon_id>"
+            }
+          ]
+        },
+        "codeWalkthrough": {
+          "files": [
+            {
+              "path": "src/pokedex/app.py",
+              "waypoints": [
+                {
+                  "id": "w1",
+                  "declaration": "Lines 10–10",
+                  "range": {
+                    "lineStart": 10,
+                    "lineEnd": 10
+                  },
+                  "codeBlockIds": [
+                    "src/pokedex/app.py#root-statement@10:1"
+                  ],
+                  "children": []
+                }
+              ]
+            },
+            {
+              "path": "src/pokedex/pokemon/views.py",
+              "waypoints": [
+                {
+                  "id": "w2",
+                  "declaration": "bp",
+                  "range": {
+                    "lineStart": 9,
+                    "lineEnd": 9
+                  },
+                  "codeBlockIds": [
+                    "src/pokedex/pokemon/views.py#root-variable@9:1"
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "w3",
+                  "declaration": "require_api_key",
+                  "range": {
+                    "lineStart": 12,
+                    "lineEnd": 15
+                  },
+                  "codeBlockIds": [
+                    "src/pokedex/pokemon/views.py#function@12:1",
+                    "src/pokedex/pokemon/views.py#condition@14:5",
+                    "src/pokedex/pokemon/views.py#call@15:9"
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "w4",
+                  "declaration": "party",
+                  "range": {
+                    "lineStart": 18,
+                    "lineEnd": 25
+                  },
+                  "codeBlockIds": [
+                    "src/pokedex/pokemon/views.py#function@18:1",
+                    "src/pokedex/pokemon/views.py#external-value@20:5",
+                    "src/pokedex/pokemon/views.py#condition@21:5",
+                    "src/pokedex/pokemon/views.py#external-value@22:9",
+                    "src/pokedex/pokemon/views.py#external-value@23:9"
+                  ],
+                  "children": [
+                    {
+                      "id": "w4.1",
+                      "declaration": "party › trainer",
+                      "range": {
+                        "lineStart": 20,
+                        "lineEnd": 20
+                      },
+                      "codeBlockIds": [
+                        "src/pokedex/pokemon/views.py#external-value@20:5"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w4.2",
+                      "declaration": "party › Condition :21",
+                      "range": {
+                        "lineStart": 21,
+                        "lineEnd": 24
+                      },
+                      "codeBlockIds": [
+                        "src/pokedex/pokemon/views.py#condition@21:5",
+                        "src/pokedex/pokemon/views.py#external-value@22:9",
+                        "src/pokedex/pokemon/views.py#external-value@23:9"
+                      ],
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "id": "w5",
+                  "declaration": "PokemonAPI",
+                  "range": {
+                    "lineStart": 28,
+                    "lineEnd": 44
+                  },
+                  "codeBlockIds": [
+                    "src/pokedex/pokemon/views.py#class@28:1"
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "w6",
+                  "declaration": "PokemonAPI.get",
+                  "range": {
+                    "lineStart": 29,
+                    "lineEnd": 33
+                  },
+                  "codeBlockIds": [
+                    "src/pokedex/pokemon/views.py#method@29:5",
+                    "src/pokedex/pokemon/views.py#root-argument-value@29:19",
+                    "src/pokedex/pokemon/views.py#external-value@30:9",
+                    "src/pokedex/pokemon/views.py#condition@31:9",
+                    "src/pokedex/pokemon/views.py#call@32:13"
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "w7",
+                  "declaration": "PokemonAPI.patch",
+                  "range": {
+                    "lineStart": 35,
+                    "lineEnd": 40
+                  },
+                  "codeBlockIds": [
+                    "src/pokedex/pokemon/views.py#method@35:5",
+                    "src/pokedex/pokemon/views.py#root-argument-value@35:21",
+                    "src/pokedex/pokemon/views.py#external-value@36:9",
+                    "src/pokedex/pokemon/views.py#condition@37:9",
+                    "src/pokedex/pokemon/views.py#call@38:13",
+                    "src/pokedex/pokemon/views.py#external-value@39:9"
+                  ],
+                  "children": [
+                    {
+                      "id": "w7.1",
+                      "declaration": "PokemonAPI.patch › pokemon",
+                      "range": {
+                        "lineStart": 36,
+                        "lineEnd": 36
+                      },
+                      "codeBlockIds": [
+                        "src/pokedex/pokemon/views.py#external-value@36:9"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w7.2",
+                      "declaration": "PokemonAPI.patch › Condition :37",
+                      "range": {
+                        "lineStart": 37,
+                        "lineEnd": 38
+                      },
+                      "codeBlockIds": [
+                        "src/pokedex/pokemon/views.py#condition@37:9",
+                        "src/pokedex/pokemon/views.py#call@38:13"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w7.3",
+                      "declaration": "PokemonAPI.patch › level",
+                      "range": {
+                        "lineStart": 39,
+                        "lineEnd": 39
+                      },
+                      "codeBlockIds": [
+                        "src/pokedex/pokemon/views.py#external-value@39:9"
+                      ],
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "id": "w8",
+                  "declaration": "PokemonAPI.delete",
+                  "range": {
+                    "lineStart": 42,
+                    "lineEnd": 44
+                  },
+                  "codeBlockIds": [
+                    "src/pokedex/pokemon/views.py#method@42:5",
+                    "src/pokedex/pokemon/views.py#root-argument-value@42:22",
+                    "src/pokedex/pokemon/views.py#call@43:9"
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "w9",
+                  "declaration": "Lines 47–47",
+                  "range": {
+                    "lineStart": 47,
+                    "lineEnd": 47
+                  },
+                  "codeBlockIds": [
+                    "src/pokedex/pokemon/views.py#root-statement@47:1",
+                    "src/pokedex/pokemon/views.py#route@47:1",
+                    "src/pokedex/pokemon/views.py#effect-callback@47:48"
+                  ],
+                  "children": []
+                }
+              ]
+            }
+          ]
+        },
+        "codeReferences": [
+          {
+            "path": "src/pokedex/app.py",
+            "references": [
+              {
+                "line": 6,
+                "startColumn": 6,
+                "endColumn": 11,
+                "path": "src/pokedex/app.py",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "flask:Flask",
+                  "name": "Flask"
+                }
+              },
+              {
+                "line": 7,
+                "startColumn": 6,
+                "endColumn": 15,
+                "path": "src/pokedex/app.py",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "flask:Blueprint",
+                  "name": "Blueprint"
+                }
+              },
+              {
+                "line": 9,
+                "startColumn": 0,
+                "endColumn": 3,
+                "path": "src/pokedex/app.py",
+                "lines": [
+                  7,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 23,
+                "endColumn": 32,
+                "path": "src/pokedex/health.py",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 0,
+                "endColumn": 3,
+                "path": "src/pokedex/app.py",
+                "lines": [
+                  7,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 23,
+                "endColumn": 33,
+                "path": "src/pokedex/pokemon/views.py",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 0,
+                "endColumn": 3,
+                "path": "src/pokedex/app.py",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 23,
+                "endColumn": 26,
+                "path": "src/pokedex/app.py",
+                "lines": [
+                  7,
+                  7
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [
+              {
+                "line": 6,
+                "startColumn": 12,
+                "endColumn": 20,
+                "name": "__name__"
+              },
+              {
+                "line": 7,
+                "startColumn": 23,
+                "endColumn": 31,
+                "name": "__name__"
+              }
+            ],
+            "exports": [
+              {
+                "line": 6,
+                "startColumn": 0,
+                "endColumn": 3,
+                "lines": [
+                  6,
+                  6
+                ],
+                "usages": []
+              },
+              {
+                "line": 7,
+                "startColumn": 0,
+                "endColumn": 3,
+                "lines": [
+                  7,
+                  7
+                ],
+                "usages": []
+              }
+            ]
+          },
+          {
+            "path": "src/pokedex/pokemon/views.py",
+            "references": [
+              {
+                "line": 9,
+                "startColumn": 5,
+                "endColumn": 14,
+                "path": "src/pokedex/pokemon/views.py",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "flask:Blueprint",
+                  "name": "Blueprint"
+                }
+              },
+              {
+                "line": 12,
+                "startColumn": 1,
+                "endColumn": 3,
+                "path": "src/pokedex/pokemon/views.py",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 14,
+                "startColumn": 7,
+                "endColumn": 14,
+                "path": "src/pokedex/pokemon/views.py",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "flask:request",
+                  "name": "request"
+                }
+              },
+              {
+                "line": 14,
+                "startColumn": 43,
+                "endColumn": 50,
+                "path": "src/pokedex/settings.py",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 8,
+                "endColumn": 13,
+                "path": "src/pokedex/pokemon/views.py",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "flask:abort",
+                  "name": "abort"
+                }
+              },
+              {
+                "line": 18,
+                "startColumn": 1,
+                "endColumn": 3,
+                "path": "src/pokedex/pokemon/views.py",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 20,
+                "startColumn": 14,
+                "endColumn": 21,
+                "path": "src/pokedex/pokemon/views.py",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "flask:request",
+                  "name": "request"
+                }
+              },
+              {
+                "line": 21,
+                "startColumn": 7,
+                "endColumn": 14,
+                "path": "src/pokedex/pokemon/views.py",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "flask:request",
+                  "name": "request"
+                }
+              },
+              {
+                "line": 22,
+                "startColumn": 15,
+                "endColumn": 22,
+                "path": "src/pokedex/pokemon/views.py",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "flask:request",
+                  "name": "request"
+                }
+              },
+              {
+                "line": 23,
+                "startColumn": 18,
+                "endColumn": 25,
+                "path": "src/pokedex/pokemon/store.py",
+                "lines": [
+                  4,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 23,
+                "startColumn": 33,
+                "endColumn": 45,
+                "path": "src/pokedex/pokemon/store.py",
+                "lines": [
+                  15,
+                  16
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 23,
+                "startColumn": 46,
+                "endColumn": 53,
+                "path": "src/pokedex/pokemon/views.py",
+                "lines": [
+                  20,
+                  20
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 23,
+                "startColumn": 69,
+                "endColumn": 76,
+                "path": "src/pokedex/pokemon/views.py",
+                "lines": [
+                  20,
+                  20
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 23,
+                "startColumn": 83,
+                "endColumn": 87,
+                "path": "src/pokedex/pokemon/views.py",
+                "lines": [
+                  22,
+                  22
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 23,
+                "startColumn": 103,
+                "endColumn": 107,
+                "path": "src/pokedex/pokemon/views.py",
+                "lines": [
+                  22,
+                  22
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 24,
+                "startColumn": 15,
+                "endColumn": 21,
+                "path": "src/pokedex/pokemon/views.py",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "dataclasses:asdict",
+                  "name": "asdict"
+                }
+              },
+              {
+                "line": 24,
+                "startColumn": 22,
+                "endColumn": 34,
+                "path": "src/pokedex/pokemon/store.py",
+                "lines": [
+                  23,
+                  25
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 24,
+                "startColumn": 35,
+                "endColumn": 42,
+                "path": "src/pokedex/pokemon/views.py",
+                "lines": [
+                  23,
+                  23
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 25,
+                "startColumn": 12,
+                "endColumn": 18,
+                "path": "src/pokedex/pokemon/views.py",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "dataclasses:asdict",
+                  "name": "asdict"
+                }
+              },
+              {
+                "line": 25,
+                "startColumn": 43,
+                "endColumn": 55,
+                "path": "src/pokedex/pokemon/store.py",
+                "lines": [
+                  15,
+                  16
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 25,
+                "startColumn": 56,
+                "endColumn": 63,
+                "path": "src/pokedex/pokemon/views.py",
+                "lines": [
+                  20,
+                  20
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 28,
+                "startColumn": 17,
+                "endColumn": 27,
+                "path": "src/pokedex/pokemon/views.py",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "flask.views:MethodView",
+                  "name": "MethodView"
+                }
+              },
+              {
+                "line": 30,
+                "startColumn": 18,
+                "endColumn": 30,
+                "path": "src/pokedex/pokemon/store.py",
+                "lines": [
+                  19,
+                  20
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 30,
+                "startColumn": 31,
+                "endColumn": 41,
+                "path": "src/pokedex/pokemon/views.py",
+                "lines": [
+                  29,
+                  29
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 31,
+                "startColumn": 11,
+                "endColumn": 18,
+                "path": "src/pokedex/pokemon/views.py",
+                "lines": [
+                  30,
+                  30
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 32,
+                "startColumn": 12,
+                "endColumn": 17,
+                "path": "src/pokedex/pokemon/views.py",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "flask:abort",
+                  "name": "abort"
+                }
+              },
+              {
+                "line": 33,
+                "startColumn": 15,
+                "endColumn": 21,
+                "path": "src/pokedex/pokemon/views.py",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "dataclasses:asdict",
+                  "name": "asdict"
+                }
+              },
+              {
+                "line": 33,
+                "startColumn": 22,
+                "endColumn": 29,
+                "path": "src/pokedex/pokemon/views.py",
+                "lines": [
+                  30,
+                  30
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 36,
+                "startColumn": 18,
+                "endColumn": 30,
+                "path": "src/pokedex/pokemon/store.py",
+                "lines": [
+                  19,
+                  20
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 36,
+                "startColumn": 31,
+                "endColumn": 41,
+                "path": "src/pokedex/pokemon/views.py",
+                "lines": [
+                  35,
+                  35
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 37,
+                "startColumn": 11,
+                "endColumn": 18,
+                "path": "src/pokedex/pokemon/views.py",
+                "lines": [
+                  36,
+                  36
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 38,
+                "startColumn": 12,
+                "endColumn": 17,
+                "path": "src/pokedex/pokemon/views.py",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "flask:abort",
+                  "name": "abort"
+                }
+              },
+              {
+                "line": 39,
+                "startColumn": 16,
+                "endColumn": 23,
+                "path": "src/pokedex/pokemon/views.py",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "flask:request",
+                  "name": "request"
+                }
+              },
+              {
+                "line": 40,
+                "startColumn": 15,
+                "endColumn": 21,
+                "path": "src/pokedex/pokemon/views.py",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "dataclasses:asdict",
+                  "name": "asdict"
+                }
+              },
+              {
+                "line": 40,
+                "startColumn": 22,
+                "endColumn": 34,
+                "path": "src/pokedex/pokemon/store.py",
+                "lines": [
+                  23,
+                  25
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 40,
+                "startColumn": 35,
+                "endColumn": 42,
+                "path": "src/pokedex/pokemon/store.py",
+                "lines": [
+                  4,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 40,
+                "startColumn": 46,
+                "endColumn": 53,
+                "path": "src/pokedex/pokemon/views.py",
+                "lines": [
+                  36,
+                  36
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 40,
+                "startColumn": 66,
+                "endColumn": 73,
+                "path": "src/pokedex/pokemon/views.py",
+                "lines": [
+                  36,
+                  36
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 40,
+                "startColumn": 88,
+                "endColumn": 95,
+                "path": "src/pokedex/pokemon/views.py",
+                "lines": [
+                  36,
+                  36
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 40,
+                "startColumn": 108,
+                "endColumn": 113,
+                "path": "src/pokedex/pokemon/views.py",
+                "lines": [
+                  39,
+                  39
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 43,
+                "startColumn": 8,
+                "endColumn": 22,
+                "path": "src/pokedex/pokemon/store.py",
+                "lines": [
+                  28,
+                  29
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 43,
+                "startColumn": 23,
+                "endColumn": 33,
+                "path": "src/pokedex/pokemon/views.py",
+                "lines": [
+                  42,
+                  42
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 47,
+                "startColumn": 0,
+                "endColumn": 2,
+                "path": "src/pokedex/pokemon/views.py",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 47,
+                "startColumn": 47,
+                "endColumn": 57,
+                "path": "src/pokedex/pokemon/views.py",
+                "lines": [
+                  28,
+                  44
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [
+              {
+                "line": 9,
+                "startColumn": 26,
+                "endColumn": 34,
+                "name": "__name__"
+              },
+              {
+                "line": 23,
+                "startColumn": 29,
+                "endColumn": 32,
+                "name": "len"
+              }
+            ],
+            "exports": [
+              {
+                "line": 9,
+                "startColumn": 0,
+                "endColumn": 2,
+                "lines": [
+                  9,
+                  9
+                ],
+                "usages": [
+                  {
+                    "line": 10,
+                    "startColumn": 23,
+                    "endColumn": 33,
+                    "path": "src/pokedex/app.py",
+                    "text": "api.register_blueprint(pokemon_bp)"
+                  }
+                ]
+              },
+              {
+                "line": 13,
+                "startColumn": 4,
+                "endColumn": 19,
+                "lines": [
+                  12,
+                  15
+                ],
+                "usages": []
+              },
+              {
+                "line": 19,
+                "startColumn": 4,
+                "endColumn": 9,
+                "lines": [
+                  18,
+                  25
+                ],
+                "usages": []
+              },
+              {
+                "line": 28,
+                "startColumn": 6,
+                "endColumn": 16,
+                "lines": [
+                  28,
+                  44
+                ],
+                "usages": []
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

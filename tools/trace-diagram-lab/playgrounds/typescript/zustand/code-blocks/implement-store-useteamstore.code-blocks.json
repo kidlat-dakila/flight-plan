@@ -597,6 +597,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 6,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/App.tsx"
         ],
@@ -1078,6 +1084,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 5,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/components/Header.tsx"
         ],
@@ -1722,6 +1734,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 4,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/lib/team-rules.ts"
         ],
@@ -2878,6 +2896,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 9,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/pages/trainers/TrainersPage.tsx"
         ],
@@ -4403,6 +4427,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 14,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/pages/trainers/components/TrainerRow.tsx"
         ],

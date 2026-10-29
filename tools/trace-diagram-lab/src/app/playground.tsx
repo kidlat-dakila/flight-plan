@@ -26,7 +26,7 @@ const Playground = ({ pathname, onNavigate, onRedirect }: PlaygroundProps) => {
     list: { isLoading: playgrounds.isLoading, error: playgrounds.error },
     listCount: playgrounds.data?.length ?? null,
     page: { isLoading: playgroundPage.isLoading, error: playgroundPage.error },
-    segmentCount: shown?.page.segments.length ?? null,
+    segmentCount: shown === null ? null : shown.cases.reduce((count, playgroundCase) => count + playgroundCase.page.segments.length, 0),
   })
   useEffect(() => {
     if (redirectPath !== null) onRedirect(redirectPath)

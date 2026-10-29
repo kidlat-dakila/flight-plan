@@ -488,6 +488,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 6,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/app/api/pokemon/[id]/route.ts"
         ],
@@ -1124,6 +1130,12 @@
         "childrenBlockIds": [],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 4,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/app/api/pokemon/route.ts"
         ],
@@ -1388,6 +1400,12 @@
         ],
         "isRoot": true,
         "isExported": false,
+        "returnsAt": [
+          {
+            "line": 8,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
         "diffs": [],
@@ -2439,6 +2457,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 5,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/app/pokemon/components/PokemonForm.tsx"
         ],
@@ -2953,6 +2977,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 8,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/app/pokemon/components/ReleaseButton.tsx"
         ],
@@ -4376,6 +4406,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 4,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/app/pokemon/new/page.tsx"
         ],
@@ -4722,6 +4758,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 7,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/app/pokemon/page.tsx"
         ],
@@ -5957,6 +5999,12 @@
         "childrenBlockIds": [],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 16,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/lib/pokemon.ts"
         ],
@@ -6032,6 +6080,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 22,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/lib/pokemon.ts"
         ],

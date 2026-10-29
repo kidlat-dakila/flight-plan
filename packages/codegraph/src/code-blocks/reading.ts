@@ -20,6 +20,7 @@ export interface ReadBlock {
   readonly argument?: ReadArgument
   readonly isParameter?: boolean
   readonly isReturned?: boolean
+  readonly returnsAt?: readonly Position[]
   readonly isPlain?: boolean
   readonly isParameterProperty?: boolean
   readonly isAnnotatedAlias?: boolean
@@ -64,6 +65,7 @@ export interface ReadUse {
   readonly target: ReadTarget
   readonly handing: ReadHanding | null
   readonly writtenAt: WrittenAt
+  readonly isRunInPlace?: boolean
 }
 
 export const WRITTEN_NOWHERE: WrittenAt = { slot: null, keyPath: [], isSpread: false, isBase: false }

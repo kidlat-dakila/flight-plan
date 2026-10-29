@@ -1,0 +1,1357 @@
+{
+  "title": "Added two routes POST /api/pokemon and PUT /api/pokemon/:pokemonId",
+  "diff": [
+    "diff --git a/src/index.ts b/src/index.ts",
+    "--- a/src/index.ts",
+    "+++ b/src/index.ts",
+    "@@ -1 +1 @@",
+    "-import Fastify from \"fastify\"",
+    "+import Fastify, { type FastifyReply, type FastifyRequest } from \"fastify\"",
+    "@@ -5,0 +6,7 @@ const PORT = 3000",
+    "+const API_KEY = \"pallet-town\"",
+    "+",
+    "+const requireApiKey = async (request: FastifyRequest, reply: FastifyReply) => {",
+    "+  if (request.headers[\"x-api-key\"] !== API_KEY) {",
+    "+    return reply.code(401).send({ error: \"The API key is missing or wrong.\" })",
+    "+  }",
+    "+}",
+    "@@ -8,0 +16 @@ const app = Fastify({ logger: true })",
+    "+app.addHook(\"onRequest\", requireApiKey)",
+    "diff --git a/src/pokemon/controller.ts b/src/pokemon/controller.ts",
+    "--- a/src/pokemon/controller.ts",
+    "+++ b/src/pokemon/controller.ts",
+    "@@ -2 +2 @@ import type { FastifyReply, FastifyRequest } from \"fastify\"",
+    "-import { readParty } from \"@/pokemon/store\"",
+    "+import { readParty, renamePokemon } from \"@/pokemon/store\"",
+    "@@ -5 +5,8 @@ export const listPokemon = async (_request: FastifyRequest, reply: FastifyReply)",
+    "-  reply.send(readParty())",
+    "+  const party = readParty().toSorted((first, second) => second.level - first.level)",
+    "+  reply.send(party)",
+    "+}",
+    "+",
+    "+export const renamePokemonById = async (request: FastifyRequest<{ Params: { pokemonId: string }; Body: { name: string } }>, reply: FastifyReply) => {",
+    "+  const pokemon = renamePokemon(Number(request.params.pokemonId), request.body.name)",
+    "+  if (pokemon === undefined) return reply.code(404).send()",
+    "+  return pokemon",
+    "diff --git a/src/pokemon/routes.ts b/src/pokemon/routes.ts",
+    "--- a/src/pokemon/routes.ts",
+    "+++ b/src/pokemon/routes.ts",
+    "@@ -1,2 +1,15 @@",
+    "-import type { FastifyInstance } from \"fastify\"",
+    "-import { listPokemon } from \"@/pokemon/controller\"",
+    "+import type { FastifyInstance, FastifyReply, FastifyRequest } from \"fastify\"",
+    "+import { listPokemon, renamePokemonById } from \"@/pokemon/controller\"",
+    "+import { addPokemon } from \"@/pokemon/store\"",
+    "+",
+    "+interface PokemonBody {",
+    "+  name: string",
+    "+  level: number",
+    "+}",
+    "+",
+    "+const validatePokemon = async (request: FastifyRequest<{ Body: PokemonBody }>, reply: FastifyReply) => {",
+    "+  const { name, level } = request.body",
+    "+  if (typeof name !== \"string\" || !Number.isInteger(level)) {",
+    "+    return reply.code(400).send({ error: \"A Pokemon needs a name and a whole level.\" })",
+    "+  }",
+    "+}",
+    "@@ -5,0 +19,7 @@ export default async function pokemonRoutes(fastify: FastifyInstance) {",
+    "+",
+    "+  fastify.post(\"/pokemon\", { preHandler: [validatePokemon] }, async (request: FastifyRequest<{ Body: PokemonBody }>, reply: FastifyReply) => {",
+    "+    const pokemon = addPokemon(request.body.name, request.body.level)",
+    "+    return reply.code(201).send(pokemon)",
+    "+  })",
+    "+",
+    "+  fastify.route({ method: [\"PUT\", \"PATCH\"], url: \"/pokemon/:pokemonId\", handler: renamePokemonById })"
+  ],
+  "codegraph": {
+    "segments": [
+      {
+        "title": "New POST /api/pokemon and PUT /api/pokemon/:pokemonId routes and middleware, modified listPokemon",
+        "importGraph": [
+          {
+            "filePath": "src/index.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "modified",
+            "importedBy": [],
+            "importsTo": [
+              "src/pokemon/routes.ts",
+              "src/trainers/routes.ts"
+            ],
+            "importedFilePaths": {
+              "@/pokemon/routes": "src/pokemon/routes.ts",
+              "@/trainers/routes": "src/trainers/routes.ts"
+            }
+          },
+          {
+            "filePath": "src/pokemon/controller.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "modified",
+            "importedBy": [
+              "src/pokemon/routes.ts"
+            ],
+            "importsTo": [
+              "src/pokemon/store.ts"
+            ],
+            "importedFilePaths": {
+              "@/pokemon/store": "src/pokemon/store.ts"
+            }
+          },
+          {
+            "filePath": "src/pokemon/routes.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "modified",
+            "importedBy": [
+              "src/index.ts"
+            ],
+            "importsTo": [
+              "src/pokemon/controller.ts",
+              "src/pokemon/store.ts"
+            ],
+            "importedFilePaths": {
+              "@/pokemon/controller": "src/pokemon/controller.ts",
+              "@/pokemon/store": "src/pokemon/store.ts"
+            }
+          },
+          {
+            "filePath": "src/pokemon/store.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/pokemon/controller.ts",
+              "src/pokemon/routes.ts"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/trainers/routes.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/index.ts"
+            ],
+            "importsTo": [
+              "src/trainers/store.ts"
+            ],
+            "importedFilePaths": {
+              "@/trainers/store": "src/trainers/store.ts"
+            }
+          },
+          {
+            "filePath": "src/trainers/store.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/trainers/routes.ts"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          }
+        ],
+        "traceDiagram": {
+          "title": "Pokemon API flow diagram",
+          "description": "This diagram shows how the Pokemon plugin sends the party to a client that sends the API key. It also shows what happens when a request reaches `POST /api/pokemon` or `PUT /api/pokemon/:pokemonId`, and how the Pokemon reaches the party through `addPokemon()` or `renamePokemon()`.",
+          "traceNodes": [
+            {
+              "id": "src/pokemon/routes.ts#function@10:1",
+              "type": "function",
+              "label": "Returns a 400 for a body without a name or a whole level",
+              "description": "When a client sends `POST /api/pokemon`, Fastify calls this hook after `requireApiKey()`, because [the route names `validatePokemon` as its `preHandler`](code:src/pokemon/routes.ts#L20).",
+              "codeBlockIds": [
+                "src/pokemon/routes.ts#function@10:1",
+                "src/pokemon/routes.ts#root-argument-value@10:32",
+                "src/pokemon/routes.ts#root-argument-value@10:80",
+                "src/pokemon/routes.ts#variable@11:3",
+                "src/pokemon/routes.ts#root-argument-value@11:27",
+                "src/pokemon/routes.ts#condition@12:3",
+                "src/pokemon/routes.ts#root-argument-value@13:12",
+                "src/pokemon/routes.ts#property@13:35"
+              ],
+              "diffCodeBlockIds": [
+                "src/pokemon/routes.ts#function@10:1",
+                "src/pokemon/routes.ts#root-argument-value@10:32",
+                "src/pokemon/routes.ts#root-argument-value@10:80",
+                "src/pokemon/routes.ts#variable@11:3",
+                "src/pokemon/routes.ts#root-argument-value@11:27",
+                "src/pokemon/routes.ts#condition@12:3",
+                "src/pokemon/routes.ts#root-argument-value@13:12",
+                "src/pokemon/routes.ts#property@13:35"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Returns a 400 when the body has no name or whole level",
+                  "codeBlockId": "src/pokemon/routes.ts#condition@12:3",
+                  "at": {
+                    "line": 13,
+                    "column": 5
+                  }
+                }
+              ]
+            },
+            {
+              "id": "src/index.ts#function@8:1",
+              "type": "function",
+              "label": "Returns a 401 for a request without the API key",
+              "description": "Two paths reach this hook, because [`app.addHook(\"onRequest\", requireApiKey)` runs it before every route of the app](code:src/index.ts#L16):\n\n- When a client sends `GET` or `POST /api/pokemon`, Fastify calls this hook before the handler of the method.\n- When a client sends `PUT` or `PATCH /api/pokemon/:pokemonId`, Fastify calls this hook before [`renamePokemonById()`](code:src/pokemon/controller.ts#renamePokemonById).",
+              "codeBlockIds": [
+                "src/index.ts#function@8:1",
+                "src/index.ts#root-variable@6:1",
+                "src/index.ts#root-argument-value@8:30",
+                "src/index.ts#root-argument-value@8:55",
+                "src/index.ts#condition@9:3",
+                "src/index.ts#root-argument-value@9:7",
+                "src/index.ts#root-argument-value@10:12",
+                "src/index.ts#property@10:35"
+              ],
+              "diffCodeBlockIds": [
+                "src/index.ts#function@8:1",
+                "src/index.ts#root-variable@6:1",
+                "src/index.ts#root-argument-value@8:30",
+                "src/index.ts#root-argument-value@8:55",
+                "src/index.ts#condition@9:3",
+                "src/index.ts#root-argument-value@9:7",
+                "src/index.ts#root-argument-value@10:12",
+                "src/index.ts#property@10:35"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Returns a 401 when the API key is missing or wrong",
+                  "codeBlockId": "src/index.ts#condition@9:3",
+                  "at": {
+                    "line": 10,
+                    "column": 5
+                  }
+                }
+              ]
+            },
+            {
+              "id": "src/pokemon/routes.ts#route@/api/pokemon",
+              "type": "route",
+              "label": "Lists the Pokemon of the party and adds one",
+              "description": "When a client sends `GET` or `POST /api/pokemon`, Fastify matches this path, because [`app.register(pokemonRoutes, { prefix: \"/api\" })` puts `/api` before the routes of the plugin](code:src/index.ts#L18). A `GET` runs [`listPokemon()`](code:src/pokemon/controller.ts#listPokemon), and a `POST` runs [the handler written in the route](code:src/pokemon/routes.ts#L20-23).",
+              "codeBlockIds": [
+                "src/pokemon/routes.ts#route@18:3",
+                "src/pokemon/routes.ts#effect-callback@18:27",
+                "src/pokemon/routes.ts#route@20:3",
+                "src/pokemon/routes.ts#property@20:30",
+                "src/pokemon/routes.ts#effect-callback@20:63"
+              ],
+              "diffCodeBlockIds": [
+                "src/pokemon/routes.ts#route@20:3",
+                "src/pokemon/routes.ts#property@20:30"
+              ],
+              "children": [
+                {
+                  "id": "src/pokemon/controller.ts#function@4:1",
+                  "type": "function",
+                  "label": "Sends the party from the highest level down",
+                  "description": "When a client sends `GET /api/pokemon`, Fastify calls this handler after `requireApiKey()`, because [the route names `listPokemon`](code:src/pokemon/routes.ts#L18).",
+                  "codeBlockIds": [
+                    "src/pokemon/controller.ts#function@4:1",
+                    "src/pokemon/controller.ts#external-value@5:3",
+                    "src/pokemon/controller.ts#effect@5:17",
+                    "src/pokemon/controller.ts#effect-callback@5:38",
+                    "src/pokemon/controller.ts#function@5:38",
+                    "src/pokemon/controller.ts#variable@5:39",
+                    "src/pokemon/controller.ts#variable@5:46",
+                    "src/pokemon/controller.ts#call@6:3",
+                    "src/pokemon/controller.ts#root-argument-value@6:3"
+                  ],
+                  "diffCodeBlockIds": [
+                    "src/pokemon/controller.ts#function@4:1",
+                    "src/pokemon/controller.ts#external-value@5:3",
+                    "src/pokemon/controller.ts#effect@5:17",
+                    "src/pokemon/controller.ts#function@5:38",
+                    "src/pokemon/controller.ts#variable@5:39",
+                    "src/pokemon/controller.ts#variable@5:46",
+                    "src/pokemon/controller.ts#call@6:3",
+                    "src/pokemon/controller.ts#root-argument-value@6:3"
+                  ],
+                  "children": [],
+                  "triggerLabels": [],
+                  "blockLabels": [
+                    {
+                      "label": "Calls readParty to read every Pokemon of the party",
+                      "codeBlockId": "src/pokemon/controller.ts#effect@5:17",
+                      "at": {
+                        "line": 5,
+                        "column": 17
+                      }
+                    }
+                  ]
+                },
+                {
+                  "id": "src/pokemon/routes.ts#effect-callback@20:63",
+                  "type": "effect-callback",
+                  "label": "Adds the Pokemon of the body to the party",
+                  "description": "When a client sends `POST /api/pokemon`, Fastify calls `requireApiKey()`, then `validatePokemon()`, then this handler.",
+                  "codeBlockIds": [
+                    "src/pokemon/routes.ts#effect-callback@20:63",
+                    "src/pokemon/routes.ts#function@20:63",
+                    "src/pokemon/routes.ts#variable@20:70",
+                    "src/pokemon/routes.ts#variable@20:118",
+                    "src/pokemon/routes.ts#external-value@21:5"
+                  ],
+                  "diffCodeBlockIds": [
+                    "src/pokemon/routes.ts#function@20:63",
+                    "src/pokemon/routes.ts#variable@20:70",
+                    "src/pokemon/routes.ts#variable@20:118",
+                    "src/pokemon/routes.ts#external-value@21:5"
+                  ],
+                  "children": [],
+                  "triggerLabels": [],
+                  "blockLabels": [
+                    {
+                      "label": "Calls addPokemon to add the Pokemon of the body to the party",
+                      "codeBlockId": "src/pokemon/routes.ts#external-value@21:5",
+                      "at": {
+                        "line": 21,
+                        "column": 21
+                      }
+                    },
+                    {
+                      "label": "Returns a 201 with the new Pokemon",
+                      "codeBlockId": "src/pokemon/routes.ts#function@20:63",
+                      "at": {
+                        "line": 22,
+                        "column": 5
+                      }
+                    }
+                  ]
+                }
+              ],
+              "triggerLabels": [],
+              "blockLabels": []
+            },
+            {
+              "id": "src/pokemon/routes.ts#route@/api/pokemon/:pokemonId",
+              "type": "route",
+              "label": "Renames one Pokemon of the party",
+              "description": "When a client sends `PUT` or `PATCH /api/pokemon/:pokemonId`, Fastify matches this path, because [`app.register(pokemonRoutes, { prefix: \"/api\" })` puts `/api` before the routes of the plugin](code:src/index.ts#L18). Both methods run [`renamePokemonById()`](code:src/pokemon/controller.ts#renamePokemonById).",
+              "codeBlockIds": [
+                "src/pokemon/routes.ts#route@25:3",
+                "src/pokemon/routes.ts#property@25:19",
+                "src/pokemon/routes.ts#property@25:45",
+                "src/pokemon/routes.ts#effect-callback@25:73"
+              ],
+              "diffCodeBlockIds": [
+                "src/pokemon/routes.ts#route@25:3",
+                "src/pokemon/routes.ts#property@25:19",
+                "src/pokemon/routes.ts#property@25:45",
+                "src/pokemon/routes.ts#effect-callback@25:73"
+              ],
+              "children": [
+                {
+                  "id": "src/pokemon/controller.ts#function@9:1",
+                  "type": "function",
+                  "label": "Renames the Pokemon of the id, or returns a 404",
+                  "description": "When a client sends `PUT` or `PATCH /api/pokemon/:pokemonId`, Fastify calls this handler after `requireApiKey()`, because [the route names `renamePokemonById` as its handler](code:src/pokemon/routes.ts#L25).",
+                  "codeBlockIds": [
+                    "src/pokemon/controller.ts#function@9:1",
+                    "src/pokemon/controller.ts#root-argument-value@9:41",
+                    "src/pokemon/controller.ts#root-argument-value@9:125",
+                    "src/pokemon/controller.ts#external-value@10:3",
+                    "src/pokemon/controller.ts#root-argument-value@10:40",
+                    "src/pokemon/controller.ts#root-argument-value@10:67",
+                    "src/pokemon/controller.ts#condition@11:3",
+                    "src/pokemon/controller.ts#root-argument-value@11:37"
+                  ],
+                  "diffCodeBlockIds": [
+                    "src/pokemon/controller.ts#function@9:1",
+                    "src/pokemon/controller.ts#root-argument-value@9:41",
+                    "src/pokemon/controller.ts#root-argument-value@9:125",
+                    "src/pokemon/controller.ts#external-value@10:3",
+                    "src/pokemon/controller.ts#root-argument-value@10:40",
+                    "src/pokemon/controller.ts#root-argument-value@10:67",
+                    "src/pokemon/controller.ts#condition@11:3",
+                    "src/pokemon/controller.ts#root-argument-value@11:37"
+                  ],
+                  "children": [],
+                  "triggerLabels": [],
+                  "blockLabels": [
+                    {
+                      "label": "Calls renamePokemon to give the Pokemon of the id its new name",
+                      "codeBlockId": "src/pokemon/controller.ts#external-value@10:3",
+                      "at": {
+                        "line": 10,
+                        "column": 19
+                      }
+                    },
+                    {
+                      "label": "Returns a 404 when no Pokemon has the id",
+                      "codeBlockId": "src/pokemon/controller.ts#condition@11:3",
+                      "at": {
+                        "line": 11,
+                        "column": 30
+                      }
+                    },
+                    {
+                      "label": "Returns the renamed Pokemon",
+                      "codeBlockId": "src/pokemon/controller.ts#function@9:1",
+                      "at": {
+                        "line": 12,
+                        "column": 3
+                      }
+                    }
+                  ]
+                }
+              ],
+              "triggerLabels": [],
+              "blockLabels": []
+            },
+            {
+              "id": "src/index.ts#effect@18:1",
+              "type": "effect",
+              "label": "Registers the Pokemon routes under /api",
+              "description": "When the server starts, Fastify runs [`pokemonRoutes()`](code:src/pokemon/routes.ts#pokemonRoutes) with the prefix `/api`.",
+              "codeBlockIds": [
+                "src/index.ts#effect@18:1",
+                "src/index.ts#effect-callback@18:14"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Hands the Pokemon plugin to the app",
+                  "codeBlockId": "src/index.ts#effect-callback@18:14"
+                }
+              ]
+            }
+          ],
+          "traceNodeEdges": [
+            {
+              "id": "src/pokemon/routes.ts#route@/api/pokemon -> src/pokemon/controller.ts#function@4:1",
+              "from": "src/pokemon/routes.ts#route@/api/pokemon",
+              "to": "src/pokemon/controller.ts#function@4:1"
+            },
+            {
+              "id": "src/pokemon/routes.ts#route@/api/pokemon/:pokemonId -> src/pokemon/controller.ts#function@9:1",
+              "from": "src/pokemon/routes.ts#route@/api/pokemon/:pokemonId",
+              "to": "src/pokemon/controller.ts#function@9:1"
+            },
+            {
+              "id": "src/pokemon/routes.ts#route@/api/pokemon -> src/pokemon/routes.ts#effect-callback@20:63",
+              "from": "src/pokemon/routes.ts#route@/api/pokemon",
+              "to": "src/pokemon/routes.ts#effect-callback@20:63"
+            },
+            {
+              "id": "src/pokemon/routes.ts#function@10:1 -> src/pokemon/routes.ts#effect-callback@20:63",
+              "from": "src/pokemon/routes.ts#function@10:1",
+              "to": "src/pokemon/routes.ts#effect-callback@20:63"
+            },
+            {
+              "id": "src/index.ts#function@8:1 -> src/pokemon/routes.ts#route@/api/pokemon",
+              "from": "src/index.ts#function@8:1",
+              "to": "src/pokemon/routes.ts#route@/api/pokemon"
+            },
+            {
+              "id": "src/index.ts#function@8:1 -> src/pokemon/routes.ts#route@/api/pokemon/:pokemonId",
+              "from": "src/index.ts#function@8:1",
+              "to": "src/pokemon/routes.ts#route@/api/pokemon/:pokemonId"
+            }
+          ]
+        },
+        "codeWalkthrough": {
+          "files": [
+            {
+              "path": "src/index.ts",
+              "waypoints": [
+                {
+                  "id": "w1",
+                  "declaration": "API_KEY",
+                  "range": {
+                    "lineStart": 6,
+                    "lineEnd": 6
+                  },
+                  "codeBlockIds": [
+                    "src/index.ts#root-variable@6:1"
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "w2",
+                  "declaration": "requireApiKey",
+                  "range": {
+                    "lineStart": 8,
+                    "lineEnd": 12
+                  },
+                  "codeBlockIds": [
+                    "src/index.ts#function@8:1",
+                    "src/index.ts#root-argument-value@8:30",
+                    "src/index.ts#root-argument-value@8:55",
+                    "src/index.ts#condition@9:3",
+                    "src/index.ts#root-argument-value@9:7",
+                    "src/index.ts#root-argument-value@10:12",
+                    "src/index.ts#property@10:35"
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "w3",
+                  "declaration": "Lines 16–16",
+                  "range": {
+                    "lineStart": 16,
+                    "lineEnd": 16
+                  },
+                  "codeBlockIds": [
+                    "src/index.ts#root-statement@16:1",
+                    "src/index.ts#middleware@16:1",
+                    "src/index.ts#effect-callback@16:26"
+                  ],
+                  "children": []
+                }
+              ]
+            },
+            {
+              "path": "src/pokemon/controller.ts",
+              "waypoints": [
+                {
+                  "id": "w4",
+                  "declaration": "listPokemon",
+                  "range": {
+                    "lineStart": 4,
+                    "lineEnd": 7
+                  },
+                  "codeBlockIds": [
+                    "src/pokemon/controller.ts#function@4:1",
+                    "src/pokemon/controller.ts#external-value@5:3",
+                    "src/pokemon/controller.ts#effect@5:17",
+                    "src/pokemon/controller.ts#function@5:38",
+                    "src/pokemon/controller.ts#variable@5:39",
+                    "src/pokemon/controller.ts#variable@5:46",
+                    "src/pokemon/controller.ts#call@6:3",
+                    "src/pokemon/controller.ts#root-argument-value@6:3"
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "w5",
+                  "declaration": "renamePokemonById",
+                  "range": {
+                    "lineStart": 9,
+                    "lineEnd": 13
+                  },
+                  "codeBlockIds": [
+                    "src/pokemon/controller.ts#function@9:1",
+                    "src/pokemon/controller.ts#root-argument-value@9:41",
+                    "src/pokemon/controller.ts#root-argument-value@9:125",
+                    "src/pokemon/controller.ts#external-value@10:3",
+                    "src/pokemon/controller.ts#root-argument-value@10:40",
+                    "src/pokemon/controller.ts#root-argument-value@10:67",
+                    "src/pokemon/controller.ts#condition@11:3",
+                    "src/pokemon/controller.ts#root-argument-value@11:37"
+                  ],
+                  "children": []
+                }
+              ]
+            },
+            {
+              "path": "src/pokemon/routes.ts",
+              "waypoints": [
+                {
+                  "id": "w6",
+                  "declaration": "PokemonBody",
+                  "range": {
+                    "lineStart": 5,
+                    "lineEnd": 8
+                  },
+                  "codeBlockIds": [
+                    "src/pokemon/routes.ts#type-declaration@5:1"
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "w7",
+                  "declaration": "validatePokemon",
+                  "range": {
+                    "lineStart": 10,
+                    "lineEnd": 15
+                  },
+                  "codeBlockIds": [
+                    "src/pokemon/routes.ts#function@10:1",
+                    "src/pokemon/routes.ts#root-argument-value@10:32",
+                    "src/pokemon/routes.ts#root-argument-value@10:80",
+                    "src/pokemon/routes.ts#variable@11:3",
+                    "src/pokemon/routes.ts#root-argument-value@11:27",
+                    "src/pokemon/routes.ts#condition@12:3",
+                    "src/pokemon/routes.ts#root-argument-value@13:12",
+                    "src/pokemon/routes.ts#property@13:35"
+                  ],
+                  "children": [
+                    {
+                      "id": "w7.1",
+                      "declaration": "validatePokemon › name",
+                      "range": {
+                        "lineStart": 11,
+                        "lineEnd": 11
+                      },
+                      "codeBlockIds": [
+                        "src/pokemon/routes.ts#variable@11:3"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w7.2",
+                      "declaration": "validatePokemon › Condition :12",
+                      "range": {
+                        "lineStart": 12,
+                        "lineEnd": 14
+                      },
+                      "codeBlockIds": [
+                        "src/pokemon/routes.ts#condition@12:3",
+                        "src/pokemon/routes.ts#property@13:35"
+                      ],
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "id": "w8",
+                  "declaration": "pokemonRoutes",
+                  "range": {
+                    "lineStart": 17,
+                    "lineEnd": 26
+                  },
+                  "codeBlockIds": [
+                    "src/pokemon/routes.ts#function@17:1",
+                    "src/pokemon/routes.ts#route@20:3",
+                    "src/pokemon/routes.ts#root-argument-value@20:3",
+                    "src/pokemon/routes.ts#property@20:30",
+                    "src/pokemon/routes.ts#function@20:63",
+                    "src/pokemon/routes.ts#variable@20:70",
+                    "src/pokemon/routes.ts#variable@20:118",
+                    "src/pokemon/routes.ts#external-value@21:5",
+                    "src/pokemon/routes.ts#route@25:3",
+                    "src/pokemon/routes.ts#root-argument-value@25:3",
+                    "src/pokemon/routes.ts#property@25:19",
+                    "src/pokemon/routes.ts#property@25:45",
+                    "src/pokemon/routes.ts#effect-callback@25:73"
+                  ],
+                  "children": [
+                    {
+                      "id": "w8.1",
+                      "declaration": "pokemonRoutes › post",
+                      "range": {
+                        "lineStart": 20,
+                        "lineEnd": 23
+                      },
+                      "codeBlockIds": [
+                        "src/pokemon/routes.ts#route@20:3",
+                        "src/pokemon/routes.ts#property@20:30",
+                        "src/pokemon/routes.ts#function@20:63",
+                        "src/pokemon/routes.ts#variable@20:70",
+                        "src/pokemon/routes.ts#variable@20:118",
+                        "src/pokemon/routes.ts#external-value@21:5"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w8.2",
+                      "declaration": "pokemonRoutes › route",
+                      "range": {
+                        "lineStart": 25,
+                        "lineEnd": 25
+                      },
+                      "codeBlockIds": [
+                        "src/pokemon/routes.ts#route@25:3",
+                        "src/pokemon/routes.ts#property@25:19",
+                        "src/pokemon/routes.ts#property@25:45",
+                        "src/pokemon/routes.ts#effect-callback@25:73"
+                      ],
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "codeReferences": [
+          {
+            "path": "src/index.ts",
+            "references": [
+              {
+                "line": 8,
+                "startColumn": 38,
+                "endColumn": 52,
+                "path": "src/index.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "fastify",
+                  "name": "FastifyRequest"
+                }
+              },
+              {
+                "line": 8,
+                "startColumn": 61,
+                "endColumn": 73,
+                "path": "src/index.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "fastify",
+                  "name": "FastifyReply"
+                }
+              },
+              {
+                "line": 9,
+                "startColumn": 6,
+                "endColumn": 13,
+                "path": "src/index.ts",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 39,
+                "endColumn": 46,
+                "path": "src/index.ts",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 11,
+                "endColumn": 16,
+                "path": "src/index.ts",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 14,
+                "startColumn": 12,
+                "endColumn": 19,
+                "path": "src/index.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "fastify",
+                  "name": "default"
+                }
+              },
+              {
+                "line": 16,
+                "startColumn": 0,
+                "endColumn": 3,
+                "path": "src/index.ts",
+                "lines": [
+                  14,
+                  14
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 25,
+                "endColumn": 38,
+                "path": "src/index.ts",
+                "lines": [
+                  8,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 17,
+                "startColumn": 0,
+                "endColumn": 3,
+                "path": "src/index.ts",
+                "lines": [
+                  14,
+                  14
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 17,
+                "startColumn": 13,
+                "endColumn": 26,
+                "path": "src/trainers/routes.ts",
+                "lines": [
+                  4,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 18,
+                "startColumn": 0,
+                "endColumn": 3,
+                "path": "src/index.ts",
+                "lines": [
+                  14,
+                  14
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 18,
+                "startColumn": 13,
+                "endColumn": 26,
+                "path": "src/pokemon/routes.ts",
+                "lines": [
+                  17,
+                  26
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 20,
+                "startColumn": 0,
+                "endColumn": 3,
+                "path": "src/index.ts",
+                "lines": [
+                  14,
+                  14
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 20,
+                "startColumn": 19,
+                "endColumn": 23,
+                "path": "src/index.ts",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [],
+            "exports": []
+          },
+          {
+            "path": "src/pokemon/controller.ts",
+            "references": [
+              {
+                "line": 4,
+                "startColumn": 44,
+                "endColumn": 58,
+                "path": "src/pokemon/controller.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "fastify",
+                  "name": "FastifyRequest"
+                }
+              },
+              {
+                "line": 4,
+                "startColumn": 67,
+                "endColumn": 79,
+                "path": "src/pokemon/controller.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "fastify",
+                  "name": "FastifyReply"
+                }
+              },
+              {
+                "line": 5,
+                "startColumn": 16,
+                "endColumn": 25,
+                "path": "src/pokemon/store.ts",
+                "lines": [
+                  12,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 6,
+                "startColumn": 2,
+                "endColumn": 7,
+                "path": "src/pokemon/controller.ts",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 6,
+                "startColumn": 13,
+                "endColumn": 18,
+                "path": "src/pokemon/controller.ts",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 49,
+                "endColumn": 63,
+                "path": "src/pokemon/controller.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "fastify",
+                  "name": "FastifyRequest"
+                }
+              },
+              {
+                "line": 9,
+                "startColumn": 131,
+                "endColumn": 143,
+                "path": "src/pokemon/controller.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "fastify",
+                  "name": "FastifyReply"
+                }
+              },
+              {
+                "line": 10,
+                "startColumn": 18,
+                "endColumn": 31,
+                "path": "src/pokemon/store.ts",
+                "lines": [
+                  22,
+                  28
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 39,
+                "endColumn": 46,
+                "path": "src/pokemon/controller.ts",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 66,
+                "endColumn": 73,
+                "path": "src/pokemon/controller.ts",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 6,
+                "endColumn": 13,
+                "path": "src/pokemon/controller.ts",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 36,
+                "endColumn": 41,
+                "path": "src/pokemon/controller.ts",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 9,
+                "endColumn": 16,
+                "path": "src/pokemon/controller.ts",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [
+              {
+                "line": 10,
+                "startColumn": 32,
+                "endColumn": 38,
+                "name": "Number"
+              }
+            ],
+            "exports": [
+              {
+                "line": 4,
+                "startColumn": 13,
+                "endColumn": 24,
+                "lines": [
+                  4,
+                  7
+                ],
+                "usages": [
+                  {
+                    "line": 18,
+                    "startColumn": 26,
+                    "endColumn": 37,
+                    "path": "src/pokemon/routes.ts",
+                    "text": "  fastify.get(\"/pokemon\", listPokemon)"
+                  }
+                ]
+              },
+              {
+                "line": 9,
+                "startColumn": 13,
+                "endColumn": 30,
+                "lines": [
+                  9,
+                  13
+                ],
+                "usages": [
+                  {
+                    "line": 25,
+                    "startColumn": 81,
+                    "endColumn": 98,
+                    "path": "src/pokemon/routes.ts",
+                    "text": "  fastify.route({ method: [\"PUT\", \"PATCH\"], url: \"/pokemon/:pokemonId\", handler: renamePokemonById })"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/pokemon/routes.ts",
+            "references": [
+              {
+                "line": 10,
+                "startColumn": 40,
+                "endColumn": 54,
+                "path": "src/pokemon/routes.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "fastify",
+                  "name": "FastifyRequest"
+                }
+              },
+              {
+                "line": 10,
+                "startColumn": 63,
+                "endColumn": 74,
+                "path": "src/pokemon/routes.ts",
+                "lines": [
+                  5,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 86,
+                "endColumn": 98,
+                "path": "src/pokemon/routes.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "fastify",
+                  "name": "FastifyReply"
+                }
+              },
+              {
+                "line": 11,
+                "startColumn": 26,
+                "endColumn": 33,
+                "path": "src/pokemon/routes.ts",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 13,
+                "endColumn": 17,
+                "path": "src/pokemon/routes.ts",
+                "lines": [
+                  11,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 52,
+                "endColumn": 57,
+                "path": "src/pokemon/routes.ts",
+                "lines": [
+                  11,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 11,
+                "endColumn": 16,
+                "path": "src/pokemon/routes.ts",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 17,
+                "startColumn": 53,
+                "endColumn": 68,
+                "path": "src/pokemon/routes.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "fastify",
+                  "name": "FastifyInstance"
+                }
+              },
+              {
+                "line": 18,
+                "startColumn": 2,
+                "endColumn": 9,
+                "path": "src/pokemon/routes.ts",
+                "lines": [
+                  17,
+                  17
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 18,
+                "startColumn": 26,
+                "endColumn": 37,
+                "path": "src/pokemon/controller.ts",
+                "lines": [
+                  4,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 20,
+                "startColumn": 2,
+                "endColumn": 9,
+                "path": "src/pokemon/routes.ts",
+                "lines": [
+                  17,
+                  17
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 20,
+                "startColumn": 42,
+                "endColumn": 57,
+                "path": "src/pokemon/routes.ts",
+                "lines": [
+                  10,
+                  15
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 20,
+                "startColumn": 78,
+                "endColumn": 92,
+                "path": "src/pokemon/routes.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "fastify",
+                  "name": "FastifyRequest"
+                }
+              },
+              {
+                "line": 20,
+                "startColumn": 101,
+                "endColumn": 112,
+                "path": "src/pokemon/routes.ts",
+                "lines": [
+                  5,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 20,
+                "startColumn": 124,
+                "endColumn": 136,
+                "path": "src/pokemon/routes.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "fastify",
+                  "name": "FastifyReply"
+                }
+              },
+              {
+                "line": 21,
+                "startColumn": 20,
+                "endColumn": 30,
+                "path": "src/pokemon/store.ts",
+                "lines": [
+                  16,
+                  20
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 21,
+                "startColumn": 31,
+                "endColumn": 38,
+                "path": "src/pokemon/routes.ts",
+                "lines": [
+                  20,
+                  20
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 21,
+                "startColumn": 50,
+                "endColumn": 57,
+                "path": "src/pokemon/routes.ts",
+                "lines": [
+                  20,
+                  20
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 22,
+                "startColumn": 11,
+                "endColumn": 16,
+                "path": "src/pokemon/routes.ts",
+                "lines": [
+                  20,
+                  20
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 22,
+                "startColumn": 32,
+                "endColumn": 39,
+                "path": "src/pokemon/routes.ts",
+                "lines": [
+                  21,
+                  21
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 25,
+                "startColumn": 2,
+                "endColumn": 9,
+                "path": "src/pokemon/routes.ts",
+                "lines": [
+                  17,
+                  17
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 25,
+                "startColumn": 81,
+                "endColumn": 98,
+                "path": "src/pokemon/controller.ts",
+                "lines": [
+                  9,
+                  13
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [
+              {
+                "line": 12,
+                "startColumn": 35,
+                "endColumn": 41,
+                "name": "Number"
+              }
+            ],
+            "exports": [
+              {
+                "line": 17,
+                "startColumn": 30,
+                "endColumn": 43,
+                "lines": [
+                  17,
+                  26
+                ],
+                "usages": [
+                  {
+                    "line": 18,
+                    "startColumn": 13,
+                    "endColumn": 26,
+                    "path": "src/index.ts",
+                    "text": "app.register(pokemonRoutes, { prefix: \"/api\" })"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

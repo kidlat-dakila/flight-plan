@@ -333,12 +333,20 @@
                       ],
                       "blockLabels": [
                         {
-                          "label": "Keeps the name the user typed",
-                          "codeBlockId": "src/pages/trainers/components/AddTrainerForm.tsx#state@7:3"
+                          "label": "Calls useAddTrainer to get the mutation that adds a trainer and whether it runs",
+                          "codeBlockId": "src/pages/trainers/components/AddTrainerForm.tsx#external-value@8:3",
+                          "at": {
+                            "line": 8,
+                            "column": 45
+                          }
                         },
                         {
-                          "label": "Gets the mutation that adds a trainer and whether it runs",
-                          "codeBlockId": "src/pages/trainers/components/AddTrainerForm.tsx#external-value@8:3"
+                          "label": "Renders a form with the name field and an Add trainer button",
+                          "codeBlockId": "src/pages/trainers/components/AddTrainerForm.tsx#component@6:1",
+                          "at": {
+                            "line": 15,
+                            "column": 3
+                          }
                         }
                       ]
                     }
@@ -346,14 +354,67 @@
                   "triggerLabels": [],
                   "blockLabels": [
                     {
-                      "label": "Renders one row for each trainer",
-                      "codeBlockId": "src/pages/trainers/TrainersPage.tsx#function@14:25"
+                      "label": "Calls useTrainers to load the trainers with their pending and error flags",
+                      "codeBlockId": "src/pages/trainers/TrainersPage.tsx#external-value@6:3",
+                      "at": {
+                        "line": 6,
+                        "column": 50
+                      }
+                    },
+                    {
+                      "label": "Renders a loading line when the trainers are still loading",
+                      "codeBlockId": "src/pages/trainers/TrainersPage.tsx#condition@7:3",
+                      "at": {
+                        "line": 7,
+                        "column": 18
+                      }
+                    },
+                    {
+                      "label": "Renders an error line when the trainers could not be loaded",
+                      "codeBlockId": "src/pages/trainers/TrainersPage.tsx#condition@8:3",
+                      "at": {
+                        "line": 8,
+                        "column": 16
+                      }
+                    },
+                    {
+                      "label": "Renders the form that adds a trainer above the table of trainers",
+                      "codeBlockId": "src/pages/trainers/TrainersPage.tsx#component@5:1",
+                      "at": {
+                        "line": 9,
+                        "column": 3
+                      }
+                    },
+                    {
+                      "label": "Renders `<AddTrainerForm />` above the table",
+                      "codeBlockId": "src/pages/trainers/TrainersPage.tsx#render@11:7"
+                    },
+                    {
+                      "label": "Renders `<TrainerRow />` for each trainer",
+                      "codeBlockId": "src/pages/trainers/TrainersPage.tsx#render@15:13"
                     }
                   ]
                 }
               ],
               "triggerLabels": [],
-              "blockLabels": []
+              "blockLabels": [
+                {
+                  "label": "Renders the trainers page and the items page",
+                  "codeBlockId": "src/App.tsx#component@4:1",
+                  "at": {
+                    "line": 5,
+                    "column": 3
+                  }
+                },
+                {
+                  "label": "Renders `<TrainersPage />` above the items",
+                  "codeBlockId": "src/App.tsx#render@7:7"
+                },
+                {
+                  "label": "Renders `<ItemsPage />` below the trainers",
+                  "codeBlockId": "src/App.tsx#render@8:7"
+                }
+              ]
             },
             {
               "id": "src/hooks/use-add-trainer.ts#hook@5:1",
@@ -389,16 +450,12 @@
               ],
               "blockLabels": [
                 {
-                  "label": "Gets the query client of the app",
-                  "codeBlockId": "src/hooks/use-add-trainer.ts#external-value@6:3"
-                },
-                {
-                  "label": "Makes the mutation that adds a trainer",
-                  "codeBlockId": "src/hooks/use-add-trainer.ts#component-effect@7:10"
-                },
-                {
-                  "label": "Sends the new trainer to the API",
-                  "codeBlockId": "src/hooks/use-add-trainer.ts#effect-callback@8:5"
+                  "label": "Returns the mutation that adds a trainer and refreshes the list",
+                  "codeBlockId": "src/hooks/use-add-trainer.ts#hook@5:1",
+                  "at": {
+                    "line": 7,
+                    "column": 3
+                  }
                 }
               ]
             },
@@ -423,8 +480,20 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Sends the request as a POST",
-                  "codeBlockId": "src/api/add-trainer.ts#property@7:42"
+                  "label": "Returns the trainer the API saved",
+                  "codeBlockId": "src/api/add-trainer.ts#function@6:1",
+                  "at": {
+                    "line": 7,
+                    "column": 3
+                  }
+                },
+                {
+                  "label": "Calls request to post the new trainer to the API",
+                  "codeBlockId": "src/api/add-trainer.ts#function@6:1",
+                  "at": {
+                    "line": 7,
+                    "column": 10
+                  }
                 }
               ]
             },
@@ -449,16 +518,7 @@
               ],
               "children": [],
               "triggerLabels": [],
-              "blockLabels": [
-                {
-                  "label": "Stops the browser from reloading the page",
-                  "codeBlockId": "src/pages/trainers/components/AddTrainerForm.tsx#variable@10:19"
-                },
-                {
-                  "label": "Runs the mutation with the typed name",
-                  "codeBlockId": "src/pages/trainers/components/AddTrainerForm.tsx#effect@12:5"
-                }
-              ]
+              "blockLabels": []
             },
             {
               "id": "src/pages/trainers/components/AddTrainerForm.tsx#effect@12:5",

@@ -851,16 +851,20 @@
                       ],
                       "blockLabels": [
                         {
-                          "label": "Keeps the draft name, starting from the current name",
-                          "codeBlockId": "src/client/RenameForm.tsx#state@5:3"
+                          "label": "Calls api.pokemon.rename.useMutation to get the mutation that renames the Pokemon and reloads the party",
+                          "codeBlockId": "src/client/RenameForm.tsx#request@7:18",
+                          "at": {
+                            "line": 7,
+                            "column": 18
+                          }
                         },
                         {
-                          "label": "Gets the tRPC query utilities",
-                          "codeBlockId": "src/client/RenameForm.tsx#external-value@6:3"
-                        },
-                        {
-                          "label": "Gets the mutation that renames a Pokemon",
-                          "codeBlockId": "src/client/RenameForm.tsx#external-value@7:3"
+                          "label": "Renders a form with the draft name and a Rename button",
+                          "codeBlockId": "src/client/RenameForm.tsx#component@4:1",
+                          "at": {
+                            "line": 10,
+                            "column": 3
+                          }
                         }
                       ]
                     }
@@ -868,14 +872,43 @@
                   "triggerLabels": [],
                   "blockLabels": [
                     {
-                      "label": "Renders one row with a rename form per Pokemon",
-                      "codeBlockId": "src/client/PartyList.tsx#function@9:23"
+                      "label": "Renders a loading line when the party is not loaded yet",
+                      "codeBlockId": "src/client/PartyList.tsx#condition@6:3",
+                      "at": {
+                        "line": 6,
+                        "column": 33
+                      }
+                    },
+                    {
+                      "label": "Renders a list of the Pokemon of the party",
+                      "codeBlockId": "src/client/PartyList.tsx#component@4:1",
+                      "at": {
+                        "line": 7,
+                        "column": 3
+                      }
+                    },
+                    {
+                      "label": "Renders `<RenameForm />` for each Pokemon of the party",
+                      "codeBlockId": "src/client/PartyList.tsx#render@12:11"
                     }
                   ]
                 }
               ],
               "triggerLabels": [],
-              "blockLabels": []
+              "blockLabels": [
+                {
+                  "label": "Renders the party list inside the query and tRPC providers",
+                  "codeBlockId": "src/client/App.tsx#component@7:1",
+                  "at": {
+                    "line": 10,
+                    "column": 3
+                  }
+                },
+                {
+                  "label": "Renders `<PartyList />` inside the tRPC provider",
+                  "codeBlockId": "src/client/App.tsx#render@13:9"
+                }
+              ]
             },
             {
               "id": "src/server/routers/pokemon.ts#root-variable@6:1",
@@ -1002,8 +1035,20 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Copies the Pokemon of the id with the new name",
-                  "codeBlockId": "src/server/data/pokemon.ts#function@22:21"
+                  "label": "Returns the renamed Pokemon",
+                  "codeBlockId": "src/server/data/pokemon.ts#function@21:1",
+                  "at": {
+                    "line": 23,
+                    "column": 3
+                  }
+                },
+                {
+                  "label": "Calls readPokemon to read the Pokemon back after the rename",
+                  "codeBlockId": "src/server/data/pokemon.ts#function@21:1",
+                  "at": {
+                    "line": 23,
+                    "column": 10
+                  }
                 }
               ]
             },
@@ -1071,16 +1116,7 @@
               ],
               "children": [],
               "triggerLabels": [],
-              "blockLabels": [
-                {
-                  "label": "Stops the browser from reloading the page",
-                  "codeBlockId": "src/client/RenameForm.tsx#call@13:9"
-                },
-                {
-                  "label": "Sends the id and the draft name to the mutation",
-                  "codeBlockId": "src/client/RenameForm.tsx#call@14:9"
-                }
-              ]
+              "blockLabels": []
             },
             {
               "id": "src/client/RenameForm.tsx#render-event@17:28",

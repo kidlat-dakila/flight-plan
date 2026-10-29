@@ -62,7 +62,8 @@ describe("the playgrounds of traceFixtureLoader", () => {
 
     expect(entries.map((entry) => entry.id)).toStrictEqual([PLAYGROUND_ID])
     expect(playgroundPage?.entry.id).toBe(PLAYGROUND_ID)
-    expect(playgroundPage?.page.segments.length).toBeGreaterThan(0)
+    expect(playgroundPage?.cases.map((playgroundCase) => playgroundCase.id)).toStrictEqual([PLAYGROUND_ID])
+    expect(playgroundPage?.cases.at(0)?.page.segments.length).toBeGreaterThan(0)
     expect(playgroundEntriesSchema.safeParse(JSON.parse(JSON.stringify(entries))).success).toBe(true)
     expect(playgroundPageSchema.safeParse(JSON.parse(JSON.stringify(playgroundPage))).error).toBeUndefined()
   })

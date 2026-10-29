@@ -1,12 +1,26 @@
+import { endOfChain } from "@/shared/chain-end"
+import { walkDepthFirst } from "@/shared/reach"
 import type { CodeBlock, CodeBlockType } from "@flightplan/configurations"
 import { isCardNodeBlock, isCardNotNodeBlock } from "./cards"
 import { classOfDeclaredProperty, hasMethodsOfItsOwn, isRouterClass } from "./cards/class"
+import { isHookCallBlock, isInsideMemo, isMemoBlock, isMergedCallback } from "./hook-calls"
+import { isFoldedCall, isFoldedCallback } from "./repository-calls"
 
 export interface NodeStep {
   readonly from: CodeBlock
   readonly fromBlock: CodeBlock
   readonly to: CodeBlock
   readonly toBlock: CodeBlock
+}
+
+interface Landing {
+  readonly isCarried: boolean
+  readonly steps: readonly NodeStep[]
+}
+
+interface Landed {
+  readonly toBlock: CodeBlock
+  readonly landing: Landing
 }
 
 type NextBlocksOf = (block: CodeBlock) => readonly CodeBlock[]
@@ -141,7 +155,9 @@ export const foldedValueOf = (block: CodeBlock): CodeBlock | null => {
 export const isNodeBlock = (block: CodeBlock): boolean => {
   if (isCardNotNodeBlock(block)) return false
   if (block.parentBlock === null) return block.type !== STATEMENT && !isFoldedValue(block)
-  return isOwnNode(block) || isCardNodeBlock(block, isNodeBlock) || (isTriggered(block) && hasNodesInside(rootOf(block)) && !isInsideOwnNode(block))
+  if (isOwnNode(block) || isCardNodeBlock(block, isNodeBlock)) return true
+  const isRunOnItsOwn = (isTriggered(block) && !isMergedCallback(block) && !isFoldedCall(block) && !isFoldedCallback(block)) || isMemoBlock(block)
+  return isRunOnItsOwn && hasNodesInside(rootOf(block)) && !isInsideOwnNode(block) && !isInsideMemo(block)
 }
 
 export const isNodeDrawnInside = (block: CodeBlock): boolean => block.parentBlock !== null && isCardNodeBlock(block, isNodeBlock)
@@ -149,12 +165,26 @@ export const isNodeDrawnInside = (block: CodeBlock): boolean => block.parentBloc
 export const isStepBlock = (block: CodeBlock): boolean =>
   block.parentBlock !== null && !isPartOfRender(block) && !isTriggered(block) && (isInvoked(block) || isExecutedAfterRender(block))
 
-const blockAround = (block: CodeBlock): CodeBlock | null => eventHandedTo(block) ?? block.cardOwner ?? classOfDeclaredProperty(block) ?? block.parentBlock
+type BlockAround = (block: CodeBlock) => CodeBlock | null
 
-const holderBlockOf = (block: CodeBlock): CodeBlock => {
-  const around = blockAround(block)
-  return around === null || isNodeBlock(block) ? block : holderBlockOf(around)
+const ownerBlockAround: BlockAround = (block) => block.cardOwner ?? classOfDeclaredProperty(block) ?? block.parentBlock
+
+const linkedBlockAround: BlockAround = (block) => eventHandedTo(block) ?? ownerBlockAround(block)
+
+const holderBlockAlong = (block: CodeBlock, blockAroundOf: BlockAround): CodeBlock =>
+  endOfChain(block, { nextOf: (step) => (isNodeBlock(step) ? null : blockAroundOf(step)), keyOf: (step) => step.id })
+
+const leadsBackTo = (start: CodeBlock, block: CodeBlock): boolean =>
+  holderBlockAlong(start, (step) => (step.id === block.id ? null : linkedBlockAround(step))).id === block.id
+
+const eventHandedOutsideOf = (block: CodeBlock): CodeBlock | null => {
+  const event = eventHandedTo(block)
+  return event === null || leadsBackTo(event, block) ? null : event
 }
+
+const blockAround: BlockAround = (block) => eventHandedOutsideOf(block) ?? ownerBlockAround(block)
+
+const holderBlockOf = (block: CodeBlock): CodeBlock => holderBlockAlong(block, blockAround)
 
 export const nodeBlockOf = (block: CodeBlock): CodeBlock | null => {
   const holder = holderBlockOf(block)
@@ -171,22 +201,34 @@ const isInStep = (block: CodeBlock): boolean => !isNodeBlock(block) && (isStepBl
 const isAround = (outer: CodeBlock, inner: CodeBlock): boolean =>
   inner.parentBlock !== null && (inner.parentBlock.id === outer.id || isAround(outer, inner.parentBlock))
 
-const carryThrough = (from: CodeBlock, fromBlock: CodeBlock, toBlock: CodeBlock, nextBlocksOf: NextBlocksOf, carriedIds: ReadonlySet<string>): NodeStep[] => {
-  if (carriedIds.has(toBlock.id)) return []
-  return nextBlocksOf(toBlock).flatMap((next) => stepsInto(from, fromBlock, next, nextBlocksOf, new Set([...carriedIds, toBlock.id])))
+const callsValue = (fromBlock: CodeBlock, value: CodeBlock): boolean => listCalledBlocks(fromBlock).some((called) => called.id === value.id)
+
+const isOnlyRead = (from: CodeBlock, fromBlock: CodeBlock, value: CodeBlock): boolean => isHookCallBlock(from) && !callsValue(fromBlock, value)
+
+const CARRIED: Landing = { isCarried: true, steps: [] }
+const NOWHERE: Landing = { isCarried: false, steps: [] }
+
+const landingOf = (from: CodeBlock, fromBlock: CodeBlock, toBlock: CodeBlock): Landing => {
+  const to = nodeBlockOf(toBlock)
+  if (to === null) return foldedValueOf(toBlock) === null ? NOWHERE : CARRIED
+  const isInFrom = to.id === from.id
+  if (!isInFrom && toBlock.id !== to.id && isAround(to, from) && isOnlyRead(from, fromBlock, toBlock)) return NOWHERE
+  const isCarried = toBlock.id !== to.id && (isInFrom ? isInStep(fromBlock) && VALUE_TYPES.has(toBlock.type) : isAround(to, from))
+  if (isCarried) return CARRIED
+  return isInFrom || isAround(from, to) ? NOWHERE : { isCarried: false, steps: [{ from, fromBlock, to, toBlock }] }
 }
 
-const stepsInto = (from: CodeBlock, fromBlock: CodeBlock, toBlock: CodeBlock, nextBlocksOf: NextBlocksOf, carriedIds: ReadonlySet<string>): NodeStep[] => {
-  const to = nodeBlockOf(toBlock)
-  if (to === null) return foldedValueOf(toBlock) === null ? [] : carryThrough(from, fromBlock, toBlock, nextBlocksOf, carriedIds)
-  const isInFrom = to.id === from.id
-  const isCarried = toBlock.id !== to.id && (isInFrom ? isInStep(fromBlock) && VALUE_TYPES.has(toBlock.type) : isAround(to, from))
-  if (isCarried) return carryThrough(from, fromBlock, toBlock, nextBlocksOf, carriedIds)
-  return isInFrom || isAround(from, to) ? [] : [{ from, fromBlock, to, toBlock }]
+const listStepsFrom = (from: CodeBlock, fromBlock: CodeBlock, nextBlocksOf: NextBlocksOf): NodeStep[] => {
+  const landedOn = (toBlock: CodeBlock): Landed => ({ toBlock, landing: landingOf(from, fromBlock, toBlock) })
+  const landed = walkDepthFirst(nextBlocksOf(fromBlock).map(landedOn), {
+    nextOf: ({ toBlock, landing }) => (landing.isCarried ? nextBlocksOf(toBlock).map(landedOn) : []),
+    keyOf: ({ toBlock }) => toBlock.id,
+  })
+  return [...landed].flatMap(({ landing }) => landing.steps)
 }
 
 export const listNodeSteps = (blocks: readonly CodeBlock[], nextBlocksOf: NextBlocksOf): NodeStep[] =>
   blocks.flatMap((block) => {
     const from = nodeBlockOf(block)
-    return from === null ? [] : nextBlocksOf(block).flatMap((next) => stepsInto(from, block, next, nextBlocksOf, new Set()))
+    return from === null ? [] : listStepsFrom(from, block, nextBlocksOf)
   })

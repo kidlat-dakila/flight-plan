@@ -1,0 +1,6 @@
+{
+  "title": "Component card in Vue",
+  "packages": ["vue"],
+  "language": "typescript",
+  "mainFramework": "vue"
+}

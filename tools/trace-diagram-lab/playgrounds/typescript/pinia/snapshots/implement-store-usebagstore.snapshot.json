@@ -284,7 +284,12 @@
                   "codeBlockId": "src/components/ui/BaseButton.vue#render-event@7:74"
                 }
               ],
-              "blockLabels": []
+              "blockLabels": [
+                {
+                  "label": "Renders a button around the content it is given, styled by its variant",
+                  "codeBlockId": "src/components/ui/BaseButton.vue#render-root@6:1"
+                }
+              ]
             },
             {
               "id": "src/stores/bag.ts#state@9:1",
@@ -472,8 +477,20 @@
                       ],
                       "blockLabels": [
                         {
-                          "label": "Takes the item count and the total price",
-                          "codeBlockId": "src/views/items/components/BagSummary.vue#call@5:1"
+                          "label": "Renders the item count and the total with a button that empties the bag",
+                          "codeBlockId": "src/views/items/components/BagSummary.vue#render-root@13:1"
+                        },
+                        {
+                          "label": "Calls formatPrice to write the total of the bag",
+                          "codeBlockId": "src/views/items/components/BagSummary.vue#render@14:3",
+                          "at": {
+                            "line": 15,
+                            "column": 38
+                          }
+                        },
+                        {
+                          "label": "Renders `<BaseButton />` that asks to empty the bag",
+                          "codeBlockId": "src/views/items/components/BagSummary.vue#render@16:5"
                         }
                       ]
                     }
@@ -490,14 +507,83 @@
                   ],
                   "blockLabels": [
                     {
-                      "label": "Gets the bag store",
-                      "codeBlockId": "src/views/items/ItemsPage.vue#external-value@9:1"
+                      "label": "Calls useItems to load the items and whether they still load",
+                      "codeBlockId": "src/views/items/ItemsPage.vue#external-value@8:1",
+                      "at": {
+                        "line": 8,
+                        "column": 30
+                      }
+                    },
+                    {
+                      "label": "Calls useBagStore to read the bag and add items to it",
+                      "codeBlockId": "src/views/items/ItemsPage.vue#external-value@9:1",
+                      "at": {
+                        "line": 9,
+                        "column": 13
+                      }
+                    },
+                    {
+                      "label": "Renders the summary of the bag above the list of items",
+                      "codeBlockId": "src/views/items/ItemsPage.vue#render-root@16:1"
+                    },
+                    {
+                      "label": "Renders `<BagSummary />` with the count and the total of the bag",
+                      "codeBlockId": "src/views/items/ItemsPage.vue#render@17:3"
+                    },
+                    {
+                      "label": "Renders a loading line when the items are still loading",
+                      "codeBlockId": "src/views/items/ItemsPage.vue#render-condition@18:3"
+                    },
+                    {
+                      "label": "Calls formatPrice to write the price of each item",
+                      "codeBlockId": "src/views/items/ItemsPage.vue#render@20:5",
+                      "at": {
+                        "line": 21,
+                        "column": 26
+                      }
+                    },
+                    {
+                      "label": "Renders `<BaseButton />` for each item when the items are loaded",
+                      "codeBlockId": "src/views/items/ItemsPage.vue#render@22:7"
                     }
                   ]
                 }
               ],
               "triggerLabels": [],
-              "blockLabels": []
+              "blockLabels": [
+                {
+                  "label": "Renders the header with its buttons and the page the user chose",
+                  "codeBlockId": "src/App.vue#render-root@15:1"
+                },
+                {
+                  "label": "Renders `<BaseButton />` that opens the trainers page",
+                  "codeBlockId": "src/App.vue#render@17:5"
+                },
+                {
+                  "label": "Renders `<BaseButton />` that opens the items page",
+                  "codeBlockId": "src/App.vue#render@18:5"
+                },
+                {
+                  "label": "Renders `<BaseButton />` that opens the help page",
+                  "codeBlockId": "src/App.vue#render@19:5"
+                },
+                {
+                  "label": "Renders `<BaseButton />` that signs the professor out",
+                  "codeBlockId": "src/App.vue#render@21:5"
+                },
+                {
+                  "label": "Renders `<TrainersPage />` when the user chose trainers",
+                  "codeBlockId": "src/App.vue#render@24:5"
+                },
+                {
+                  "label": "Renders `<ItemsPage />` when the user chose items",
+                  "codeBlockId": "src/App.vue#render@25:5"
+                },
+                {
+                  "label": "Renders `<HelpPage />` when the user chose help",
+                  "codeBlockId": "src/App.vue#render@26:5"
+                }
+              ]
             },
             {
               "id": "src/components/ui/BaseButton.vue#render-event@7:74",
@@ -510,7 +596,16 @@
               "diffCodeBlockIds": [],
               "children": [],
               "triggerLabels": [],
-              "blockLabels": []
+              "blockLabels": [
+                {
+                  "label": "Calls emit to pass the click to the component that renders the button",
+                  "codeBlockId": "src/components/ui/BaseButton.vue#render-event@7:74",
+                  "at": {
+                    "line": 7,
+                    "column": 82
+                  }
+                }
+              ]
             },
             {
               "id": "src/views/items/ItemsPage.vue#render-event@17:53",
@@ -531,8 +626,12 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Clears every line of the bag store",
-                  "codeBlockId": "src/views/items/ItemsPage.vue#call@12:3"
+                  "label": "Calls bag.clear to remove every line from the bag",
+                  "codeBlockId": "src/views/items/ItemsPage.vue#call@12:3",
+                  "at": {
+                    "line": 12,
+                    "column": 3
+                  }
                 }
               ]
             },
@@ -549,7 +648,16 @@
               ],
               "children": [],
               "triggerLabels": [],
-              "blockLabels": []
+              "blockLabels": [
+                {
+                  "label": "Calls bag.addItem to add one of the item of the row to the bag",
+                  "codeBlockId": "src/views/items/ItemsPage.vue#render-event@22:35",
+                  "at": {
+                    "line": 22,
+                    "column": 43
+                  }
+                }
+              ]
             },
             {
               "id": "src/views/items/components/BagSummary.vue#render-event@16:57",
@@ -570,8 +678,12 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Emits clear to the page",
-                  "codeBlockId": "src/views/items/components/BagSummary.vue#call@9:3"
+                  "label": "Calls emit to ask the items page to empty the bag",
+                  "codeBlockId": "src/views/items/components/BagSummary.vue#call@9:3",
+                  "at": {
+                    "line": 9,
+                    "column": 3
+                  }
                 }
               ]
             }

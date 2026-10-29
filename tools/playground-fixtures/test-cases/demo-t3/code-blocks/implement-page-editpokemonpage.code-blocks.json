@@ -916,6 +916,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 2,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/app/_components/SubmitButton.tsx"
         ],
@@ -1937,6 +1943,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 6,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/app/layout.tsx"
         ],
@@ -2566,6 +2578,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 10,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/app/pokemon/[id]/edit/page.tsx"
         ],
@@ -3968,6 +3986,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 9,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/app/pokemon/[id]/page.tsx"
         ],
@@ -4970,6 +4994,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 19,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/app/pokemon/_components/PokemonForm.tsx"
         ],
@@ -8229,6 +8259,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 6,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/app/pokemon/new/page.tsx"
         ],
@@ -8626,6 +8662,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 5,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/app/trainers/page.tsx"
         ],
@@ -10474,6 +10516,12 @@
         ],
         "isRoot": false,
         "isExported": false,
+        "returnsAt": [
+          {
+            "line": 13,
+            "column": 5
+          }
+        ],
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
         "diffs": [],
@@ -10890,6 +10938,12 @@
         ],
         "isRoot": false,
         "isExported": false,
+        "returnsAt": [
+          {
+            "line": 17,
+            "column": 5
+          }
+        ],
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
         "diffs": [],
@@ -11504,6 +11558,12 @@
         ],
         "isRoot": false,
         "isExported": false,
+        "returnsAt": [
+          {
+            "line": 21,
+            "column": 5
+          }
+        ],
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": [
           {
@@ -12309,6 +12369,12 @@
         ],
         "isRoot": false,
         "isExported": false,
+        "returnsAt": [
+          {
+            "line": 5,
+            "column": 5
+          }
+        ],
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
         "diffs": [],
@@ -13557,6 +13623,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 17,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/trpc/react.tsx"
         ],

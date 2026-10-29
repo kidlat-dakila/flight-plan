@@ -55,7 +55,7 @@ src/shared/       the plumbing the folders share: a cache, grouping, records, ru
 src/ast-graph/    the syntax of one file: encapsulations, names, statements and syntax sites, with one reader per language in languages/<language>/
 src/catalogue/    what a call into a library means, as data: one file per language and category of libraries, a fixture for every pattern, and matching/ that applies the patterns to a file
 src/code-blocks/  the blocks of each file of a group, what each block uses, the block around each change, the chains, and the segments of a group
-src/trace-diagram/  the chains of a group in memory → the Trace Diagram of a segment: its nodes, the nodes inside a node, its trigger labels and its edges, with its stored and its flat form
+src/trace-diagram/  the chains of a group in memory → the Trace Diagram of a segment: its nodes, the nodes inside a node, its trigger labels, the rows of a function card, a component card and an effect or memo card, and its edges, with its stored and its flat form
 src/blast-diagram/  the blocks that use the change of a segment → its Blast Diagram
 src/code-walkthrough/      the diff blocks of a segment and its Trace Diagram → its Code Walkthrough
 src/code-references/       the files of a segment → where each name used in the viewed files is defined, and where each name they export is used
@@ -63,7 +63,7 @@ src/scaffold/     the segments of a codegraph, the diff and the files → the fi
 src/code/         source lines with their marks and references, code links, code definitions, highlighting code and a review, marked source for fixtures
 src/prose/        Markdown prose → the prose shapes, and count labels
 src/diagram/      what both diagrams share: the settings, levels through edges
-src/trace/      Trace Diagram: the names of its blocks, the code of a node, band
+src/trace/      Trace Diagram: the names of its blocks, the code of a node, the view of a function card, a component card and an effect or memo card, band
 src/blast/        Blast Diagram: which files the change reaches, file labels, the layout in columns, the views of the band
 src/walkthrough/  Code Walkthrough: waypoints, reviewed marks, file rows, band and controls
 src/review-page/  a review artifact and its highlighted code → the view the review page and the Trace Diagram page are built from: the shown segments, their walkthroughs, code links and definitions, the Trace Diagram band of each segment

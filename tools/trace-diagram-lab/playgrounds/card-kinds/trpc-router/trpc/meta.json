@@ -1,0 +1,6 @@
+{
+  "title": "tRPC router card in tRPC",
+  "packages": ["@trpc/server", "@trpc/client", "@trpc/react-query", "@tanstack/react-query", "react", "react-dom", "zod"],
+  "language": "typescript",
+  "mainFramework": "react"
+}

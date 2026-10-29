@@ -1439,7 +1439,24 @@
                       "codeBlockId": "src/app/pokemon/components/PokemonForm.tsx#render-event@12:11"
                     }
                   ],
-                  "blockLabels": []
+                  "blockLabels": [
+                    {
+                      "label": "Renders a form with the fields of the Pokemon and a Save button",
+                      "codeBlockId": "src/app/pokemon/components/PokemonForm.tsx#component@10:1",
+                      "at": {
+                        "line": 11,
+                        "column": 3
+                      }
+                    },
+                    {
+                      "label": "Renders an option for each trainer",
+                      "codeBlockId": "src/app/pokemon/components/PokemonForm.tsx#render-loop@18:10"
+                    },
+                    {
+                      "label": "Renders `<SubmitButton />` that saves the form",
+                      "codeBlockId": "src/app/pokemon/components/PokemonForm.tsx#render@24:7"
+                    }
+                  ]
                 }
               ],
               "triggerLabels": [
@@ -1450,24 +1467,32 @@
               ],
               "blockLabels": [
                 {
-                  "label": "Reads the id from the URL",
-                  "codeBlockId": "src/app/pokemon/[id]/edit/page.tsx#variable@8:3"
+                  "label": "Calls findPokemon to load the Pokemon with the id from the URL",
+                  "codeBlockId": "src/app/pokemon/[id]/edit/page.tsx#external-value@9:3",
+                  "at": {
+                    "line": 9,
+                    "column": 25
+                  }
                 },
                 {
-                  "label": "Loads the Pokemon with that id",
-                  "codeBlockId": "src/app/pokemon/[id]/edit/page.tsx#external-value@9:3"
+                  "label": "Calls findTrainers to load the trainers for the trainer select",
+                  "codeBlockId": "src/app/pokemon/[id]/edit/page.tsx#external-value@11:3",
+                  "at": {
+                    "line": 11,
+                    "column": 26
+                  }
                 },
                 {
-                  "label": "Checks whether a Pokemon was found",
-                  "codeBlockId": "src/app/pokemon/[id]/edit/page.tsx#condition@10:3"
+                  "label": "Renders a heading with the name of the Pokemon and the form",
+                  "codeBlockId": "src/app/pokemon/[id]/edit/page.tsx#component@7:1",
+                  "at": {
+                    "line": 12,
+                    "column": 3
+                  }
                 },
                 {
-                  "label": "Renders the 404 page when none was found",
-                  "codeBlockId": "src/app/pokemon/[id]/edit/page.tsx#call@10:30"
-                },
-                {
-                  "label": "Loads the trainers for the trainer select",
-                  "codeBlockId": "src/app/pokemon/[id]/edit/page.tsx#external-value@11:3"
+                  "label": "Renders `<PokemonForm />` filled with the Pokemon to save it",
+                  "codeBlockId": "src/app/pokemon/[id]/edit/page.tsx#render@15:7"
                 }
               ]
             },
@@ -1496,16 +1521,20 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Saves the fields of the form on the Pokemon",
-                  "codeBlockId": "src/app/pokemon/actions.ts#call@26:3"
+                  "label": "Calls savePokemon to store the edited fields of the Pokemon",
+                  "codeBlockId": "src/app/pokemon/actions.ts#call@26:3",
+                  "at": {
+                    "line": 26,
+                    "column": 9
+                  }
                 },
                 {
-                  "label": "Clears the cached page of the Pokemon",
-                  "codeBlockId": "src/app/pokemon/actions.ts#cache@27:3"
-                },
-                {
-                  "label": "Redirects to the page of the Pokemon",
-                  "codeBlockId": "src/app/pokemon/actions.ts#navigation@28:3"
+                  "label": "Calls readPokemonFields to read the Pokemon fields from the form",
+                  "codeBlockId": "src/app/pokemon/actions.ts#call@26:3",
+                  "at": {
+                    "line": 26,
+                    "column": 25
+                  }
                 }
               ]
             },
@@ -1530,12 +1559,7 @@
               ],
               "children": [],
               "triggerLabels": [],
-              "blockLabels": [
-                {
-                  "label": "Sets the fields on the row with this id",
-                  "codeBlockId": "src/db/queries/pokemon.ts#call@16:3"
-                }
-              ]
+              "blockLabels": []
             },
             {
               "id": "src/app/pokemon/[id]/edit/page.tsx#render-event@15:20",

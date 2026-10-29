@@ -10,12 +10,35 @@ export interface PlaygroundEntry {
   readonly language: string
   readonly framework: string
   readonly title: string
+}
+
+export interface PlaygroundCase {
+  readonly id: string
+  readonly title: string
   readonly caseTitle: string
+  readonly artifact: ReviewArtifact
 }
 
 interface PlaygroundName {
   readonly language: string
   readonly framework: string
+}
+
+interface CaseFolder {
+  readonly id: string
+  readonly casesPath: string
+  readonly kind: string
+}
+
+interface CaseMeta {
+  readonly title: string
+  readonly language?: string
+}
+
+interface TitledCaseFolder {
+  readonly folder: CaseFolder
+  readonly meta: CaseMeta
+  readonly snapshotName: string
 }
 
 const ID_SEPARATOR = "/"
@@ -26,7 +49,7 @@ const META_FILE = "meta.json"
 const BEFORE = -1
 const AFTER = 1
 
-const playgroundMetaSchema = z.object({ title: z.string() })
+const caseMetaSchema = z.object({ title: z.string(), language: z.string().optional() })
 
 const playgroundIdOf = ({ language, framework }: PlaygroundName): string => [language, framework].join(ID_SEPARATOR)
 
@@ -46,6 +69,9 @@ const inFrameworkOrder = (one: string, two: string): number => {
   return inCodeOrder(one, two)
 }
 
+const inVariantOrder = (one: TitledCaseFolder, two: TitledCaseFolder): number =>
+  inCodeOrder(one.meta.language ?? "", two.meta.language ?? "") || inCodeOrder(one.folder.kind, two.folder.kind)
+
 const listFolderNames = async (path: string): Promise<string[]> => {
   try {
     return (await getAllFixtureCases(path)).filter((name) => FOLDER_NAME_PATTERN.test(name))
@@ -55,26 +81,39 @@ const listFolderNames = async (path: string): Promise<string[]> => {
   }
 }
 
-const readPlaygroundTitle = async (languagePath: string, framework: string): Promise<string | null> => {
-  const text = await readTextOrNull(join(languagePath, framework, META_FILE))
+const readMeta = async (folderPath: string): Promise<CaseMeta | null> => {
+  const text = await readTextOrNull(join(folderPath, META_FILE))
   if (text === null) return null
   const parsed: unknown = JSON.parse(text)
-  return playgroundMetaSchema.parse(parsed).title
+  return caseMetaSchema.parse(parsed)
 }
 
-const firstSnapshotNameOf = async (languagePath: string, framework: string): Promise<string | null> =>
-  (await listSnapshotNames(languagePath, framework)).at(0) ?? null
+const titledCaseFolderOf = async (folder: CaseFolder): Promise<TitledCaseFolder | null> => {
+  const [meta, snapshotNames] = await Promise.all([readMeta(join(folder.casesPath, folder.kind)), listSnapshotNames(folder.casesPath, folder.kind)])
+  const snapshotName = snapshotNames.at(0) ?? null
+  return meta === null || snapshotName === null ? null : { folder, meta, snapshotName }
+}
+
+const isTitled = (titled: TitledCaseFolder | null): titled is TitledCaseFolder => titled !== null
+
+const listVariantFolders = async (playgroundId: string, groupPath: string): Promise<TitledCaseFolder[]> => {
+  const variants = await listFolderNames(groupPath)
+  const titled = await Promise.all(variants.map(async (variant) =>
+    await titledCaseFolderOf({ id: [playgroundId, variant].join(ID_SEPARATOR), casesPath: groupPath, kind: variant })))
+  return titled.filter(isTitled).sort(inVariantOrder)
+}
+
+const listCaseFolders = async (playgroundsPath: string, name: PlaygroundName): Promise<TitledCaseFolder[]> => {
+  const id = playgroundIdOf(name)
+  const languagePath = join(playgroundsPath, name.language)
+  const own = await titledCaseFolderOf({ id, casesPath: languagePath, kind: name.framework })
+  return own === null ? await listVariantFolders(id, join(languagePath, name.framework)) : [own]
+}
 
 const readPlaygroundEntry = async (playgroundsPath: string, name: PlaygroundName): Promise<PlaygroundEntry | null> => {
-  const languagePath = join(playgroundsPath, name.language)
-  const snapshotName = await firstSnapshotNameOf(languagePath, name.framework)
-  if (snapshotName === null) return null
-  const [title, snapshot] = await Promise.all([
-    readPlaygroundTitle(languagePath, name.framework),
-    readTraceSnapshot(languagePath, name.framework, snapshotName),
-  ])
-  if (title === null || snapshot === null) return null
-  return { id: playgroundIdOf(name), ...name, title, caseTitle: snapshot.title }
+  const [meta, caseFolders] = await Promise.all([readMeta(join(playgroundsPath, name.language, name.framework)), listCaseFolders(playgroundsPath, name)])
+  if (meta === null || caseFolders.length === 0) return null
+  return { id: playgroundIdOf(name), ...name, title: meta.title }
 }
 
 const listLanguage = async (playgroundsPath: string, language: string): Promise<PlaygroundEntry[]> => {
@@ -89,10 +128,18 @@ export const listPlaygrounds = async (playgroundsPath: string = PLAYGROUNDS_FOLD
   return entries.flat()
 }
 
-export const readPlayground = async (id: string, playgroundsPath: string = PLAYGROUNDS_FOLDER): Promise<ReviewArtifact | null> => {
+const readPlaygroundCase = async ({ folder, meta, snapshotName }: TitledCaseFolder): Promise<PlaygroundCase | null> => {
+  const [snapshot, artifact] = await Promise.all([
+    readTraceSnapshot(folder.casesPath, folder.kind, snapshotName),
+    readCaseArtifact(folder.casesPath, folder.kind, snapshotName),
+  ])
+  return snapshot === null || artifact === null ? null : { id: folder.id, title: meta.title, caseTitle: snapshot.title, artifact }
+}
+
+export const readPlayground = async (id: string, playgroundsPath: string = PLAYGROUNDS_FOLDER): Promise<readonly PlaygroundCase[] | null> => {
   const name = parsePlaygroundId(id)
   if (name === null) return null
-  const languagePath = join(playgroundsPath, name.language)
-  const snapshotName = await firstSnapshotNameOf(languagePath, name.framework)
-  return snapshotName === null ? null : await readCaseArtifact(languagePath, name.framework, snapshotName)
+  const caseFolders = await listCaseFolders(playgroundsPath, name)
+  const cases = (await Promise.all(caseFolders.map(readPlaygroundCase))).filter((playgroundCase): playgroundCase is PlaygroundCase => playgroundCase !== null)
+  return cases.length === 0 ? null : cases
 }

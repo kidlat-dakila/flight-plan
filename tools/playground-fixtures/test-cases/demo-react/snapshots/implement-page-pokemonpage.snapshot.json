@@ -1532,7 +1532,28 @@
               ],
               "children": [],
               "triggerLabels": [],
-              "blockLabels": []
+              "blockLabels": [
+                {
+                  "label": "Calls useSession to get the name of the professor and the sign-out action",
+                  "codeBlockId": "src/routes/root-layout.tsx#external-value@6:3",
+                  "at": {
+                    "line": 6,
+                    "column": 38
+                  }
+                },
+                {
+                  "label": "Renders the header with its links and the page of the route under it",
+                  "codeBlockId": "src/routes/root-layout.tsx#component@5:1",
+                  "at": {
+                    "line": 7,
+                    "column": 3
+                  }
+                },
+                {
+                  "label": "Renders `<Button />` that signs the professor out",
+                  "codeBlockId": "src/routes/root-layout.tsx#render@15:9"
+                }
+              ]
             },
             {
               "id": "src/routes/pokemon/index.tsx#component@5:1",
@@ -1618,20 +1639,32 @@
                   ],
                   "blockLabels": [
                     {
-                      "label": "Uses an empty value for Every trainer",
-                      "codeBlockId": "src/routes/pokemon/components/PokemonFilters.tsx#root-variable@4:1"
+                      "label": "Calls usePokemonFilters to get the chosen trainer and its setter",
+                      "codeBlockId": "src/routes/pokemon/components/PokemonFilters.tsx#state@7:3",
+                      "at": {
+                        "line": 7,
+                        "column": 39
+                      }
                     },
                     {
-                      "label": "Reads the chosen trainer and its setter from the store",
-                      "codeBlockId": "src/routes/pokemon/components/PokemonFilters.tsx#state@7:3"
+                      "label": "Calls useTrainers to get the trainers for the options",
+                      "codeBlockId": "src/routes/pokemon/components/PokemonFilters.tsx#external-value@8:3",
+                      "at": {
+                        "line": 8,
+                        "column": 35
+                      }
                     },
                     {
-                      "label": "Gets the trainers for the options",
-                      "codeBlockId": "src/routes/pokemon/components/PokemonFilters.tsx#external-value@8:3"
+                      "label": "Renders a select of the trainers with Every trainer first",
+                      "codeBlockId": "src/routes/pokemon/components/PokemonFilters.tsx#component@6:1",
+                      "at": {
+                        "line": 9,
+                        "column": 3
+                      }
                     },
                     {
-                      "label": "Renders one option per trainer",
-                      "codeBlockId": "src/routes/pokemon/components/PokemonFilters.tsx#function@12:21"
+                      "label": "Renders an option for each trainer",
+                      "codeBlockId": "src/routes/pokemon/components/PokemonFilters.tsx#render-loop@12:8"
                     }
                   ]
                 }
@@ -1639,12 +1672,48 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Gets the Pokemon of the chosen trainer",
-                  "codeBlockId": "src/routes/pokemon/index.tsx#external-value@6:3"
+                  "label": "Calls usePokemon to get the Pokemon of the chosen trainer",
+                  "codeBlockId": "src/routes/pokemon/index.tsx#external-value@6:3",
+                  "at": {
+                    "line": 6,
+                    "column": 49
+                  }
                 },
                 {
-                  "label": "Renders one line per Pokemon with its level and types",
-                  "codeBlockId": "src/routes/pokemon/index.tsx#function@15:24"
+                  "label": "Renders the heading, the trainer select and the list of Pokemon",
+                  "codeBlockId": "src/routes/pokemon/index.tsx#component@5:1",
+                  "at": {
+                    "line": 7,
+                    "column": 3
+                  }
+                },
+                {
+                  "label": "Renders `<PokemonFilters />` to choose a trainer",
+                  "codeBlockId": "src/routes/pokemon/index.tsx#render@10:7"
+                },
+                {
+                  "label": "Renders a loading line while the Pokemon load",
+                  "codeBlockId": "src/routes/pokemon/index.tsx#render-condition@11:8"
+                },
+                {
+                  "label": "Renders an error line when the Pokemon could not be loaded",
+                  "codeBlockId": "src/routes/pokemon/index.tsx#render-condition@12:8"
+                },
+                {
+                  "label": "Renders a list when the Pokemon are loaded",
+                  "codeBlockId": "src/routes/pokemon/index.tsx#render-condition@13:8"
+                },
+                {
+                  "label": "Renders a line for each Pokemon with its name, level and types",
+                  "codeBlockId": "src/routes/pokemon/index.tsx#render-loop@15:12"
+                },
+                {
+                  "label": "Calls formatTypes to write the types of the Pokemon",
+                  "codeBlockId": "src/routes/pokemon/index.tsx#render@16:13",
+                  "at": {
+                    "line": 17,
+                    "column": 47
+                  }
                 }
               ]
             },
@@ -1723,20 +1792,28 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Starts the key of every Pokemon query",
-                  "codeBlockId": "src/hooks/use-pokemon.ts#root-variable@5:1"
+                  "label": "Calls usePokemonFilters to read the chosen trainer",
+                  "codeBlockId": "src/hooks/use-pokemon.ts#component-effect@8:21",
+                  "at": {
+                    "line": 8,
+                    "column": 21
+                  }
                 },
                 {
-                  "label": "Reads the chosen trainer from the store",
-                  "codeBlockId": "src/hooks/use-pokemon.ts#state@8:3"
+                  "label": "Returns the query of the Pokemon of the chosen trainer",
+                  "codeBlockId": "src/hooks/use-pokemon.ts#hook@7:1",
+                  "at": {
+                    "line": 9,
+                    "column": 3
+                  }
                 },
                 {
-                  "label": "Loads the Pokemon again when the trainer changes",
-                  "codeBlockId": "src/hooks/use-pokemon.ts#component-effect@9:10"
-                },
-                {
-                  "label": "Requests the Pokemon of the chosen trainer",
-                  "codeBlockId": "src/hooks/use-pokemon.ts#effect-callback@11:5"
+                  "label": "Calls fetchPokemon to load the Pokemon of the chosen trainer",
+                  "codeBlockId": "src/hooks/use-pokemon.ts#function@11:14",
+                  "at": {
+                    "line": 11,
+                    "column": 20
+                  }
                 }
               ]
             },
@@ -1761,8 +1838,20 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Adds the trainer to the query string when one is chosen",
-                  "codeBlockId": "src/api/pokemon.ts#variable@5:3"
+                  "label": "Returns the Pokemon the API sends back",
+                  "codeBlockId": "src/api/pokemon.ts#function@4:1",
+                  "at": {
+                    "line": 6,
+                    "column": 3
+                  }
+                },
+                {
+                  "label": "Calls request to fetch the Pokemon, of one trainer when one is given",
+                  "codeBlockId": "src/api/pokemon.ts#function@4:1",
+                  "at": {
+                    "line": 6,
+                    "column": 10
+                  }
                 }
               ]
             },
@@ -1789,8 +1878,12 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Checks whether the Pokemon has a second type",
-                  "codeBlockId": "src/lib/format.ts#condition@12:10"
+                  "label": "Returns the first type, and the second after a slash when there is one",
+                  "codeBlockId": "src/lib/format.ts#function@11:1",
+                  "at": {
+                    "line": 12,
+                    "column": 3
+                  }
                 }
               ]
             },
@@ -1817,12 +1910,12 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Compares the picked value with the value of Every trainer",
-                  "codeBlockId": "src/routes/pokemon/components/PokemonFilters.tsx#root-variable@4:1"
-                },
-                {
-                  "label": "Checks whether Every trainer is picked",
-                  "codeBlockId": "src/routes/pokemon/components/PokemonFilters.tsx#condition@10:74"
+                  "label": "Calls setTrainerId to choose the picked trainer, or none for Every trainer",
+                  "codeBlockId": "src/routes/pokemon/components/PokemonFilters.tsx#function@10:50",
+                  "at": {
+                    "line": 10,
+                    "column": 61
+                  }
                 }
               ]
             }

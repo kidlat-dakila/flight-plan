@@ -315,7 +315,24 @@
               ],
               "children": [],
               "triggerLabels": [],
-              "blockLabels": []
+              "blockLabels": [
+                {
+                  "label": "Returns the trainer of the id in the path",
+                  "codeBlockId": "src/routes/trainer/loader.ts#function@4:1",
+                  "at": {
+                    "line": 5,
+                    "column": 3
+                  }
+                },
+                {
+                  "label": "Calls fetchTrainer to request the trainer of the id in the path",
+                  "codeBlockId": "src/routes/trainer/loader.ts#function@4:1",
+                  "at": {
+                    "line": 5,
+                    "column": 16
+                  }
+                }
+              ]
             },
             {
               "id": "src/api/trainers.ts#function@8:1",
@@ -332,7 +349,24 @@
               ],
               "children": [],
               "triggerLabels": [],
-              "blockLabels": []
+              "blockLabels": [
+                {
+                  "label": "Returns the trainer from the API",
+                  "codeBlockId": "src/api/trainers.ts#function@8:1",
+                  "at": {
+                    "line": 9,
+                    "column": 3
+                  }
+                },
+                {
+                  "label": "Calls request to get the trainer of the id from the API",
+                  "codeBlockId": "src/api/trainers.ts#function@8:1",
+                  "at": {
+                    "line": 9,
+                    "column": 10
+                  }
+                }
+              ]
             }
           ],
           "traceNodeEdges": [
@@ -953,12 +987,20 @@
               ],
               "blockLabels": [
                 {
-                  "label": "Gets the trainer that the loader returned",
-                  "codeBlockId": "src/routes/trainer/index.tsx#external-value@5:3"
+                  "label": "Calls useLoaderData to get the trainer that the loader returned",
+                  "codeBlockId": "src/routes/trainer/index.tsx#external-value@5:3",
+                  "at": {
+                    "line": 5,
+                    "column": 19
+                  }
                 },
                 {
-                  "label": "Gets the function that opens another path",
-                  "codeBlockId": "src/routes/trainer/index.tsx#external-value@6:3"
+                  "label": "Renders the name and the hometown of the trainer with a button back to the trainers",
+                  "codeBlockId": "src/routes/trainer/index.tsx#component@4:1",
+                  "at": {
+                    "line": 12,
+                    "column": 3
+                  }
                 }
               ]
             },
@@ -979,12 +1021,7 @@
               ],
               "children": [],
               "triggerLabels": [],
-              "blockLabels": [
-                {
-                  "label": "Opens the trainers list at the path /",
-                  "codeBlockId": "src/routes/trainer/index.tsx#navigation@9:5"
-                }
-              ]
+              "blockLabels": []
             }
           ],
           "traceNodeEdges": [
@@ -1519,14 +1556,39 @@
                   ],
                   "children": [],
                   "triggerLabels": [],
-                  "blockLabels": []
+                  "blockLabels": [
+                    {
+                      "label": "Renders a row with a link to the trainer page and the hometown",
+                      "codeBlockId": "src/routes/trainers/components/TrainerRow.tsx#component@4:1",
+                      "at": {
+                        "line": 5,
+                        "column": 3
+                      }
+                    }
+                  ]
                 }
               ],
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Renders one row for each trainer",
-                  "codeBlockId": "src/routes/trainers/index.tsx#function@10:23"
+                  "label": "Calls useLoaderData to get the trainers that the loader returned",
+                  "codeBlockId": "src/routes/trainers/index.tsx#external-value@6:3",
+                  "at": {
+                    "line": 6,
+                    "column": 20
+                  }
+                },
+                {
+                  "label": "Renders a table of the trainers",
+                  "codeBlockId": "src/routes/trainers/index.tsx#component@5:1",
+                  "at": {
+                    "line": 7,
+                    "column": 3
+                  }
+                },
+                {
+                  "label": "Renders `<TrainerRow />` for each trainer the loader returned",
+                  "codeBlockId": "src/routes/trainers/index.tsx#render@11:11"
                 }
               ]
             }

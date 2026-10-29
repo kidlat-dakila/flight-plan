@@ -1,5 +1,5 @@
 import { toTraceFlow } from "@/lib/trace-flow"
-import { layoutTrace, type LayoutEdge, type LayoutNode } from "@/lib/trace-layout"
+import { innerWidthOf, layoutTrace, RAIL_INDENT, railIdOf, type LayoutEdge, type LayoutNode } from "@/lib/trace-layout"
 
 const CART_LINE: LayoutNode = {
   id: "cart-line",
@@ -101,5 +101,21 @@ describe("toTraceFlow", () => {
 
   it("draws nothing for a diagram with no node", () => {
     expect(toTraceFlow([], layoutTrace([], []))).toStrictEqual({ frames: [], lines: [] })
+  })
+
+  it("sets a child card on a rail into its parent at the indent of the rail, under the row that names it, and keeps the rail and that row on the parent", () => {
+    const page: LayoutNode = {
+      id: "team-page",
+      rows: [{ id: "section", kind: "render-group", rows: [{ id: "section:return", kind: "render-return" }, { id: "slot-row", kind: "render-row" }, { id: "slot", kind: "card" }] }],
+      children: [{ id: "slot", rows: [{ id: "slot-call", kind: "row" }], children: [] }],
+    }
+    const nested = toTraceFlow([page], layoutTrace([page], []))
+    const [parent, slot] = nested.frames
+    const slotRow = parent.rows.find((row) => row.id === "slot-row")
+
+    expect([slot.id, slot.parentId, slot.position.x]).toStrictEqual(["slot", "team-page", (parent.width - innerWidthOf(parent.width)) / 2 + RAIL_INDENT])
+    expect(slot.position.y).toBeGreaterThan((slotRow?.y ?? 0) + (slotRow?.height ?? 0))
+    expect(parent.rows.map((row) => row.id)).toStrictEqual(["section:return", railIdOf("section"), "slot-row"])
+    expect(slot.rows.map((row) => row.id)).toStrictEqual(["slot-call"])
   })
 })

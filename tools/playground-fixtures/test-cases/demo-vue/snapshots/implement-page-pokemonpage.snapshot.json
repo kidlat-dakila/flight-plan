@@ -1728,7 +1728,16 @@
               ],
               "children": [],
               "triggerLabels": [],
-              "blockLabels": []
+              "blockLabels": [
+                {
+                  "label": "Renders the header with its links and the page of the route under it",
+                  "codeBlockId": "src/views/RootLayout.vue#render-root@10:1"
+                },
+                {
+                  "label": "Renders `<BaseButton />` that signs the professor out",
+                  "codeBlockId": "src/views/RootLayout.vue#render@18:7"
+                }
+              ]
             },
             {
               "id": "src/views/pokemon/PokemonPage.vue#component@1:1",
@@ -1814,20 +1823,36 @@
                   ],
                   "blockLabels": [
                     {
-                      "label": "Lists every Pokemon type as an option",
-                      "codeBlockId": "src/types/pokemon.ts#root-variable@1:1"
+                      "label": "Calls usePokemonFiltersStore to get the filter store",
+                      "codeBlockId": "src/views/pokemon/components/PokemonFilters.vue#external-value@8:1",
+                      "at": {
+                        "line": 8,
+                        "column": 17
+                      }
                     },
                     {
-                      "label": "Gets the filter store",
-                      "codeBlockId": "src/views/pokemon/components/PokemonFilters.vue#external-value@8:1"
+                      "label": "Calls useTrainers to get the trainers for the trainer select",
+                      "codeBlockId": "src/views/pokemon/components/PokemonFilters.vue#external-value@10:1",
+                      "at": {
+                        "line": 10,
+                        "column": 28
+                      }
                     },
                     {
-                      "label": "Reads the type and the trainer as refs the selects write",
-                      "codeBlockId": "src/views/pokemon/components/PokemonFilters.vue#external-value@9:1"
+                      "label": "Renders a type select, a trainer select and a Clear filters button",
+                      "codeBlockId": "src/views/pokemon/components/PokemonFilters.vue#render-root@13:1"
                     },
                     {
-                      "label": "Gets the trainers for the trainer select",
-                      "codeBlockId": "src/views/pokemon/components/PokemonFilters.vue#external-value@10:1"
+                      "label": "Renders an option for each Pokemon type",
+                      "codeBlockId": "src/views/pokemon/components/PokemonFilters.vue#render-loop@17:7"
+                    },
+                    {
+                      "label": "Renders an option for each trainer",
+                      "codeBlockId": "src/views/pokemon/components/PokemonFilters.vue#render-loop@21:7"
+                    },
+                    {
+                      "label": "Renders `<BaseButton />` that clears both filters",
+                      "codeBlockId": "src/views/pokemon/components/PokemonFilters.vue#render@23:5"
                     }
                   ]
                 }
@@ -1835,8 +1860,44 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Gets the Pokemon that match the filters",
-                  "codeBlockId": "src/views/pokemon/PokemonPage.vue#external-value@6:1"
+                  "label": "Calls usePokemon to get the Pokemon that match the filters",
+                  "codeBlockId": "src/views/pokemon/PokemonPage.vue#external-value@6:1",
+                  "at": {
+                    "line": 6,
+                    "column": 41
+                  }
+                },
+                {
+                  "label": "Renders the heading, the filters and the list of Pokemon",
+                  "codeBlockId": "src/views/pokemon/PokemonPage.vue#render-root@9:1"
+                },
+                {
+                  "label": "Renders `<PokemonFilters />` to choose a type and a trainer",
+                  "codeBlockId": "src/views/pokemon/PokemonPage.vue#render@12:5"
+                },
+                {
+                  "label": "Renders a loading line while the Pokemon load",
+                  "codeBlockId": "src/views/pokemon/PokemonPage.vue#render-condition@13:5"
+                },
+                {
+                  "label": "Renders an error line when the Pokemon could not be loaded",
+                  "codeBlockId": "src/views/pokemon/PokemonPage.vue#render-condition@14:5"
+                },
+                {
+                  "label": "Renders a list when the Pokemon are loaded",
+                  "codeBlockId": "src/views/pokemon/PokemonPage.vue#render-condition@15:5"
+                },
+                {
+                  "label": "Renders a line for each Pokemon with its name, level and types",
+                  "codeBlockId": "src/views/pokemon/PokemonPage.vue#render-loop@16:7"
+                },
+                {
+                  "label": "Calls formatTypes to write the types of the Pokemon",
+                  "codeBlockId": "src/views/pokemon/PokemonPage.vue#render@16:7",
+                  "at": {
+                    "line": 16,
+                    "column": 94
+                  }
                 }
               ]
             },
@@ -1931,32 +1992,36 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Starts the key of every Pokemon query",
-                  "codeBlockId": "src/composables/use-pokemon.ts#root-variable@8:1"
+                  "label": "Calls usePokemonFiltersStore to read the chosen type and trainer",
+                  "codeBlockId": "src/composables/use-pokemon.ts#external-value@14:3",
+                  "at": {
+                    "line": 14,
+                    "column": 43
+                  }
                 },
                 {
-                  "label": "Reads the type and the trainer from the store as refs",
-                  "codeBlockId": "src/composables/use-pokemon.ts#external-value@14:3"
+                  "label": "Calls fetchPokemon to load the Pokemon of the chosen trainer",
+                  "codeBlockId": "src/composables/use-pokemon.ts#function@17:14",
+                  "at": {
+                    "line": 17,
+                    "column": 20
+                  }
                 },
                 {
-                  "label": "Gets the query of the Pokemon",
-                  "codeBlockId": "src/composables/use-pokemon.ts#external-value@15:3"
+                  "label": "Calls hasType to keep only the Pokemon of the chosen type",
+                  "codeBlockId": "src/composables/use-pokemon.ts#function@19:66",
+                  "at": {
+                    "line": 19,
+                    "column": 77
+                  }
                 },
                 {
-                  "label": "Loads the Pokemon again when the trainer changes",
-                  "codeBlockId": "src/composables/use-pokemon.ts#component-effect@15:17"
-                },
-                {
-                  "label": "Requests the Pokemon of the chosen trainer",
-                  "codeBlockId": "src/composables/use-pokemon.ts#effect-callback@17:5"
-                },
-                {
-                  "label": "Keeps only the Pokemon of the chosen type",
-                  "codeBlockId": "src/composables/use-pokemon.ts#derived@19:3"
-                },
-                {
-                  "label": "Returns the query with the filtered Pokemon",
-                  "codeBlockId": "src/composables/use-pokemon.ts#property@20:22"
+                  "label": "Returns the query with the Pokemon filtered by type",
+                  "codeBlockId": "src/composables/use-pokemon.ts#hook@13:1",
+                  "at": {
+                    "line": 20,
+                    "column": 3
+                  }
                 }
               ]
             },
@@ -1981,8 +2046,20 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Adds the trainer to the query string when one is chosen",
-                  "codeBlockId": "src/api/pokemon.ts#variable@5:3"
+                  "label": "Returns the Pokemon the API sends back",
+                  "codeBlockId": "src/api/pokemon.ts#function@4:1",
+                  "at": {
+                    "line": 6,
+                    "column": 3
+                  }
+                },
+                {
+                  "label": "Calls request to fetch the Pokemon, of one trainer when one is given",
+                  "codeBlockId": "src/api/pokemon.ts#function@4:1",
+                  "at": {
+                    "line": 6,
+                    "column": 10
+                  }
                 }
               ]
             },
@@ -2007,12 +2084,7 @@
               ],
               "children": [],
               "triggerLabels": [],
-              "blockLabels": [
-                {
-                  "label": "Checks whether the Pokemon has a second type",
-                  "codeBlockId": "src/lib/format.ts#condition@10:3"
-                }
-              ]
+              "blockLabels": []
             },
             {
               "id": "src/composables/use-pokemon.ts#function@10:1",
@@ -2050,7 +2122,16 @@
               ],
               "children": [],
               "triggerLabels": [],
-              "blockLabels": []
+              "blockLabels": [
+                {
+                  "label": "Calls filters.clear to set both filters back to null",
+                  "codeBlockId": "src/views/pokemon/components/PokemonFilters.vue#render-event@23:33",
+                  "at": {
+                    "line": 23,
+                    "column": 41
+                  }
+                }
+              ]
             }
           ],
           "traceNodeEdges": [

@@ -1,0 +1,6 @@
+{
+  "title": "Route card in Next.js",
+  "packages": ["next", "react", "react-dom"],
+  "language": "typescript",
+  "mainFramework": "next"
+}

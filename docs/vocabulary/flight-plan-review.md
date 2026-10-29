@@ -216,7 +216,7 @@ What a refresh keeps is decided part by part, by comparing the code as the two a
 | Part | Kept when |
 |---|---|
 | A waypoint's title, reading, core change note and findings | The lines of its declaration are the same |
-| A Trace Diagram node's label, description, trigger labels and block labels | The lines of its code block are the same |
+| A Trace Diagram node's label, description, trigger labels and block labels | The lines of its code block are the same. A block label goes back on the row of the same block at the same place in it, so each call and each return of a function card keeps its own label |
 | A File Section's waypoint order | The whole file is the same |
 | A segment's title, context, file order and the impacts of its Blast Diagram | The segment has the same changed files and every one of them is the same |
 | The title and the description of a Trace Diagram | The same, and the diagram has the same edges and as many nodes |

@@ -145,12 +145,20 @@
                   "triggerLabels": [],
                   "blockLabels": [
                     {
-                      "label": "Reads the Pokemon at the slot",
-                      "codeBlockId": "src/pokedex/team.py#variable@21:9"
+                      "label": "Calls pokemon.level_up to make a copy of the Pokemon one level higher",
+                      "codeBlockId": "src/pokedex/team.py#variable@22:9",
+                      "at": {
+                        "line": 22,
+                        "column": 19
+                      }
                     },
                     {
-                      "label": "Gets a copy of that Pokemon one level higher",
-                      "codeBlockId": "src/pokedex/team.py#variable@22:9"
+                      "label": "Returns the Pokemon one level higher",
+                      "codeBlockId": "src/pokedex/team.py#method@20:5",
+                      "at": {
+                        "line": 25,
+                        "column": 9
+                      }
                     }
                   ]
                 }
@@ -193,8 +201,12 @@
                   "triggerLabels": [],
                   "blockLabels": [
                     {
-                      "label": "Caps the new level at `100`",
-                      "codeBlockId": "src/pokedex/rules.py#root-variable@2:1"
+                      "label": "Returns a copy of the Pokemon one level higher, at most level 100",
+                      "codeBlockId": "src/pokedex/models.py#method@12:5",
+                      "at": {
+                        "line": 13,
+                        "column": 9
+                      }
                     }
                   ]
                 }
@@ -1078,16 +1090,28 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Gets the starter team of Ash",
-                  "codeBlockId": "src/pokedex/cli.py#external-value@14:5"
+                  "label": "Calls build_starter_team to make the team of Ash",
+                  "codeBlockId": "src/pokedex/cli.py#external-value@14:5",
+                  "at": {
+                    "line": 14,
+                    "column": 12
+                  }
                 },
                 {
-                  "label": "Levels up the Pokemon in the first slot",
-                  "codeBlockId": "src/pokedex/cli.py#call@15:5"
+                  "label": "Calls team.train to level up the Pokemon at the first slot",
+                  "codeBlockId": "src/pokedex/cli.py#call@15:5",
+                  "at": {
+                    "line": 15,
+                    "column": 5
+                  }
                 },
                 {
-                  "label": "Prints the team with the level of each Pokemon",
-                  "codeBlockId": "src/pokedex/cli.py#call@16:5"
+                  "label": "Calls describe_team to write the team for printing",
+                  "codeBlockId": "src/pokedex/cli.py#call@16:5",
+                  "at": {
+                    "line": 16,
+                    "column": 11
+                  }
                 }
               ]
             },
@@ -1107,16 +1131,60 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Makes an empty team for Ash of Pallet Town",
-                  "codeBlockId": "src/pokedex/cli.py#external-value@7:5"
+                  "label": "Calls Team to make the team for Ash",
+                  "codeBlockId": "src/pokedex/cli.py#external-value@7:5",
+                  "at": {
+                    "line": 7,
+                    "column": 12
+                  }
                 },
                 {
-                  "label": "Adds Pikachu to the team",
-                  "codeBlockId": "src/pokedex/cli.py#call@8:5"
+                  "label": "Calls Trainer to make Ash from Pallet Town",
+                  "codeBlockId": "src/pokedex/cli.py#external-value@7:5",
+                  "at": {
+                    "line": 7,
+                    "column": 17
+                  }
                 },
                 {
-                  "label": "Adds Bulbasaur to the team",
-                  "codeBlockId": "src/pokedex/cli.py#call@9:5"
+                  "label": "Calls team.add to put Pikachu in the team",
+                  "codeBlockId": "src/pokedex/cli.py#call@8:5",
+                  "at": {
+                    "line": 8,
+                    "column": 5
+                  }
+                },
+                {
+                  "label": "Calls Pokemon to make an electric Pikachu",
+                  "codeBlockId": "src/pokedex/cli.py#call@8:5",
+                  "at": {
+                    "line": 8,
+                    "column": 14
+                  }
+                },
+                {
+                  "label": "Calls team.add to put Bulbasaur in the team",
+                  "codeBlockId": "src/pokedex/cli.py#call@9:5",
+                  "at": {
+                    "line": 9,
+                    "column": 5
+                  }
+                },
+                {
+                  "label": "Calls Pokemon to make a grass and poison Bulbasaur",
+                  "codeBlockId": "src/pokedex/cli.py#call@9:5",
+                  "at": {
+                    "line": 9,
+                    "column": 14
+                  }
+                },
+                {
+                  "label": "Returns the team with Pikachu and Bulbasaur",
+                  "codeBlockId": "src/pokedex/cli.py#function@6:1",
+                  "at": {
+                    "line": 10,
+                    "column": 5
+                  }
                 }
               ]
             },
@@ -1157,12 +1225,20 @@
                   "triggerLabels": [],
                   "blockLabels": [
                     {
-                      "label": "Reads the Pokemon at the slot",
-                      "codeBlockId": "src/pokedex/team.py#variable@21:9"
+                      "label": "Calls pokemon.level_up to make a copy of the Pokemon one level higher",
+                      "codeBlockId": "src/pokedex/team.py#variable@22:9",
+                      "at": {
+                        "line": 22,
+                        "column": 19
+                      }
                     },
                     {
-                      "label": "Gets a copy of that Pokemon one level higher",
-                      "codeBlockId": "src/pokedex/team.py#variable@22:9"
+                      "label": "Returns the Pokemon one level higher",
+                      "codeBlockId": "src/pokedex/team.py#method@20:5",
+                      "at": {
+                        "line": 25,
+                        "column": 9
+                      }
                     }
                   ]
                 }
@@ -1205,8 +1281,12 @@
                   "triggerLabels": [],
                   "blockLabels": [
                     {
-                      "label": "Caps the new level at `100`",
-                      "codeBlockId": "src/pokedex/rules.py#root-variable@2:1"
+                      "label": "Returns a copy of the Pokemon one level higher, at most level 100",
+                      "codeBlockId": "src/pokedex/models.py#method@12:5",
+                      "at": {
+                        "line": 13,
+                        "column": 9
+                      }
                     }
                   ]
                 }

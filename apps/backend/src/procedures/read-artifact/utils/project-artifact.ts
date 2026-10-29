@@ -1,10 +1,13 @@
-import { contextIdOf, flattenTraceNodes, storeFileSection } from "@flightplan/codegraph"
+import { contextIdOf, flattenTraceNodes, listTraceNodes, storeFileSection } from "@flightplan/codegraph"
 import type {
   ReviewArtifact,
   Segment,
+  SourceFile,
+  TraceNode,
   Waypoint,
 } from "@flightplan/configurations"
 import { waypointsOf } from "./artifact-walk"
+import { describeBlockLabels } from "./block-label-rows"
 import { contextStubOf } from "./context-code-blocks"
 import { changedHunksOf } from "./covered-code"
 import { tallyWork, unwrittenWork } from "./unwritten-work"
@@ -45,14 +48,19 @@ const traceStubsOf = (segment: Segment): unknown[] =>
     isRequired,
   }))
 
-const flatTraceOf = (segment: Segment): unknown =>
+const shownTraceNodesOf = (traceNodes: readonly TraceNode[], sources: readonly SourceFile[]): unknown[] => {
+  const nodes = listTraceNodes(traceNodes)
+  return flattenTraceNodes(traceNodes).map((flat, index) => ({ ...flat, blockLabels: describeBlockLabels(nodes[index], sources) }))
+}
+
+const flatTraceOf = (segment: Segment, sources: readonly SourceFile[]): unknown =>
   segment.traceDiagram === null
     ? null
     : {
         title: segment.traceDiagram.title,
         description: segment.traceDiagram.description,
         isDescriptionRequired: segment.traceDiagram.isRequired,
-        nodes: flattenTraceNodes(segment.traceDiagram.traceNodes),
+        nodes: shownTraceNodesOf(segment.traceDiagram.traceNodes, sources),
         edges: segment.traceDiagram.traceNodeEdges,
       }
 
@@ -86,9 +94,9 @@ export const projectOverview = (artifact: ReviewArtifact, configurationId: strin
   unwritten: tallyWork(unwrittenWork(artifact)),
 })
 
-const SEGMENT_PARTS: Readonly<Record<Exclude<ArtifactSection, "overview" | "full" | "diff">, (segment: Segment) => unknown>> = {
+const SEGMENT_PARTS: Readonly<Record<Exclude<ArtifactSection, "overview" | "full" | "diff">, (segment: Segment, sources: readonly SourceFile[]) => unknown>> = {
   "context": (segment) => ({ segmentId: segment.id, context: segment.context, isContextRequired: segment.isContextRequired }),
-  "trace-diagram": (segment) => ({ segmentId: segment.id, traceDiagram: flatTraceOf(segment) }),
+  "trace-diagram": (segment, sources) => ({ segmentId: segment.id, traceDiagram: flatTraceOf(segment, sources) }),
   "blast-diagram": (segment) => ({ segmentId: segment.id, blastDiagram: segment.blastDiagram }),
   "code-walkthrough": (segment) => ({ segmentId: segment.id, walkthrough: storedWalkthroughOf(segment) }),
 }
@@ -106,12 +114,12 @@ export const projectSegments = (
         title: artifact.title,
         status: artifact.status,
         commit: artifact.commit,
-        segments: segments.map((segment) => ({ ...shownSegmentOf(segment), traceDiagram: flatTraceOf(segment), walkthrough: storedWalkthroughOf(segment) })),
+        segments: segments.map((segment) => ({ ...shownSegmentOf(segment), traceDiagram: flatTraceOf(segment, artifact.sources), walkthrough: storedWalkthroughOf(segment) })),
         contextCodeBlocks: artifact.contextCodeBlocks
           .filter((listed) => listed.description !== null)
           .map((listed) => ({ id: contextIdOf(listed), description: listed.description })),
       }
-    : { segments: segments.map(SEGMENT_PARTS[section]) }
+    : { segments: segments.map((segment) => SEGMENT_PARTS[section](segment, artifact.sources)) }
 
 const waypointIdsFor = (segments: readonly Segment[], path: string): string[] =>
   segments.flatMap((segment) =>

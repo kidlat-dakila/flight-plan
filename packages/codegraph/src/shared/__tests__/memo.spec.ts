@@ -1,6 +1,10 @@
 import { Memo, once } from "@/shared/memo"
 
 describe("Memo", () => {
+  afterEach(() => {
+    vi.restoreAllMocks()
+  })
+
   it("makes a value once per key and gives the same one back afterwards", () => {
     const memo = new Memo<string, number>()
     const make = vi.fn(() => 3)
@@ -22,6 +26,17 @@ describe("Memo", () => {
     memo.clear()
 
     expect(memo.has("price")).toBe(false)
+  })
+
+  it("stores without copying what it already holds", () => {
+    const memo = new Memo<string, number>()
+    const makeMap = vi.spyOn(globalThis, "Map")
+
+    memo.store("price", 3)
+    memo.store("tax", 1)
+
+    expect(makeMap).not.toHaveBeenCalled()
+    expect(memo.values()).toStrictEqual([3, 1])
   })
 })
 

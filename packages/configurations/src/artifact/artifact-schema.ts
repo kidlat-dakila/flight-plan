@@ -163,6 +163,8 @@ const lineSpanSchema = z.tuple([z.number().int(), z.number().int()])
 
 const codeSpanSchema = z.strictObject({ line: z.number().int(), startColumn: z.number().int(), endColumn: z.number().int() })
 
+const positionSchema = z.strictObject({ line: z.number().int(), column: z.number().int() })
+
 const libraryNameSchema = z.strictObject({ specifier: z.string(), name: z.string() })
 
 export const codeReferenceSchema = codeSpanSchema.extend({
@@ -204,7 +206,7 @@ const blockLabelSchema = z.strictObject({
       configurationType: "editable",
       _ui: {
         title: "Trace block label",
-        description: "What an argument, a state, a hook, an effect or a step of a node is for, in the reader's terms.",
+        description: "What a call, a return or a raise of a function does, or what a state, a hook, an effect or a step of another card is for, in the reader's terms.",
       },
       fieldDescription: "traceDiagram.nodes.blockLabels.label.md",
       exampleValue: "Sends the promo code the shopper typed",
@@ -212,6 +214,7 @@ const blockLabelSchema = z.strictObject({
     })
     .nullable(),
   codeBlock: codeBlockSchema,
+  at: positionSchema.optional(),
 })
 
 const traceRowSchema = z.strictObject({

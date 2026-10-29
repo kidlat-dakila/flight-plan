@@ -44,12 +44,25 @@ export class UsersController {
  │ │ auditService                                               │ │
  │ └────────────────────────────────────────────────────────────┘ │
  │ METHODS                                                        │
- │ ┌ ƒ UsersController.audit ──── src/users/users.controller.ts ┐ │  ──▶ AuditService.record
+ │ ┌ ƒ UsersController.audit ──── src/users/users.controller.ts ┐ │
  │ │ Method                                            Modified │ │
  │ │ Records a change                                           │ │
+ │ │ ARGUMENTS                                                  │ │
  │ │ ┌────────────────────────────────────────────────────────┐ │ │
- │ │ │ change                                                 │ │ │
+ │ │ │ () change: Change                                      │ │ │
  │ │ └────────────────────────────────────────────────────────┘ │ │
+ │ │ EXTERNAL CALLS                                             │ │
+ │ │ ┌ {} AuditService ───────────────────── Class • Modified ┐ │ │
+ │ │ │ ╔════════════════════════════════════════════════════╗ │ │ │
+ │ │ │ ║ Calls this.auditService.record to keep the change  ║○──▶ AuditService.record
+ │ │ │ ║ this.auditService.record()                         ║ │ │ │
+ │ │ │ ╚════════════════════════════════════════════════════╝ │ │ │
+ │ │ └────────────────────────────────────────────────────────┘ │ │
+ │ │ RETURNS AND RAISES                                         │ │
+ │ │ ╔════════════════════════════════════════════════════════╗ │ │
+ │ │ ║ Returns the recorded change                            ║ │ │
+ │ │ ║ return                                                 ║ │ │
+ │ │ ╚════════════════════════════════════════════════════════╝ │ │
  │ └────────────────────────────────────────────────────────────┘ │
  └────────────────────────────────────────────────────────────────┘
 
@@ -57,6 +70,12 @@ export class UsersController {
  │ Route                                                          │
  │ GET                                                            │
  │ ┌ ƒ UsersController.findAll ── src/users/users.controller.ts ┐ │
+ │ │ Method                                                     │ │
+ │ │ RETURNS AND RAISES                                         │ │
+ │ │ ┌────────────────────────────────────────────────────────┐ │ │
+ │ │ │ Returns every user                                     │ │ │
+ │ │ │ return                                                 │ │ │
+ │ │ └────────────────────────────────────────────────────────┘ │ │
  │ └────────────────────────────────────────────────────────────┘ │
  └────────────────────────────────────────────────────────────────┘
 ```
@@ -154,14 +173,25 @@ app.enableVersioning({ type: VersioningType.HEADER, header: "X-API-Version" })
  │ ┌ ƒ UsersController.findAll ── src/users/users.controller.ts ┐ │
  │ │ Method                                                     │ │
  │ │ Lists every user                                           │ │
+ │ │ RETURNS AND RAISES                                         │ │
+ │ │ ┌────────────────────────────────────────────────────────┐ │ │
+ │ │ │ Returns every user                                     │ │ │
+ │ │ │ return                                                 │ │ │
+ │ │ └────────────────────────────────────────────────────────┘ │ │
  │ └────────────────────────────────────────────────────────────┘ │
  │ GET v2                                                         │
  │ ┌ ƒ UsersController.findPage ─ src/users/users.controller.ts ┐ │
  │ │ Method                                            Modified │ │
  │ │ Lists one page of users                                    │ │
- │ │ ┌────────────────────────────────────────────────────────┐ │ │
- │ │ │ page                                                   │ │ │
- │ │ └────────────────────────────────────────────────────────┘ │ │
+ │ │ ARGUMENTS                                                  │ │
+ │ │ ╔════════════════════════════════════════════════════════╗ │ │
+ │ │ ║ () @Query("page") page: number                         ║ │ │
+ │ │ ╚════════════════════════════════════════════════════════╝ │ │
+ │ │ RETURNS AND RAISES                                         │ │
+ │ │ ╔════════════════════════════════════════════════════════╗ │ │
+ │ │ ║ Returns the users of the page                          ║ │ │
+ │ │ ║ return                                                 ║ │ │
+ │ │ ╚════════════════════════════════════════════════════════╝ │ │
  │ └────────────────────────────────────────────────────────────┘ │
  └────────────────────────────────────────────────────────────────┘
 ```
@@ -186,7 +216,7 @@ A path of `forRoutes` and `exclude` reads `:id` as one segment, `*`, `*splat` an
 
 ## Services
 
-**A handler has a line to the method of the service it calls through what the controller is injected with.** `this.usersService.findAll()` reaches `findAll` of the class the constructor parameter `private readonly usersService: UsersService` is typed as, and so does a property typed as a class, `private readonly usersService: UsersService`. As for every method, the call is no row: its line leaves the head of the handler card, as [Rows and methods](../class-card.md#rows-and-methods) says.
+**A handler has a line to the method of the service it calls through what the controller is injected with.** `this.usersService.findAll()` reaches `findAll` of the class the constructor parameter `private readonly usersService: UsersService` is typed as, and so does a property typed as a class, `private readonly usersService: UsersService`. The call is a row of the handler card, `this.usersService.findAll()`, under the callee card `UsersService`, and its line leaves that row, as [Rows and methods](../class-card.md#rows-and-methods) says.
 
 ## Example
 
@@ -228,32 +258,71 @@ app.setGlobalPrefix("api")
  │ Route                                                 Modified │
  │ Creates and lists users                                        │
  │ POST                                                           │
- │ ┌ ƒ UsersController.create ─── src/users/users.controller.ts ┐ │  ◀── AuditInterceptor   ──▶ UsersService.create
+ │ ┌ ƒ UsersController.create ─── src/users/users.controller.ts ┐ │  ◀── AuditInterceptor
  │ │ Method                                            Modified │ │
  │ │ Creates a user from the body                               │ │
+ │ │ ARGUMENTS                                                  │ │
  │ │ ┌────────────────────────────────────────────────────────┐ │ │
- │ │ │ body                                                   │ │ │
+ │ │ │ () @Body() body: CreateUserDto                         │ │ │
  │ │ └────────────────────────────────────────────────────────┘ │ │
+ │ │ EXTERNAL CALLS                                             │ │
+ │ │ ┌ {} UsersService ───────────────────── Class • Modified ┐ │ │
+ │ │ │ ╔════════════════════════════════════════════════════╗ │ │ │
+ │ │ │ ║ Calls this.usersService.create to save the user    ║○──▶ UsersService.create
+ │ │ │ ║ this.usersService.create()                         ║ │ │ │
+ │ │ │ ╚════════════════════════════════════════════════════╝ │ │ │
+ │ │ └────────────────────────────────────────────────────────┘ │ │
+ │ │ RETURNS AND RAISES                                         │ │
+ │ │ ╔════════════════════════════════════════════════════════╗ │ │
+ │ │ ║ Returns the created user                               ║ │ │
+ │ │ ║ return                                                 ║ │ │
+ │ │ ╚════════════════════════════════════════════════════════╝ │ │
  │ └────────────────────────────────────────────────────────────┘ │
  │ GET                                                            │
- │ ┌ ƒ UsersController.findAll ── src/users/users.controller.ts ┐ │  ──▶ UsersService.findAll
+ │ ┌ ƒ UsersController.findAll ── src/users/users.controller.ts ┐ │
  │ │ Method                                            Modified │ │
  │ │ Lists the users of a role                                  │ │
+ │ │ ARGUMENTS                                                  │ │
  │ │ ┌────────────────────────────────────────────────────────┐ │ │
- │ │ │ role                                                   │ │ │
+ │ │ │ () @Query("role") role: string                         │ │ │
  │ │ └────────────────────────────────────────────────────────┘ │ │
+ │ │ EXTERNAL CALLS                                             │ │
+ │ │ ┌ {} UsersService ───────────────────── Class • Modified ┐ │ │
+ │ │ │ ╔════════════════════════════════════════════════════╗ │ │ │
+ │ │ │ ║ Calls this.usersService.findAll to filter by role  ║○──▶ UsersService.findAll
+ │ │ │ ║ this.usersService.findAll()                        ║ │ │ │
+ │ │ │ ╚════════════════════════════════════════════════════╝ │ │ │
+ │ │ └────────────────────────────────────────────────────────┘ │ │
+ │ │ RETURNS AND RAISES                                         │ │
+ │ │ ╔════════════════════════════════════════════════════════╗ │ │
+ │ │ ║ Returns the users of the role                          ║ │ │
+ │ │ ║ return                                                 ║ │ │
+ │ │ ╚════════════════════════════════════════════════════════╝ │ │
  │ └────────────────────────────────────────────────────────────┘ │
  └────────────────────────────────────────────────────────────────┘
 
  ┌ ⇢ /api/users/:id ─────────────── src/users/users.controller.ts ┐  ◀── AuthGuard
  │ Route                                                          │
  │ GET                                                            │
- │ ┌ ƒ UsersController.findOne ── src/users/users.controller.ts ┐ │  ──▶ UsersService.findOne
+ │ ┌ ƒ UsersController.findOne ── src/users/users.controller.ts ┐ │
  │ │ Method                                            Modified │ │
  │ │ Finds one user                                             │ │
+ │ │ ARGUMENTS                                                  │ │
  │ │ ┌────────────────────────────────────────────────────────┐ │ │
- │ │ │ id                                                     │ │ │
+ │ │ │ () @Param("id") id: string                             │ │ │
  │ │ └────────────────────────────────────────────────────────┘ │ │
+ │ │ EXTERNAL CALLS                                             │ │
+ │ │ ┌ {} UsersService ───────────────────── Class • Modified ┐ │ │
+ │ │ │ ╔════════════════════════════════════════════════════╗ │ │ │
+ │ │ │ ║ Calls this.usersService.findOne to read the user   ║○──▶ UsersService.findOne
+ │ │ │ ║ this.usersService.findOne()                        ║ │ │ │
+ │ │ │ ╚════════════════════════════════════════════════════╝ │ │ │
+ │ │ └────────────────────────────────────────────────────────┘ │ │
+ │ │ RETURNS AND RAISES                                         │ │
+ │ │ ╔════════════════════════════════════════════════════════╗ │ │
+ │ │ ║ Returns the user                                       ║ │ │
+ │ │ ║ return                                                 ║ │ │
+ │ │ ╚════════════════════════════════════════════════════════╝ │ │
  │ └────────────────────────────────────────────────────────────┘ │
  └────────────────────────────────────────────────────────────────┘
 ```
@@ -328,21 +397,38 @@ export class UsersResolver {
  │ ┌ ƒ UsersResolver.users ──────── src/users/users.resolver.ts ┐ │
  │ │ Method                                                     │ │
  │ │ Lists the users                                            │ │
+ │ │ RETURNS AND RAISES                                         │ │
+ │ │ ┌────────────────────────────────────────────────────────┐ │ │
+ │ │ │ Returns every user                                     │ │ │
+ │ │ │ return                                                 │ │ │
+ │ │ └────────────────────────────────────────────────────────┘ │ │
  │ └────────────────────────────────────────────────────────────┘ │
  │ MUTATION                                                       │
  │ ┌ ƒ UsersResolver.addUser ────── src/users/users.resolver.ts ┐ │
  │ │ Method                                            Modified │ │
  │ │ Adds a user by name                                        │ │
- │ │ ┌────────────────────────────────────────────────────────┐ │ │
- │ │ │ name                                                   │ │ │
- │ │ └────────────────────────────────────────────────────────┘ │ │
+ │ │ ARGUMENTS                                                  │ │
+ │ │ ╔════════════════════════════════════════════════════════╗ │ │
+ │ │ ║ () @Args("name") name: string                          ║ │ │
+ │ │ ╚════════════════════════════════════════════════════════╝ │ │
+ │ │ RETURNS AND RAISES                                         │ │
+ │ │ ╔════════════════════════════════════════════════════════╗ │ │
+ │ │ ║ Returns the added user                                 ║ │ │
+ │ │ ║ return                                                 ║ │ │
+ │ │ ╚════════════════════════════════════════════════════════╝ │ │
  │ └────────────────────────────────────────────────────────────┘ │
  │ FIELD                                                          │
  │ ┌ ƒ UsersResolver.posts ──────── src/users/users.resolver.ts ┐ │
  │ │ Method                                                     │ │
  │ │ Finds the posts of a user                                  │ │
+ │ │ ARGUMENTS                                                  │ │
  │ │ ┌────────────────────────────────────────────────────────┐ │ │
- │ │ │ user                                                   │ │ │
+ │ │ │ () @Parent() user: User                                │ │ │
+ │ │ └────────────────────────────────────────────────────────┘ │ │
+ │ │ RETURNS AND RAISES                                         │ │
+ │ │ ┌────────────────────────────────────────────────────────┐ │ │
+ │ │ │ Returns the posts the user wrote                       │ │ │
+ │ │ │ return                                                 │ │ │
  │ │ └────────────────────────────────────────────────────────┘ │ │
  │ └────────────────────────────────────────────────────────────┘ │
  └────────────────────────────────────────────────────────────────┘

@@ -25,7 +25,7 @@ describe("the row groups of a class card", () => {
 })
 
 describe("the row groups of a function that returns a function", () => {
-  it("groups its rows as a component does, and keeps the returned function as its child", () => {
+  it("lists its rows as a function card does, and draws the returned function as its child below them", () => {
     const save = codeOf(
       "import { keyOf } from \"./keys\"",
       "export const createSaveHandler = (userId) => {",
@@ -33,10 +33,14 @@ describe("the row groups of a function that returns a function", () => {
       "  return (draft) => save(key, draft)",
       "}",
     )
-    const node = nodeViewNamed({ "src/save.ts": save }, { "src/save.ts": [rangeAt(3, 3, 3, 28), rangeAt(4, 21, 4, 37)] }, "createSaveHandler")
+    const keys = codeOf("export const keyOf = (id) => String(id)")
+    const node = nodeViewNamed({ "src/save.ts": save, "src/keys.ts": keys }, { "src/save.ts": [rangeAt(3, 3, 3, 28), rangeAt(4, 21, 4, 37)] }, "createSaveHandler")
+    const [returned] = node?.children ?? []
 
-    expect(groupsOf(node).map(([label]) => label)).toStrictEqual(["Calls"])
-    expect(node?.children.map((child) => child.type)).toStrictEqual(["function"])
+    expect(groupsOf(node)).toStrictEqual([["Arguments", 1, []], ["External calls", 0, []], ["Returns and raises", 1, []], [null, 0, [returned.name]]])
+    expect(node?.rowGroups.flatMap(({ calleeCards }) => calleeCards ?? []).map(({ name, rowIds }) => [name, rowIds.length])).toStrictEqual([["keyOf", 1]])
+    expect(returned.type).toBe("function")
+    expect(returned.rowGroups.map(({ label }) => label)).toStrictEqual(["Arguments", "External calls"])
   })
 })
 
@@ -106,7 +110,7 @@ describe("the cards of Next.js", () => {
     const node = nodeViewNamed({ "app/actions.ts": actions, "app/page.tsx": page }, { "app/actions.ts": [rangeAt(3, 3, 3, 33)] }, "createUser")
 
     expect(node?.typeLabel).toBe("Server action")
-    expect(groupsOf(node)).toStrictEqual([[null, 1, []]])
+    expect(groupsOf(node)).toStrictEqual([["Arguments", 1, []], ["External calls", 0, []]])
   })
 })
 
@@ -201,7 +205,7 @@ describe("the row groups of a Nest route card", () => {
 
     expect(node?.typeLabel).toBe("Route")
     expect(groupsOf(node)).toStrictEqual([["POST", 0, ["UsersController.create"]], ["GET", 0, ["UsersController.list"]]])
-    expect(node?.children.find((child) => child.name === "UsersController.list")?.blockLists).toStrictEqual([])
+    expect(node?.children.find((child) => child.name === "UsersController.list")?.blockLists.map(({ kind }) => kind)).toStrictEqual(["return"])
   })
 
   it("puts a heading that names a version after the heading of its method alone, versions in order", () => {

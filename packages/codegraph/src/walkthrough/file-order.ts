@@ -1,3 +1,4 @@
+import { walkBreadthFirst } from "@/shared/reach"
 import type { SourceFile, WalkthroughOrder } from "@flightplan/configurations"
 
 export interface OrderedFile {
@@ -16,16 +17,15 @@ const directUsesOf = (sources: readonly SourceFile[]): UsedPaths =>
     new Set(source.references.filter((reference) => !reference.isLibrary && reference.path !== source.path).map((reference) => reference.path)),
   ] as const))
 
-const reachFrom = (pending: readonly string[], directUses: UsedPaths, reached: ReadonlySet<string>): ReadonlySet<string> => {
-  const unvisited = [...new Set(pending)].filter((path) => !reached.has(path))
-  if (unvisited.length === 0) return reached
-  return reachFrom(unvisited.flatMap((path) => [...(directUses.get(path) ?? [])]), directUses, new Set([...reached, ...unvisited]))
-}
+const directUsesOfPath = (directUses: UsedPaths, path: string): string[] => [...(directUses.get(path) ?? [])]
+
+const reachFrom = (path: string, directUses: UsedPaths): ReadonlySet<string> =>
+  new Set(walkBreadthFirst(directUsesOfPath(directUses, path), { nextOf: (used) => directUsesOfPath(directUses, used), keyOf: (used) => used }))
 
 export const listUsedPaths = (sources: readonly SourceFile[]): UsedPaths => {
   const directUses = directUsesOf(sources)
   return new Map([...directUses.keys()].map((path) => {
-    const reached = reachFrom([...(directUses.get(path) ?? [])], directUses, new Set())
+    const reached = reachFrom(path, directUses)
     return [path, new Set([...reached].filter((used) => used !== path))] as const
   }))
 }

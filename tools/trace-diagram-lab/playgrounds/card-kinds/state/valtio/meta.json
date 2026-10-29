@@ -1,0 +1,6 @@
+{
+  "title": "State card in Valtio",
+  "packages": ["react", "react-dom", "valtio"],
+  "language": "typescript",
+  "mainFramework": "react"
+}

@@ -130,6 +130,7 @@ const symbolOf = (use: ReadUse, filePath: string, index: BlockIndex): StoredCode
     use: use.use,
     ...handedToOf(use, filePath, index),
     ...memberOf(use, targetId, index),
+    ...(use.isRunInPlace === true ? { isRunInPlace: true } : {}),
   }
   if (target.kind === "local") {
     return targetId === null
@@ -217,6 +218,7 @@ export const linkReferences = (readings: readonly FileReading[], exports: Export
       ...(block.isParameterProperty === true ? { isParameterProperty: true } : {}),
       ...(block.isAnnotatedAlias === true ? { isAnnotatedAlias: true } : {}),
       ...(block.isReturned === true && RETURNED_TYPES.has(block.type) ? { isReturned: true } : {}),
+      ...(block.returnsAt === undefined ? {} : { returnsAt: block.returnsAt }),
       exportedByFilePaths,
       lineOfCodeDiffs: null,
       diffs: [],

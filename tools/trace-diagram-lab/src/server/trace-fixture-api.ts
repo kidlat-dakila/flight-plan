@@ -10,9 +10,16 @@ export interface TraceFixturePage {
   readonly page: TracePage
 }
 
+export interface PlaygroundCasePage {
+  readonly id: string
+  readonly title: string
+  readonly caseTitle: string
+  readonly page: TracePage
+}
+
 export interface PlaygroundPage {
   readonly entry: PlaygroundEntry
-  readonly page: TracePage
+  readonly cases: readonly PlaygroundCasePage[]
 }
 
 export interface TraceFixtureLoader {

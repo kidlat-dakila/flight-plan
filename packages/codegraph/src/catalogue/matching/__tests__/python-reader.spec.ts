@@ -1,6 +1,6 @@
 import type { SyntaxNode } from "@/ast-graph/parser"
 import { readPython } from "@/catalogue/matching/python-reader"
-import type { Binding } from "@/catalogue/matching/syntax-reader"
+import type { Binding, SyntaxReader } from "@/catalogue/matching/syntax-reader"
 
 const CALL_TYPE = "call"
 
@@ -45,5 +45,29 @@ describe("a name the file never binds", () => {
       specifier: "storage",
       importedName: "open",
     })
+  })
+})
+
+const DEEP_MEMBER_CHAIN = 10000
+const DEEP_ANNOTATIONS = 20000
+
+const namesIn = (reader: SyntaxReader, name: string): SyntaxNode[] => reader.tree.rootNode.descendantsOfType("identifier").filter((identifier) => identifier.text === name)
+
+describe("a name deep inside a function", () => {
+  it("comes from the parameter that binds it, however deep it is used", () => {
+    const reader = readPython(lines("def read_report(report):", `    return report${".rows".repeat(DEEP_MEMBER_CHAIN)}`))
+    const [, used] = namesIn(reader, "report")
+
+    expect(reader.bindingOf(used)).toMatchObject({ kind: "parameter", position: 0 })
+  })
+})
+
+describe("the type of a parameter", () => {
+  it("is the type inside many Annotated wrappers", () => {
+    const annotated = `${"Annotated[".repeat(DEEP_ANNOTATIONS)}Report${", 1]".repeat(DEEP_ANNOTATIONS)}`
+    const reader = readPython(lines(`def read_report(report: ${annotated}):`, "    return report"))
+    const [parameter] = reader.tree.rootNode.descendantsOfType("typed_parameter")
+
+    expect(reader.parameterTypeOf(parameter)?.text).toBe("Report")
   })
 })

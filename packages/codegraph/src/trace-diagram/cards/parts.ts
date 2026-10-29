@@ -1,3 +1,4 @@
+import { endOfChain } from "@/shared/chain-end"
 import { firstOfEach } from "@/shared/first-of-each"
 import type { BlockCard, CardKind, CardPart, CodeBlock, TraceNode, TraceNodeEdge } from "@flightplan/configurations"
 import { rootBlockOfNode } from "./nodes"
@@ -32,9 +33,12 @@ export const nodeIdByBlockIdOf = (nodes: readonly TraceNode[]): ReadonlyMap<stri
 const blockAroundPart = (block: CodeBlock): CodeBlock | null => block.cardOwner ?? block.parentBlock
 
 const nodeIdAround = (block: CodeBlock | null, ownId: string, nodeIdByBlockId: ReadonlyMap<string, string>): string | null => {
+  const otherNodeIdOf = (step: CodeBlock): string | null => {
+    const nodeId = nodeIdByBlockId.get(step.id)
+    return nodeId !== undefined && nodeId !== ownId ? nodeId : null
+  }
   if (block === null) return null
-  const nodeId = nodeIdByBlockId.get(block.id)
-  return nodeId !== undefined && nodeId !== ownId ? nodeId : nodeIdAround(blockAroundPart(block), ownId, nodeIdByBlockId)
+  return otherNodeIdOf(endOfChain(block, { nextOf: (step) => (otherNodeIdOf(step) === null ? blockAroundPart(step) : null), keyOf: (step) => step.id }))
 }
 
 export const listPartParents = (kinds: readonly CardKind[]) => ({ nodes }: CardContext): ParentIdById => {

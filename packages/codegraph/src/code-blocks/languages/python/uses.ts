@@ -1,6 +1,9 @@
 import { NAMESPACE_IMPORT } from "@/ast-graph/languages/base"
-import type { SyntaxNode } from "@/ast-graph/parser"
+import { PYTHON_GRAMMAR } from "@/ast-graph/languages/python/bindings"
+import type { SyntaxNode, SyntaxTree } from "@/ast-graph/parser"
+import { nodesMatching, patternOfTypes } from "@/ast-graph/query-nodes"
 import type { ImportVariable } from "@/ast-graph/types"
+import { collectFromNode, type ReadNode } from "@/ast-graph/walk-tree"
 import type { ResolvedReference, Resolution } from "@/code-blocks/languages/typescript/outline"
 import { nodeAtRange } from "@/code-blocks/languages/typescript/syntax"
 import type { HandingSlot, ReadHanding, ReadTarget, ReadUse, WrittenAt } from "@/code-blocks/reading"
@@ -30,6 +33,12 @@ interface MemberChain {
   readonly path: readonly string[]
 }
 
+interface MemberLink {
+  readonly member: string
+  readonly holder: SyntaxNode
+  readonly isGot: boolean
+}
+
 type Role = "call" | "value"
 
 const MEMBER_TYPE = "attribute"
@@ -46,8 +55,14 @@ const RECEIVER_NAMES: ReadonlySet<string> = new Set(["self", "cls"])
 const MODULE_SEPARATOR = "."
 const ARGUMENT = "argument"
 const FIRST_SLOT = 0
+const ANNOTATION_PATTERN = patternOfTypes([ANNOTATION_TYPE])
+const CLOSING_TYPES: ReadonlySet<string> = new Set([ANNOTATION_TYPE, CALL_TYPE])
 
-const isTypeUse = (used: SyntaxNode): boolean => used.closest([ANNOTATION_TYPE, CALL_TYPE])?.type === ANNOTATION_TYPE
+const readTypeUses = (annotation: SyntaxNode): ReadNode<number> => (node) =>
+  node.id === annotation.id ? { found: [], shouldDescend: true } : { found: [node.id], shouldDescend: !CLOSING_TYPES.has(node.type) }
+
+const listTypeUseIds = (tree: SyntaxTree): ReadonlySet<number> =>
+  new Set(nodesMatching(PYTHON_GRAMMAR, tree, ANNOTATION_PATTERN).flatMap((annotation) => collectFromNode(annotation, readTypeUses(annotation))))
 
 const isChildAt = (node: SyntaxNode, field: string): boolean => node.parent?.childForFieldName(field)?.id === node.id
 
@@ -61,28 +76,36 @@ const targetOf = (resolution: Resolution): ReadTarget =>
         filePath: resolution.variable.importedFilePath,
       }
 
-const memberReadFrom = (read: SyntaxNode): string | null => {
-  const { parent } = read
-  if (parent?.type === MEMBER_TYPE && isChildAt(read, "object")) return parent.childForFieldName("attribute")?.text ?? ""
-  return keyOfSubscript(read)
+const memberReadIn = (read: SyntaxNode, holder: SyntaxNode): string | null => {
+  if (holder.type === MEMBER_TYPE && holder.childForFieldName("object")?.id === read.id) return holder.childForFieldName("attribute")?.text ?? ""
+  return keyOfSubscript(read, holder)
 }
 
-const chainFrom = (name: SyntaxNode): MemberChain => {
-  const member = memberReadFrom(name)
-  if (member === null || name.parent === null) return { outermost: name, path: [] }
-  const { outermost, path } = chainFrom(name.parent)
-  return { outermost, path: [member, ...path] }
+const memberLinkOf = (read: SyntaxNode): MemberLink | null => {
+  const holder = read.parent
+  const member = holder === null ? null : memberReadIn(read, holder)
+  return holder === null || member === null ? null : { member, holder, isGot: false }
 }
+
+const keyLinkOf = (read: SyntaxNode): MemberLink | null => {
+  const got = keyOfGetter(read)
+  return got === null ? memberLinkOf(read) : { member: got.key, holder: got.call, isGot: true }
+}
+
+function* linksFrom(name: SyntaxNode, linkOf: (read: SyntaxNode) => MemberLink | null): Generator<MemberLink> {
+  for (let link = linkOf(name); link !== null; link = linkOf(link.holder)) yield link
+}
+
+const chainOf = (name: SyntaxNode, links: readonly MemberLink[]): MemberChain => ({
+  outermost: links.length === 0 ? name : links[links.length - 1].holder,
+  path: links.map(({ member }) => member),
+})
+
+const chainFrom = (name: SyntaxNode): MemberChain => chainOf(name, [...linksFrom(name, memberLinkOf)])
 
 const keyChainFrom = (name: SyntaxNode): MemberChain | null => {
-  const got = keyOfGetter(name)
-  if (got !== null) {
-    const { outermost, path } = keyChainFrom(got.call) ?? chainFrom(got.call)
-    return { outermost, path: [got.key, ...path] }
-  }
-  const member = memberReadFrom(name)
-  const further = member === null || name.parent === null ? null : keyChainFrom(name.parent)
-  return member === null || further === null ? null : { outermost: further.outermost, path: [member, ...further.path] }
+  const links = [...linksFrom(name, keyLinkOf)]
+  return links.some(({ isGot }) => isGot) ? chainOf(name, links) : null
 }
 
 const isOpened = (target: ReadTarget): boolean => target.kind === "local" || target.filePath !== null
@@ -188,7 +211,7 @@ const baseTargetOf = (base: SyntaxNode, outline: PythonOutline): ReadTarget[] =>
 const listBaseTargets = (holder: SyntaxNode | null, outline: PythonOutline): ReadTarget[] =>
   (holder?.childForFieldName("superclasses")?.namedChildren ?? []).flatMap((base) => baseTargetOf(base, outline))
 
-const readUses = ({ reference, resolution: found }: ResolvedReference, outline: PythonOutline): ReadUse[] => {
+const readUses = ({ reference, resolution: found }: ResolvedReference, outline: PythonOutline, typeUseIds: ReadonlySet<number>): ReadUse[] => {
   const used = nodeAtRange(outline.tree, reference.range)
   const chain = chainFrom(used)
   const { outermost } = chain
@@ -206,10 +229,13 @@ const readUses = ({ reference, resolution: found }: ResolvedReference, outline: 
   if (bases.length > 0) return bases.map((base) => ({ usedAt, use: useOf(role, path), memberPath: path, target: base, handing: null, writtenAt }))
   const filled = handingInto(callFilledByAnnotatedType(outermost), FIRST_SLOT, outline)
   if (filled !== null) return [{ usedAt, use: "value", memberPath: path, target, handing: filled, writtenAt }]
-  if (isTypeUse(outermost)) return [{ usedAt, use: "type", memberPath: path, target, handing: null, writtenAt }]
+  if (typeUseIds.has(outermost.id)) return [{ usedAt, use: "type", memberPath: path, target, handing: null, writtenAt }]
   const named = throughNamespace({ target, path })
   if (named.target !== target) return [{ usedAt, use: useOf(role, named.path), memberPath: named.path, target: named.target, handing: null, writtenAt }]
   return [{ usedAt, use: useOf(role, path), memberPath: path, target, handing: role === "value" ? handingOf(outermost, outline) : null, writtenAt }, ...readKeysGot(used, target)]
 }
 
-export const readPythonUses = (outline: PythonOutline): ReadUse[] => outline.resolved.flatMap((resolved) => readUses(resolved, outline))
+export const readPythonUses = (outline: PythonOutline): ReadUse[] => {
+  const typeUseIds = listTypeUseIds(outline.tree)
+  return outline.resolved.flatMap((resolved) => readUses(resolved, outline, typeUseIds))
+}

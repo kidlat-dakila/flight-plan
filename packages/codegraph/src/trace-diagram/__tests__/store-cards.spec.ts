@@ -152,10 +152,10 @@ describe("the card of a Redux slice", () => {
     ])
   })
 
-  it("gives a write to the state a row of the reducer that writes it", () => {
+  it("gives a reducer no row for a write to the state, since a function card lists only its calls, returns and raises", () => {
     const diagram = presentDiagramOf({ "store/cart-slice.ts": SLICE }, { "store/cart-slice.ts": [rangeAt(8, 25, 8, 41)] })
 
-    expect(rowNamesOf(nodeNamed(diagram, "clear"))).toStrictEqual(["state.items"])
+    expect(rowNamesOf(nodeNamed(diagram, "clear"))).toStrictEqual([])
   })
 
   it("lists the keys of its initial state as rows", () => {

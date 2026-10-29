@@ -3,21 +3,25 @@ import type { ListedBlock } from "@/trace-diagram/listed-blocks"
 import type { CodeBlockType, NodeBlockListKind } from "@flightplan/configurations"
 
 export const BLOCK_LIST_LABELS: Readonly<Record<NodeBlockListKind, string>> = {
-  argument: "Args",
-  property: "Properties",
-  state: "State",
-  hook: "Hooks",
-  effect: "Effects",
-  call: "Calls",
-  step: "Steps",
-  part: "Parts",
+  "argument": "Args",
+  "property": "Properties",
+  "state": "State",
+  "hook": "Hooks",
+  "memo": "Memos",
+  "effect": "Effects",
+  "dependency": "Dependencies",
+  "outside-variable": "Outside variables",
+  "call": "Calls",
+  "step": "Steps",
+  "part": "Parts",
+  "render": "Renders",
+  "return": "Returns",
+  "throw": "Raises",
 }
-export const KINDS_BEFORE_CALLS: readonly NodeBlockListKind[] = ["argument", "state", "hook", "effect"]
-export const BLOCK_LIST_KINDS: readonly NodeBlockListKind[] = ["argument", "property", "state", "hook", "effect", "call", "step", "part"]
+export const BLOCK_LIST_KINDS: readonly NodeBlockListKind[] = ["argument", "property", "state", "hook", "memo", "effect", "dependency", "outside-variable", "call", "step", "part", "render", "return", "throw"]
 export const ARGUMENT: NodeBlockListKind = "argument"
 export const PROPERTY: NodeBlockListKind = "property"
 export const EXTERNAL_CALL: NodeBlockListKind = "call"
-export const STEP: NodeBlockListKind = "step"
 export const PART: NodeBlockListKind = "part"
 
 const WORD_SEPARATOR = " "

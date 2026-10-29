@@ -3,5 +3,5 @@
 }
 
 [data-testid="playground-nav"] {
-  visibility: hidden;
+  display: none;
 }

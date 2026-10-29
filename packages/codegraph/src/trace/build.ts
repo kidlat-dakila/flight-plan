@@ -8,6 +8,9 @@ import { firstOfEach } from "@/shared/first-of-each"
 import { groupBy } from "@/shared/group-by"
 import { listTraceNodes } from "@/trace-diagram"
 import { linesLabelOf } from "@/trace-diagram/added-cards"
+import { isComponentCardBlock } from "@/trace-diagram/component-card"
+import { isFunctionCardBlock } from "@/trace-diagram/function-card"
+import { isHookCallBlock } from "@/trace-diagram/hook-calls"
 import { listListedBlocks, type ListedBlock } from "@/trace-diagram/listed-blocks"
 import { eventHandedTo, isFoldedValue, isHandlerBlock, listNodeSteps, nodeBlockAround, type NodeStep } from "@/trace-diagram/node-blocks"
 import type { WaypointPlace } from "@/walkthrough/build"
@@ -32,12 +35,14 @@ import type {
 } from "@flightplan/configurations"
 import { BLOCK_LIST_KINDS, headOfNode, labelOfRow, listRowGroups, listsNoRows } from "./cards"
 import { buildNodeCodeViews, type CodeViewSetting } from "./code-views"
+import { buildComponentCardView, componentRowFinder } from "./component-card"
+import { buildFunctionCardView, CHANGE_LABELS, functionCardRowFinder, sourceIn, type ChangeOfBlock, type FunctionCardView, type RowFinder } from "./function-card"
+import { buildHookCallCardView } from "./hook-call-card"
 import { BLOCK_TYPE_LABELS, nameOfBlock } from "./names"
 import { parametersOf } from "./parameters"
 
 const TRACE_ANCHOR_NAME = "trace-diagram"
 
-const CHANGE_LABELS: Readonly<Record<NodeChange, string>> = { added: "Added", modified: "Modified" }
 const PATH_SEPARATOR = "/"
 const SHORT_PATH_SEGMENT_COUNT = 3
 const TITLE_SEPARATOR = ", "
@@ -45,7 +50,7 @@ const EDGE_END_SEPARATOR = " -> "
 const TITLED_NODE_COUNT = 3
 type RowIdByBlockId = ReadonlyMap<string, string>
 
-const NO_ROW_IDS: RowIdByBlockId = new Map()
+const NO_ROWS: RowFinder = { fromRowOf: () => null, toRowOf: () => null, rowCalling: () => null, calledOf: () => null }
 const LIST_KEY_SEPARATOR = ":"
 const EMPTY_TITLE = "Empty diagram"
 const UNWRITTEN_LABEL = "Not written yet."
@@ -74,6 +79,22 @@ const changeOfNode = ({ codeBlocks: [root], diffCodeBlocks }: TraceNode, context
 }
 
 const isChanged = (block: CodeBlock): boolean => block.lineOfCodeDiffs !== null
+
+const listBlocksWithin = (block: CodeBlock): CodeBlock[] => [block, ...block.childrenBlocks.flatMap(listBlocksWithin)]
+
+const changeOfCallee = (block: CodeBlock, context: ReviewViewContext): NodeChange | null => {
+  if (!listBlocksWithin(block).some(isChanged)) return null
+  return isWhollyAdded(block, context) ? "added" : "modified"
+}
+
+const isCardOf = (isCardBlock: (block: CodeBlock) => boolean) => (node: TraceNode): boolean =>
+  node.rows === undefined && !listsNoRows(node) && isCardBlock(node.codeBlocks[0])
+
+export const isFunctionCardNode = isCardOf(isFunctionCardBlock)
+
+export const isComponentCardNode = isCardOf(isComponentCardBlock)
+
+export const isHookCallCardNode = isCardOf(isHookCallBlock)
 
 const listHandlers = (event: CodeBlock): CodeBlock[] => [
   ...event.childrenBlocks.filter(isHandlerBlock),
@@ -124,6 +145,18 @@ const rowIdByBlockIdOf = (node: TraceNode): RowIdByBlockId =>
         ...node.triggerLabels.map(({ codeBlock }) => [codeBlock.id, codeBlock.id] as const),
       ])
     : new Map(node.rows.map((row) => [row.id, row.id] as const))
+
+const plainRowFinder = (rowIdByBlockId: RowIdByBlockId): RowFinder => ({
+  fromRowOf: (block) => rowIdAround(block, rowIdByBlockId),
+  toRowOf: (block) => rowIdAround(block, rowIdByBlockId),
+  rowCalling: () => null,
+  calledOf: () => null,
+})
+
+const rowFinderOf = (node: TraceNode, context: ReviewViewContext): RowFinder => {
+  if (isFunctionCardNode(node) || isHookCallCardNode(node)) return functionCardRowFinder(node, sourceIn(context))
+  return isComponentCardNode(node) ? componentRowFinder(node, sourceIn(context)) : plainRowFinder(rowIdByBlockIdOf(node))
+}
 
 const inRowOrder = (rows: readonly TraceRow[]): TraceRow[] =>
   [...rows].sort((one, two) => one.lineStart - two.lineStart || one.lineEnd - two.lineEnd)
@@ -177,6 +210,13 @@ const codeLinesOf = ({ codeBlocks: [root, ...insideBlocks] }: TraceNode): LineSp
 const isNodeUnwritten = (node: TraceNode): boolean =>
   node.label === null || node.triggerLabels.some((trigger) => trigger.label === null) || node.blockLabels.some((listed) => listed.label === null)
 
+const cardViewOf = (node: TraceNode, context: ReviewViewContext): FunctionCardView | null => {
+  const changeOf: ChangeOfBlock = (block) => changeOfCallee(block, context)
+  if (isFunctionCardNode(node)) return buildFunctionCardView(node, context, changeOf)
+  if (isHookCallCardNode(node)) return buildHookCallCardView(node, context, changeOf)
+  return isComponentCardNode(node) ? buildComponentCardView(node, context, changeOf) : null
+}
+
 const toNodeView = (node: TraceNode, setting: CodeViewSetting, context: ReviewViewContext): TraceNodeView => {
   const [root] = node.codeBlocks
   const path = filePathOf(root)
@@ -184,7 +224,8 @@ const toNodeView = (node: TraceNode, setting: CodeViewSetting, context: ReviewVi
   const change = changeOfNode(node, context)
   const linkId = codeLinkIdOf(path, name)
   const storedRows = node.rows === undefined ? null : inRowOrder(node.rows)
-  const rows = storedRows === null ? listRows(node) : []
+  const card = cardViewOf(node, context)
+  const rows = storedRows === null && card === null ? listRows(node) : []
   return {
     id: node.id,
     type: node.type,
@@ -201,10 +242,10 @@ const toNodeView = (node: TraceNode, setting: CodeViewSetting, context: ReviewVi
     description: node.description === null ? null : parseProse(node.description, context.knownLinkIds),
     codeLinkId: context.knownLinkIds.has(linkId) ? linkId : null,
     codeViews: buildNodeCodeViews(node.id, { path, lines: codeLinesOf(node) }, setting, context),
-    parameters: parametersOf(node.type, root, context),
-    blockLists: storedRows === null ? toBlockLists(node, rows) : [],
+    parameters: card === null ? parametersOf(node.type, root, context) : [],
+    blockLists: card?.blockLists ?? (storedRows === null ? toBlockLists(node, rows) : []),
     triggerLabels: storedRows === null ? node.triggerLabels.map(toTriggerLabelView) : storedRows.map((row) => toStoredRowView(row, node)),
-    rowGroups: storedRows === null ? listRowGroups(node, rows) : groupStoredRows(storedRows),
+    rowGroups: card?.rowGroups ?? (storedRows === null ? listRowGroups(node, rows) : groupStoredRows(storedRows)),
     position: node.position ?? null,
     ...(node.width === undefined ? {} : { width: node.width }),
     children: node.children.map((child) => toNodeView(child, setting, context)),
@@ -239,15 +280,31 @@ const listDiagramSteps = (nodes: readonly TraceNode[]): NodeStep[] => {
   return listNodeSteps(blocks, (block) => block.nextBlocks.filter((next) => blockIds.has(next.id)))
 }
 
-const toEdgeViews = (edge: TraceNodeEdge, steps: readonly NodeStep[], nodeById: ReadonlyMap<string, TraceNode>, rowIdsByNodeId: ReadonlyMap<string, RowIdByBlockId>): TraceEdgeView[] => {
+const isVaguerThan = (view: TraceEdgeView, other: TraceEdgeView): boolean => view.toRowId === null && other.toRowId !== null && view.fromRowId === other.fromRowId
+
+const withoutVaguerViews = (views: readonly TraceEdgeView[]): TraceEdgeView[] => views.filter((view) => !views.some((other) => isVaguerThan(view, other)))
+
+const isInside = (block: CodeBlock, holder: CodeBlock): boolean => block.parentBlock !== null && (block.parentBlock.id === holder.id || isInside(block.parentBlock, holder))
+
+const calledInside = (fromRowId: string | null, fromRows: RowFinder, to: CodeBlock): CodeBlock | null => {
+  const called = fromRowId === null ? null : fromRows.calledOf(fromRowId)
+  return called !== null && isInside(called, to) ? called : null
+}
+
+const toEdgeViews = (edge: TraceNodeEdge, steps: readonly NodeStep[], nodeById: ReadonlyMap<string, TraceNode>, rowFindersByNodeId: ReadonlyMap<string, RowFinder>): TraceEdgeView[] => {
   if (isDrawnByAuthor(edge)) return [toAuthorEdgeView(edge)]
-  const fromRowIds = rowIdsByNodeId.get(edge.from) ?? NO_ROW_IDS
-  const toRowIds = rowIdsByNodeId.get(edge.to) ?? NO_ROW_IDS
+  const fromRows = rowFindersByNodeId.get(edge.from) ?? NO_ROWS
+  const toRows = rowFindersByNodeId.get(edge.to) ?? NO_ROWS
   const heldBlock = nodeById.get(edge.to)?.codeBlocks[0]
-  const held = heldBlock !== undefined && nodeBlockAround(heldBlock)?.id === edge.from ? [toEdgeView(edge, rowIdAround(heldBlock, fromRowIds), null)] : []
-  const stepped = steps.map(({ fromBlock, to, toBlock }) => toEdgeView(edge, rowIdAround(fromBlock, fromRowIds), toBlock.id === to.id ? null : rowIdAround(toBlock, toRowIds)))
-  const views = firstOfEach([...held, ...stepped], (view) => view.id)
-  return views.length === 0 ? [toEdgeView(edge, null, null)] : views
+  const held = heldBlock !== undefined && nodeBlockAround(heldBlock)?.id === edge.from ? [toEdgeView(edge, fromRows.fromRowOf(heldBlock, heldBlock), null)] : []
+  const stepped = steps.map(({ fromBlock, to, toBlock }) => {
+    const fromRowId = fromRows.fromRowOf(fromBlock, to)
+    const reached = toBlock.id === to.id ? calledInside(fromRowId, fromRows, to) : toBlock
+    return toEdgeView(edge, fromRowId, reached === null ? null : toRows.toRowOf(reached))
+  })
+  const views = withoutVaguerViews(firstOfEach([...held, ...stepped], (view) => view.id))
+  const toNodeBlock = nodeById.get(edge.to)?.codeBlocks[0]
+  return views.length === 0 ? [toEdgeView(edge, toNodeBlock === undefined ? null : fromRows.rowCalling(toNodeBlock), null)] : views
 }
 
 const titleOf = (nodes: readonly TraceNode[]): string => {
@@ -261,7 +318,7 @@ const toDiagram = (traceDiagram: TraceDiagram, segmentId: string, scope: string,
   const nodes = listTraceNodes(traceDiagram.traceNodes)
   const nodeViews = traceDiagram.traceNodes.map((node) => toNodeView(node, setting, context))
   const nodeById = new Map(nodes.map((node) => [node.id, node] as const))
-  const rowIdsByNodeId = new Map(nodes.map((node) => [node.id, rowIdByBlockIdOf(node)] as const))
+  const rowFindersByNodeId = new Map(nodes.map((node) => [node.id, rowFinderOf(node, context)] as const))
   const stepsByEdgeId = groupBy(listDiagramSteps(nodes), (step) => edgeIdOf(step.from.id, step.to.id))
   return {
     anchorId: `${scope}trace-${segmentId}`,
@@ -272,7 +329,7 @@ const toDiagram = (traceDiagram: TraceDiagram, segmentId: string, scope: string,
     descriptionHint: traceDiagram.description === null ? traceHintOf(nodes.map((node) => classificationOfBlock(node.codeBlocks[0]))) : null,
     unwrittenLabel: UNWRITTEN_LABEL,
     nodes: nodeViews,
-    edges: traceDiagram.traceNodeEdges.flatMap((edge) => toEdgeViews(edge, stepsByEdgeId.get(edge.id) ?? [], nodeById, rowIdsByNodeId)),
+    edges: traceDiagram.traceNodeEdges.flatMap((edge) => toEdgeViews(edge, stepsByEdgeId.get(edge.id) ?? [], nodeById, rowFindersByNodeId)),
   }
 }
 

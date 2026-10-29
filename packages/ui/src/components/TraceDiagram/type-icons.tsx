@@ -4,6 +4,7 @@ import {
   ArrowRightLeftIcon,
   ArrowUpRightIcon,
   BoxIcon,
+  BracesIcon,
   CloudDownloadIcon,
   CodeXmlIcon,
   ComponentIcon,
@@ -20,10 +21,12 @@ import {
   KeyRoundIcon,
   LayoutTemplateIcon,
   LifeBuoyIcon,
+  LinkIcon,
   LogInIcon,
   MemoryStickIcon,
   MousePointerClickIcon,
   NavigationIcon,
+  OctagonXIcon,
   PiIcon,
   PuzzleIcon,
   QuoteIcon,
@@ -180,14 +183,27 @@ const TYPE_ICONS: Readonly<Record<string, BlockIcon>> = {
 }
 
 const BLOCK_LIST_ICONS: Readonly<Record<string, BlockIcon>> = {
-  argument: SlidersHorizontalIcon,
-  property: TagIcon,
-  state: ToggleRightIcon,
-  hook: AnchorIcon,
-  effect: ZapIcon,
-  call: ArrowUpRightIcon,
-  step: FootprintsIcon,
-  part: PuzzleIcon,
+  "argument": SlidersHorizontalIcon,
+  "property": TagIcon,
+  "state": ToggleRightIcon,
+  "hook": AnchorIcon,
+  "effect": ZapIcon,
+  "memo": SigmaIcon,
+  "dependency": LinkIcon,
+  "outside-variable": EyeIcon,
+  "call": ArrowUpRightIcon,
+  "return": CornerDownLeftIcon,
+  "throw": OctagonXIcon,
+  "step": FootprintsIcon,
+  "part": PuzzleIcon,
+  "render": CodeXmlIcon,
+}
+
+const RENDER_ROW_ICONS: Readonly<Record<string, BlockIcon>> = {
+  condition: SplitIcon,
+  loop: RepeatIcon,
+  component: ComponentIcon,
+  value: BracesIcon,
 }
 
 const UNKNOWN_ICON: BlockIcon = WorkflowIcon
@@ -198,6 +214,8 @@ const iconIn = (icons: Readonly<Record<string, BlockIcon>>, key: string): BlockI
 export const typeIconOf = (type: string): BlockIcon => iconIn(TYPE_ICONS, type)
 
 const blockListIconOf = (kind: string): BlockIcon => iconIn(BLOCK_LIST_ICONS, kind)
+
+const renderRowIconOf = (kind: string): BlockIcon => iconIn(RENDER_ROW_ICONS, kind)
 
 interface BlockTypeIconProps {
   readonly type: string
@@ -212,5 +230,7 @@ interface BlockListIconProps {
 const BlockTypeIcon = ({ type, className }: BlockTypeIconProps) => createElement(typeIconOf(type), { "aria-hidden": "true", className })
 
 export const BlockListIcon = ({ kind, className }: BlockListIconProps) => createElement(blockListIconOf(kind), { "aria-hidden": "true", className })
+
+export const RenderRowIcon = ({ kind, className }: BlockListIconProps) => createElement(renderRowIconOf(kind), { "aria-hidden": "true", className })
 
 export default BlockTypeIcon

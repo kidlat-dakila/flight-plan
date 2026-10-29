@@ -1,3 +1,4 @@
+import { walkBreadthFirst } from "@/shared/reach"
 import type { CatalogueRuns } from "@flightplan/configurations"
 import type { StoredCodeBlock, StoredCodeBlockSymbol, StoredCodeGroupGraph } from "./stored-types"
 
@@ -107,11 +108,8 @@ export const listFileUses = ({ codeBlocks }: StoredCodeGroupGraph): FileUses => 
   }
 }
 
-const reachPaths = (pendingPaths: readonly string[], nextPathsOf: NextPathsOf, reachedPaths: ReadonlySet<string> = NO_PATHS): ReadonlySet<string> => {
-  const arrivingPaths = [...new Set(pendingPaths)].filter((filePath) => !reachedPaths.has(filePath))
-  if (arrivingPaths.length === 0) return reachedPaths
-  return reachPaths(arrivingPaths.flatMap(nextPathsOf), nextPathsOf, new Set([...reachedPaths, ...arrivingPaths]))
-}
+const reachPaths = (startPaths: readonly string[], nextPathsOf: NextPathsOf): ReadonlySet<string> =>
+  new Set(walkBreadthFirst(startPaths, { nextOf: nextPathsOf, keyOf: (filePath) => filePath }))
 
 const reachBeyond = (filePath: string, nextPathsOf: NextPathsOf): string[] => [...reachPaths(nextPathsOf(filePath), nextPathsOf)].filter((reachedPath) => reachedPath !== filePath)
 
@@ -162,20 +160,19 @@ export const cutSegments = (group: StoredCodeGroupGraph): CodeSegment[] => {
   return entries.length === 0 ? [{ kind: "entry", filePaths: sharedPaths }] : [{ kind: "shared", filePaths: sharedPaths }, ...entries]
 }
 
-const reachUsers = (pending: readonly StoredCodeBlock[], blockById: ReadonlyMap<string, StoredCodeBlock>, reachedIds: ReadonlySet<string>): ReadonlySet<string> => {
-  const holding = pending.flatMap((block) => withAncestors(block, blockById)).filter((block) => !reachedIds.has(block.id))
-  if (holding.length === 0) return reachedIds
-  const users = holding.flatMap((block) => block.usedByIds).flatMap((userId) => {
-    const user = blockById.get(userId)
-    return user === undefined ? [] : [user]
+const holderAndUsersOf = (block: StoredCodeBlock, blockById: ReadonlyMap<string, StoredCodeBlock>): StoredCodeBlock[] =>
+  [block.parentBlockId, ...block.usedByIds].flatMap((id) => {
+    const reached = id === null ? undefined : blockById.get(id)
+    return reached === undefined ? [] : [reached]
   })
-  return reachUsers(users, blockById, new Set([...reachedIds, ...holding.map((block) => block.id)]))
-}
+
+const reachUsers = (changed: readonly StoredCodeBlock[], blockById: ReadonlyMap<string, StoredCodeBlock>): ReadonlySet<string> =>
+  new Set([...walkBreadthFirst(changed, { nextOf: (block) => holderAndUsersOf(block, blockById), keyOf: (block) => block.id })].map((block) => block.id))
 
 export const listBlocksUsing = ({ codeBlocks }: StoredCodeGroupGraph, filePaths: readonly string[], sharedFilePaths: readonly string[] = []): StoredCodeBlock[] => {
   const followedById = new Map(codeBlocks.filter((block) => !sharedFilePaths.includes(block.filePath)).map((block) => [block.id, block] as const))
   const changed = codeBlocks.filter((block) => block.lineOfCodeDiffs !== null && filePaths.includes(block.filePath))
-  const reachedIds = reachUsers(changed, followedById, new Set())
+  const reachedIds = reachUsers(changed, followedById)
   return codeBlocks.filter((block) => reachedIds.has(block.id))
 }
 

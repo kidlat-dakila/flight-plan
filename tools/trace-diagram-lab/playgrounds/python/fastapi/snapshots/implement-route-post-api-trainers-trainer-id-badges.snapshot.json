@@ -317,7 +317,24 @@
                   ],
                   "children": [],
                   "triggerLabels": [],
-                  "blockLabels": []
+                  "blockLabels": [
+                    {
+                      "label": "Returns the trainer with the new badge",
+                      "codeBlockId": "src/pokedex/badges/routes.py#function@11:1",
+                      "at": {
+                        "line": 13,
+                        "column": 5
+                      }
+                    },
+                    {
+                      "label": "Calls award_badge to give the badge of the body to the trainer",
+                      "codeBlockId": "src/pokedex/badges/routes.py#function@11:1",
+                      "at": {
+                        "line": 13,
+                        "column": 12
+                      }
+                    }
+                  ]
                 }
               ],
               "triggerLabels": [],
@@ -367,8 +384,12 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Copies the trainer with the badge added at the end",
-                  "codeBlockId": "src/pokedex/badges/service.py#variable@6:5"
+                  "label": "Returns the trainer with the new badge",
+                  "codeBlockId": "src/pokedex/badges/service.py#function@5:1",
+                  "at": {
+                    "line": 8,
+                    "column": 5
+                  }
                 }
               ]
             },
@@ -451,12 +472,16 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Lists the gym leaders who award badges",
-                  "codeBlockId": "src/pokedex/badges/dependencies.py#root-variable@5:1"
+                  "label": "Raises an HTTPException when the header names no gym leader",
+                  "codeBlockId": "src/pokedex/badges/dependencies.py#throw@10:9"
                 },
                 {
-                  "label": "Checks whether the header names a gym leader",
-                  "codeBlockId": "src/pokedex/badges/dependencies.py#condition@9:5"
+                  "label": "Returns the name of the gym leader",
+                  "codeBlockId": "src/pokedex/badges/dependencies.py#function@8:1",
+                  "at": {
+                    "line": 11,
+                    "column": 5
+                  }
                 }
               ]
             }

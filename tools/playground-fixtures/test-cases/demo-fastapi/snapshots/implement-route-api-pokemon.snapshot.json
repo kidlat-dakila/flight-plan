@@ -1525,7 +1525,24 @@
                   ],
                   "children": [],
                   "triggerLabels": [],
-                  "blockLabels": []
+                  "blockLabels": [
+                    {
+                      "label": "Returns the listed Pokemon",
+                      "codeBlockId": "src/pokedex/pokemon/routes.py#function@10:1",
+                      "at": {
+                        "line": 12,
+                        "column": 5
+                      }
+                    },
+                    {
+                      "label": "Calls list_pokemon to read every Pokemon, or those of one trainer",
+                      "codeBlockId": "src/pokedex/pokemon/routes.py#function@10:1",
+                      "at": {
+                        "line": 12,
+                        "column": 12
+                      }
+                    }
+                  ]
                 },
                 {
                   "id": "src/pokedex/pokemon/routes.py#function@20:1",
@@ -1544,7 +1561,24 @@
                   ],
                   "children": [],
                   "triggerLabels": [],
-                  "blockLabels": []
+                  "blockLabels": [
+                    {
+                      "label": "Returns the created Pokemon",
+                      "codeBlockId": "src/pokedex/pokemon/routes.py#function@20:1",
+                      "at": {
+                        "line": 22,
+                        "column": 5
+                      }
+                    },
+                    {
+                      "label": "Calls create_pokemon to store the new Pokemon",
+                      "codeBlockId": "src/pokedex/pokemon/routes.py#function@20:1",
+                      "at": {
+                        "line": 22,
+                        "column": 12
+                      }
+                    }
+                  ]
                 }
               ],
               "triggerLabels": [],
@@ -1577,7 +1611,24 @@
                   ],
                   "children": [],
                   "triggerLabels": [],
-                  "blockLabels": []
+                  "blockLabels": [
+                    {
+                      "label": "Returns the Pokemon with the id",
+                      "codeBlockId": "src/pokedex/pokemon/routes.py#function@15:1",
+                      "at": {
+                        "line": 17,
+                        "column": 5
+                      }
+                    },
+                    {
+                      "label": "Calls find_pokemon to read the Pokemon with the id",
+                      "codeBlockId": "src/pokedex/pokemon/routes.py#function@15:1",
+                      "at": {
+                        "line": 17,
+                        "column": 12
+                      }
+                    }
+                  ]
                 },
                 {
                   "id": "src/pokedex/pokemon/routes.py#function@25:1",
@@ -1598,7 +1649,24 @@
                   ],
                   "children": [],
                   "triggerLabels": [],
-                  "blockLabels": []
+                  "blockLabels": [
+                    {
+                      "label": "Returns the updated Pokemon",
+                      "codeBlockId": "src/pokedex/pokemon/routes.py#function@25:1",
+                      "at": {
+                        "line": 27,
+                        "column": 5
+                      }
+                    },
+                    {
+                      "label": "Calls update_pokemon to save the changes to the Pokemon",
+                      "codeBlockId": "src/pokedex/pokemon/routes.py#function@25:1",
+                      "at": {
+                        "line": 27,
+                        "column": 12
+                      }
+                    }
+                  ]
                 },
                 {
                   "id": "src/pokedex/pokemon/routes.py#function@30:1",
@@ -1621,8 +1689,12 @@
                   "triggerLabels": [],
                   "blockLabels": [
                     {
-                      "label": "Deletes the Pokemon of the id",
-                      "codeBlockId": "src/pokedex/pokemon/routes.py#call@32:5"
+                      "label": "Calls delete_pokemon to remove the Pokemon with the id",
+                      "codeBlockId": "src/pokedex/pokemon/routes.py#call@32:5",
+                      "at": {
+                        "line": 32,
+                        "column": 5
+                      }
                     }
                   ]
                 }
@@ -1685,16 +1757,12 @@
               ],
               "blockLabels": [
                 {
-                  "label": "Queries every Pokemon ordered by name",
-                  "codeBlockId": "src/pokedex/pokemon/service.py#external-value@11:5"
-                },
-                {
-                  "label": "Checks whether a trainer is given",
-                  "codeBlockId": "src/pokedex/pokemon/service.py#condition@12:5"
-                },
-                {
-                  "label": "Filters the query to the Pokemon of that trainer",
-                  "codeBlockId": "src/pokedex/pokemon/service.py#external-value@13:9"
+                  "label": "Returns the Pokemon ordered by name, of one trainer when one is given",
+                  "codeBlockId": "src/pokedex/pokemon/service.py#function@10:1",
+                  "at": {
+                    "line": 14,
+                    "column": 5
+                  }
                 }
               ]
             },
@@ -1790,12 +1858,16 @@
               ],
               "blockLabels": [
                 {
-                  "label": "Loads the row of the id, or None",
-                  "codeBlockId": "src/pokedex/pokemon/service.py#external-value@18:5"
+                  "label": "Raises a NotFoundError when no Pokemon has the id",
+                  "codeBlockId": "src/pokedex/pokemon/service.py#throw@20:9"
                 },
                 {
-                  "label": "Checks whether the id has no row",
-                  "codeBlockId": "src/pokedex/pokemon/service.py#condition@19:5"
+                  "label": "Returns the found Pokemon",
+                  "codeBlockId": "src/pokedex/pokemon/service.py#function@17:1",
+                  "at": {
+                    "line": 21,
+                    "column": 5
+                  }
                 }
               ]
             },
@@ -1856,32 +1928,28 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Maps a Pokemon to a row of the pokemon table",
-                  "codeBlockId": "src/pokedex/pokemon/models.py#class@7:1"
+                  "label": "Calls find_trainer when a trainer is given to check that the trainer exists",
+                  "codeBlockId": "src/pokedex/pokemon/service.py#call@26:9",
+                  "at": {
+                    "line": 26,
+                    "column": 9
+                  }
                 },
                 {
-                  "label": "Checks whether the body names a trainer",
-                  "codeBlockId": "src/pokedex/pokemon/service.py#condition@25:5"
+                  "label": "Calls Pokemon to make the Pokemon from the draft",
+                  "codeBlockId": "src/pokedex/pokemon/service.py#external-value@27:5",
+                  "at": {
+                    "line": 27,
+                    "column": 15
+                  }
                 },
                 {
-                  "label": "Loads the trainer, or raises NotFoundError",
-                  "codeBlockId": "src/pokedex/pokemon/service.py#call@26:9"
-                },
-                {
-                  "label": "Builds the new row from the body",
-                  "codeBlockId": "src/pokedex/pokemon/service.py#external-value@27:5"
-                },
-                {
-                  "label": "Adds the new row to the session",
-                  "codeBlockId": "src/pokedex/pokemon/service.py#data@28:5"
-                },
-                {
-                  "label": "Commits the insert to the database",
-                  "codeBlockId": "src/pokedex/pokemon/service.py#data@29:5"
-                },
-                {
-                  "label": "Reloads the row, so its id is set",
-                  "codeBlockId": "src/pokedex/pokemon/service.py#data@30:5"
+                  "label": "Returns the stored Pokemon",
+                  "codeBlockId": "src/pokedex/pokemon/service.py#function@24:1",
+                  "at": {
+                    "line": 31,
+                    "column": 5
+                  }
                 }
               ]
             },
@@ -1932,8 +2000,16 @@
                   "triggerLabels": [],
                   "blockLabels": [
                     {
-                      "label": "Checks whether the type is set and not in the list",
-                      "codeBlockId": "src/pokedex/pokemon/schemas.py#condition@19:9"
+                      "label": "Raises a ValueError when the type is not a known Pokemon type",
+                      "codeBlockId": "src/pokedex/pokemon/schemas.py#throw@20:13"
+                    },
+                    {
+                      "label": "Returns the type as it is",
+                      "codeBlockId": "src/pokedex/pokemon/schemas.py#method@16:5",
+                      "at": {
+                        "line": 21,
+                        "column": 9
+                      }
                     }
                   ]
                 },
@@ -1956,8 +2032,16 @@
                   "triggerLabels": [],
                   "blockLabels": [
                     {
-                      "label": "Checks whether the two types are the same",
-                      "codeBlockId": "src/pokedex/pokemon/schemas.py#condition@25:9"
+                      "label": "Raises a ValueError when both types are the same",
+                      "codeBlockId": "src/pokedex/pokemon/schemas.py#throw@26:13"
+                    },
+                    {
+                      "label": "Returns the checked Pokemon draft",
+                      "codeBlockId": "src/pokedex/pokemon/schemas.py#method@23:5",
+                      "at": {
+                        "line": 27,
+                        "column": 9
+                      }
                     }
                   ]
                 }
@@ -2031,32 +2115,28 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Loads the stored Pokemon, or raises NotFoundError",
-                  "codeBlockId": "src/pokedex/pokemon/service.py#external-value@35:5"
+                  "label": "Calls find_pokemon to read the Pokemon to update",
+                  "codeBlockId": "src/pokedex/pokemon/service.py#external-value@35:5",
+                  "at": {
+                    "line": 35,
+                    "column": 15
+                  }
                 },
                 {
-                  "label": "Keeps only the fields the body sets",
-                  "codeBlockId": "src/pokedex/pokemon/service.py#variable@36:5"
+                  "label": "Calls find_trainer when a new trainer is given to check that the trainer exists",
+                  "codeBlockId": "src/pokedex/pokemon/service.py#call@38:9",
+                  "at": {
+                    "line": 38,
+                    "column": 9
+                  }
                 },
                 {
-                  "label": "Checks whether the body sets a trainer",
-                  "codeBlockId": "src/pokedex/pokemon/service.py#condition@37:5"
-                },
-                {
-                  "label": "Loads the trainer, or raises NotFoundError",
-                  "codeBlockId": "src/pokedex/pokemon/service.py#call@38:9"
-                },
-                {
-                  "label": "Copies each kept field onto the row",
-                  "codeBlockId": "src/pokedex/pokemon/service.py#loop@39:5"
-                },
-                {
-                  "label": "Commits the changed fields to the database",
-                  "codeBlockId": "src/pokedex/pokemon/service.py#data@41:5"
-                },
-                {
-                  "label": "Reloads the row with the stored values",
-                  "codeBlockId": "src/pokedex/pokemon/service.py#data@42:5"
+                  "label": "Returns the updated Pokemon",
+                  "codeBlockId": "src/pokedex/pokemon/service.py#function@34:1",
+                  "at": {
+                    "line": 43,
+                    "column": 5
+                  }
                 }
               ]
             },
@@ -2135,16 +2215,12 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Loads the stored Pokemon, or raises NotFoundError",
-                  "codeBlockId": "src/pokedex/pokemon/service.py#external-value@47:5"
-                },
-                {
-                  "label": "Marks the row for deletion in the session",
-                  "codeBlockId": "src/pokedex/pokemon/service.py#data@48:5"
-                },
-                {
-                  "label": "Commits the deletion to the database",
-                  "codeBlockId": "src/pokedex/pokemon/service.py#data@49:5"
+                  "label": "Calls find_pokemon to read the Pokemon to delete",
+                  "codeBlockId": "src/pokedex/pokemon/service.py#external-value@47:5",
+                  "at": {
+                    "line": 47,
+                    "column": 15
+                  }
                 }
               ]
             },

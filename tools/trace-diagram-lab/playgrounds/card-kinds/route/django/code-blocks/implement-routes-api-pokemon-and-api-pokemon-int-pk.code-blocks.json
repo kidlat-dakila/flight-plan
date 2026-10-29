@@ -1,0 +1,7386 @@
+[
+  {
+    "astGraphs": [
+      {
+        "filePath": "mysite/urls.py",
+        "codeBlockIds": [
+          "mysite/urls.py#import@1:1",
+          "mysite/urls.py#import@3:1",
+          "mysite/urls.py#import@4:1",
+          "mysite/urls.py#root-variable@6:1",
+          "mysite/urls.py#route@7:5",
+          "mysite/urls.py#effect-callback@7:21",
+          "mysite/urls.py#route@8:5",
+          "mysite/urls.py#effect-callback@8:18"
+        ],
+        "rootBlockIds": [
+          "mysite/urls.py#import@1:1",
+          "mysite/urls.py#import@3:1",
+          "mysite/urls.py#import@4:1",
+          "mysite/urls.py#root-variable@6:1"
+        ],
+        "diffBlockIds": [],
+        "diffContains": [],
+        "externalSymbols": [
+          {
+            "blockId": "mysite/urls.py#route@7:5",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "mysite/urls.py#effect-callback@7:21",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "mysite/urls.py#route@8:5",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "mysite/urls.py#effect-callback@8:18",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "mysite/urls.py#effect-callback@8:18",
+            "symbolIndex": 1
+          }
+        ],
+        "externalBlockIds": [],
+        "exports": {
+          "urlpatterns": "mysite/urls.py#root-variable@6:1"
+        }
+      },
+      {
+        "filePath": "pokedex/models.py",
+        "codeBlockIds": [
+          "pokedex/models.py#import@1:1",
+          "pokedex/models.py#import@2:1",
+          "pokedex/models.py#class@5:1",
+          "pokedex/models.py#property@6:5",
+          "pokedex/models.py#effect@6:15",
+          "pokedex/models.py#code-event@6:93",
+          "pokedex/models.py#property@7:5",
+          "pokedex/models.py#property@8:5",
+          "pokedex/models.py#method@10:5",
+          "pokedex/models.py#property@11:17",
+          "pokedex/models.py#property@11:32",
+          "pokedex/models.py#property@11:51"
+        ],
+        "rootBlockIds": [
+          "pokedex/models.py#import@1:1",
+          "pokedex/models.py#import@2:1",
+          "pokedex/models.py#class@5:1"
+        ],
+        "diffBlockIds": [],
+        "diffContains": [],
+        "externalSymbols": [
+          {
+            "blockId": "pokedex/models.py#class@5:1",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "pokedex/models.py#effect@6:15",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "pokedex/models.py#effect@6:15",
+            "symbolIndex": 1
+          },
+          {
+            "blockId": "pokedex/models.py#code-event@6:93",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "pokedex/models.py#property@7:5",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "pokedex/models.py#property@8:5",
+            "symbolIndex": 0
+          }
+        ],
+        "externalBlockIds": [],
+        "exports": {
+          "Pokemon": "pokedex/models.py#class@5:1"
+        }
+      },
+      {
+        "filePath": "pokedex/urls.py",
+        "codeBlockIds": [
+          "pokedex/urls.py#import@1:1",
+          "pokedex/urls.py#import@3:1",
+          "pokedex/urls.py#root-variable@5:1",
+          "pokedex/urls.py#route@6:5",
+          "pokedex/urls.py#effect-callback@6:22",
+          "pokedex/urls.py#route@7:5",
+          "pokedex/urls.py#effect-callback@7:22",
+          "pokedex/urls.py#route@8:5",
+          "pokedex/urls.py#effect-callback@8:31",
+          "pokedex/urls.py#route@9:5",
+          "pokedex/urls.py#effect-callback@9:40"
+        ],
+        "rootBlockIds": [
+          "pokedex/urls.py#import@1:1",
+          "pokedex/urls.py#import@3:1",
+          "pokedex/urls.py#root-variable@5:1"
+        ],
+        "diffBlockIds": [
+          "pokedex/urls.py#root-variable@5:1",
+          "pokedex/urls.py#route@7:5",
+          "pokedex/urls.py#effect-callback@7:22",
+          "pokedex/urls.py#route@8:5",
+          "pokedex/urls.py#effect-callback@8:31",
+          "pokedex/urls.py#route@9:5",
+          "pokedex/urls.py#effect-callback@9:40"
+        ],
+        "diffContains": [
+          "effect",
+          "route",
+          "logic"
+        ],
+        "externalSymbols": [
+          {
+            "blockId": "pokedex/urls.py#route@6:5",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "pokedex/urls.py#effect-callback@6:22",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "pokedex/urls.py#route@7:5",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "pokedex/urls.py#effect-callback@7:22",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "pokedex/urls.py#route@8:5",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "pokedex/urls.py#effect-callback@8:31",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "pokedex/urls.py#route@9:5",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "pokedex/urls.py#effect-callback@9:40",
+            "symbolIndex": 0
+          }
+        ],
+        "externalBlockIds": [
+          "pokedex/views.py#function@14:1",
+          "pokedex/views.py#function@20:1",
+          "pokedex/views.py#class@30:1",
+          "pokedex/views.py#function@45:1"
+        ],
+        "exports": {
+          "urlpatterns": "pokedex/urls.py#root-variable@5:1"
+        }
+      },
+      {
+        "filePath": "pokedex/views.py",
+        "codeBlockIds": [
+          "pokedex/views.py#import@1:1",
+          "pokedex/views.py#import@3:1",
+          "pokedex/views.py#import@4:1",
+          "pokedex/views.py#import@5:1",
+          "pokedex/views.py#import@6:1",
+          "pokedex/views.py#import@7:1",
+          "pokedex/views.py#import@9:1",
+          "pokedex/views.py#root-variable@11:1",
+          "pokedex/views.py#function@14:1",
+          "pokedex/views.py#root-argument-value@16:13",
+          "pokedex/views.py#root-argument-value@17:34",
+          "pokedex/views.py#property@17:26",
+          "pokedex/views.py#property@17:57",
+          "pokedex/views.py#function@20:1",
+          "pokedex/views.py#root-argument-value@22:11",
+          "pokedex/views.py#root-argument-value@23:8",
+          "pokedex/views.py#root-argument-value@24:27",
+          "pokedex/views.py#root-argument-value@25:50",
+          "pokedex/views.py#condition@23:5",
+          "pokedex/views.py#external-value@24:9",
+          "pokedex/views.py#external-value@25:9",
+          "pokedex/views.py#data@25:19",
+          "pokedex/views.py#class@30:1",
+          "pokedex/views.py#method@31:5",
+          "pokedex/views.py#root-argument-value@31:19",
+          "pokedex/views.py#root-argument-value@31:28",
+          "pokedex/views.py#data-fetch@32:29",
+          "pokedex/views.py#method@34:5",
+          "pokedex/views.py#root-argument-value@34:21",
+          "pokedex/views.py#root-argument-value@36:35",
+          "pokedex/views.py#root-argument-value@34:30",
+          "pokedex/views.py#external-value@35:9",
+          "pokedex/views.py#data-fetch@35:19",
+          "pokedex/views.py#call@37:9",
+          "pokedex/views.py#method@40:5",
+          "pokedex/views.py#root-argument-value@40:22",
+          "pokedex/views.py#root-argument-value@40:31",
+          "pokedex/views.py#call@41:9",
+          "pokedex/views.py#data-fetch@41:9",
+          "pokedex/views.py#function@45:1",
+          "pokedex/views.py#root-argument-value@47:14",
+          "pokedex/views.py#root-argument-value@48:57",
+          "pokedex/views.py#root-argument-value@47:23",
+          "pokedex/views.py#external-value@48:5",
+          "pokedex/views.py#data-fetch@48:15",
+          "pokedex/views.py#call@50:5"
+        ],
+        "rootBlockIds": [
+          "pokedex/views.py#import@1:1",
+          "pokedex/views.py#import@3:1",
+          "pokedex/views.py#import@4:1",
+          "pokedex/views.py#import@5:1",
+          "pokedex/views.py#import@6:1",
+          "pokedex/views.py#import@7:1",
+          "pokedex/views.py#import@9:1",
+          "pokedex/views.py#root-variable@11:1",
+          "pokedex/views.py#function@14:1",
+          "pokedex/views.py#function@20:1",
+          "pokedex/views.py#class@30:1",
+          "pokedex/views.py#function@45:1"
+        ],
+        "diffBlockIds": [
+          "pokedex/views.py#import@1:1",
+          "pokedex/views.py#import@4:1",
+          "pokedex/views.py#import@5:1",
+          "pokedex/views.py#import@6:1",
+          "pokedex/views.py#import@7:1",
+          "pokedex/views.py#import@9:1",
+          "pokedex/views.py#root-variable@11:1",
+          "pokedex/views.py#function@20:1",
+          "pokedex/views.py#root-argument-value@22:11",
+          "pokedex/views.py#root-argument-value@23:8",
+          "pokedex/views.py#root-argument-value@24:27",
+          "pokedex/views.py#root-argument-value@25:50",
+          "pokedex/views.py#condition@23:5",
+          "pokedex/views.py#external-value@24:9",
+          "pokedex/views.py#external-value@25:9",
+          "pokedex/views.py#data@25:19",
+          "pokedex/views.py#class@30:1",
+          "pokedex/views.py#method@31:5",
+          "pokedex/views.py#root-argument-value@31:19",
+          "pokedex/views.py#root-argument-value@31:28",
+          "pokedex/views.py#data-fetch@32:29",
+          "pokedex/views.py#method@34:5",
+          "pokedex/views.py#root-argument-value@34:21",
+          "pokedex/views.py#root-argument-value@36:35",
+          "pokedex/views.py#root-argument-value@34:30",
+          "pokedex/views.py#external-value@35:9",
+          "pokedex/views.py#data-fetch@35:19",
+          "pokedex/views.py#call@37:9",
+          "pokedex/views.py#method@40:5",
+          "pokedex/views.py#root-argument-value@40:22",
+          "pokedex/views.py#root-argument-value@40:31",
+          "pokedex/views.py#call@41:9",
+          "pokedex/views.py#data-fetch@41:9",
+          "pokedex/views.py#function@45:1",
+          "pokedex/views.py#root-argument-value@47:14",
+          "pokedex/views.py#root-argument-value@48:57",
+          "pokedex/views.py#root-argument-value@47:23",
+          "pokedex/views.py#external-value@48:5",
+          "pokedex/views.py#data-fetch@48:15",
+          "pokedex/views.py#call@50:5"
+        ],
+        "diffContains": [
+          "route",
+          "data",
+          "logic"
+        ],
+        "externalSymbols": [
+          {
+            "blockId": "pokedex/views.py#function@14:1",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "pokedex/views.py#function@14:1",
+            "symbolIndex": 1
+          },
+          {
+            "blockId": "pokedex/views.py#function@14:1",
+            "symbolIndex": 2
+          },
+          {
+            "blockId": "pokedex/views.py#function@20:1",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "pokedex/views.py#function@20:1",
+            "symbolIndex": 1
+          },
+          {
+            "blockId": "pokedex/views.py#function@20:1",
+            "symbolIndex": 2
+          },
+          {
+            "blockId": "pokedex/views.py#condition@23:5",
+            "symbolIndex": 1
+          },
+          {
+            "blockId": "pokedex/views.py#external-value@24:9",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "pokedex/views.py#data@25:19",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "pokedex/views.py#class@30:1",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "pokedex/views.py#method@31:5",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "pokedex/views.py#data-fetch@32:29",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "pokedex/views.py#data-fetch@32:29",
+            "symbolIndex": 1
+          },
+          {
+            "blockId": "pokedex/views.py#method@34:5",
+            "symbolIndex": 1
+          },
+          {
+            "blockId": "pokedex/views.py#method@34:5",
+            "symbolIndex": 3
+          },
+          {
+            "blockId": "pokedex/views.py#data-fetch@35:19",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "pokedex/views.py#data-fetch@35:19",
+            "symbolIndex": 1
+          },
+          {
+            "blockId": "pokedex/views.py#method@40:5",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "pokedex/views.py#data-fetch@41:9",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "pokedex/views.py#data-fetch@41:9",
+            "symbolIndex": 1
+          },
+          {
+            "blockId": "pokedex/views.py#function@45:1",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "pokedex/views.py#function@45:1",
+            "symbolIndex": 1
+          },
+          {
+            "blockId": "pokedex/views.py#function@45:1",
+            "symbolIndex": 5
+          },
+          {
+            "blockId": "pokedex/views.py#data-fetch@48:15",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "pokedex/views.py#data-fetch@48:15",
+            "symbolIndex": 1
+          }
+        ],
+        "externalBlockIds": [
+          "pokedex/models.py#class@5:1"
+        ],
+        "exports": {
+          "MAX_LEVEL": "pokedex/views.py#root-variable@11:1",
+          "trainer": "pokedex/views.py#function@14:1",
+          "party": "pokedex/views.py#function@20:1",
+          "PokemonView": "pokedex/views.py#class@30:1",
+          "level_up": "pokedex/views.py#function@45:1",
+          "Pokemon": "pokedex/models.py#class@5:1"
+        }
+      }
+    ],
+    "rootASTGraphFilePaths": [
+      "mysite/urls.py"
+    ],
+    "codeBlocks": [
+      {
+        "id": "mysite/urls.py#import@1:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 38
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "mysite/urls.py",
+        "catalogue": null
+      },
+      {
+        "id": "mysite/urls.py#import@3:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 3,
+              "column": 1
+            },
+            "end": {
+              "line": 3,
+              "column": 25
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "mysite/urls.py",
+        "catalogue": null
+      },
+      {
+        "id": "mysite/urls.py#import@4:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 4,
+              "column": 1
+            },
+            "end": {
+              "line": 4,
+              "column": 41
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "mysite/urls.py",
+        "catalogue": null
+      },
+      {
+        "id": "mysite/urls.py#root-variable@6:1",
+        "name": "urlpatterns",
+        "type": "root-variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 6,
+              "column": 1
+            },
+            "end": {
+              "line": 9,
+              "column": 2
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "mysite/urls.py#route@7:5",
+          "mysite/urls.py#route@8:5"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "mysite/urls.py"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "api-route",
+          "effect"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "mysite/urls.py",
+        "catalogue": null
+      },
+      {
+        "id": "mysite/urls.py#route@7:5",
+        "type": "route",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 7,
+              "column": 5
+            },
+            "end": {
+              "line": 7,
+              "column": 34
+            }
+          }
+        ],
+        "parentBlockId": "mysite/urls.py#root-variable@6:1",
+        "childrenBlockIds": [
+          "mysite/urls.py#effect-callback@7:21"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "api-route",
+          "effect"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 7,
+                "column": 5
+              },
+              "end": {
+                "line": 7,
+                "column": 9
+              }
+            },
+            "use": "call",
+            "type": "unopened-import",
+            "specifier": "django.urls:path",
+            "importedName": "path",
+            "isLibrary": true
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "mysite/urls.py",
+        "catalogue": {
+          "specifier": "django.urls",
+          "name": "path",
+          "runs": "route",
+          "path": "health/",
+          "method": "*",
+          "event": null,
+          "certainty": "proven"
+        },
+        "card": {
+          "library": "Django",
+          "kind": "route",
+          "part": "holder",
+          "heading": "ANY",
+          "groupKey": "/health",
+          "ownerId": null
+        }
+      },
+      {
+        "id": "mysite/urls.py#effect-callback@7:21",
+        "name": "1",
+        "type": "effect-callback",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 7,
+              "column": 21
+            },
+            "end": {
+              "line": 7,
+              "column": 33
+            }
+          }
+        ],
+        "parentBlockId": "mysite/urls.py#route@7:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "api-route",
+          "effect"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 7,
+                "column": 21
+              },
+              "end": {
+                "line": 7,
+                "column": 33
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "unopened-import",
+            "specifier": "mysite:views",
+            "importedName": "health",
+            "isLibrary": false
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "mysite/urls.py",
+        "catalogue": {
+          "specifier": "django.urls",
+          "name": "path",
+          "runs": "route",
+          "path": null,
+          "method": null,
+          "event": null,
+          "certainty": "proven"
+        },
+        "card": {
+          "library": "Django",
+          "kind": "route",
+          "part": "handler",
+          "heading": "ANY",
+          "groupKey": "/health",
+          "ownerId": null
+        }
+      },
+      {
+        "id": "mysite/urls.py#route@8:5",
+        "type": "route",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 8,
+              "column": 5
+            },
+            "end": {
+              "line": 8,
+              "column": 40
+            }
+          }
+        ],
+        "parentBlockId": "mysite/urls.py#root-variable@6:1",
+        "childrenBlockIds": [
+          "mysite/urls.py#effect-callback@8:18"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "api-route",
+          "effect"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 8,
+                "column": 5
+              },
+              "end": {
+                "line": 8,
+                "column": 9
+              }
+            },
+            "use": "call",
+            "type": "unopened-import",
+            "specifier": "django.urls:path",
+            "importedName": "path",
+            "isLibrary": true
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "mysite/urls.py",
+        "catalogue": {
+          "specifier": "django.urls",
+          "name": "path",
+          "runs": "route",
+          "path": "api/",
+          "method": "*",
+          "event": null,
+          "certainty": "proven"
+        },
+        "card": {
+          "library": "Django",
+          "kind": "route",
+          "part": "mount",
+          "heading": null,
+          "groupKey": "/api",
+          "ownerId": null
+        }
+      },
+      {
+        "id": "mysite/urls.py#effect-callback@8:18",
+        "name": "1",
+        "type": "effect-callback",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 8,
+              "column": 18
+            },
+            "end": {
+              "line": 8,
+              "column": 39
+            }
+          }
+        ],
+        "parentBlockId": "mysite/urls.py#route@8:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "api-route",
+          "effect"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 8,
+                "column": 18
+              },
+              "end": {
+                "line": 8,
+                "column": 25
+              }
+            },
+            "use": "call",
+            "type": "unopened-import",
+            "specifier": "django.urls:include",
+            "importedName": "include",
+            "isLibrary": true
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 8,
+                "column": 26
+              },
+              "end": {
+                "line": 8,
+                "column": 38
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "unopened-import",
+            "specifier": "pokedex:urls",
+            "importedName": "*",
+            "isLibrary": false
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "mysite/urls.py",
+        "catalogue": {
+          "specifier": "django.urls",
+          "name": "path",
+          "runs": "route",
+          "path": null,
+          "method": null,
+          "event": null,
+          "certainty": "proven"
+        }
+      },
+      {
+        "id": "pokedex/models.py#import@1:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 33
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "pokedex/models.py",
+        "catalogue": null
+      },
+      {
+        "id": "pokedex/models.py#import@2:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 2,
+              "column": 1
+            },
+            "end": {
+              "line": 2,
+              "column": 29
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "pokedex/models.py",
+        "catalogue": null
+      },
+      {
+        "id": "pokedex/models.py#class@5:1",
+        "name": "Pokemon",
+        "type": "class",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 5,
+              "column": 1
+            },
+            "end": {
+              "line": 11,
+              "column": 71
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "pokedex/models.py#property@6:5",
+          "pokedex/models.py#property@7:5",
+          "pokedex/models.py#property@8:5",
+          "pokedex/models.py#method@10:5"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "pokedex/models.py",
+          "pokedex/views.py"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "data-model",
+          "effect",
+          "event"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 5,
+                "column": 15
+              },
+              "end": {
+                "line": 5,
+                "column": 27
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "Model"
+              ],
+              "blockId": null
+            },
+            "type": "unopened-import",
+            "specifier": "django.db:models",
+            "importedName": "models",
+            "isLibrary": true
+          }
+        ],
+        "usedByIds": [
+          "pokedex/views.py#data@25:19",
+          "pokedex/views.py#data-fetch@32:29",
+          "pokedex/views.py#data-fetch@35:19",
+          "pokedex/views.py#data-fetch@41:9",
+          "pokedex/views.py#data-fetch@48:15"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "pokedex/models.py",
+        "catalogue": {
+          "specifier": "django.db.models",
+          "name": "Model",
+          "runs": null,
+          "path": null,
+          "method": null,
+          "event": null,
+          "certainty": "proven"
+        }
+      },
+      {
+        "id": "pokedex/models.py#property@6:5",
+        "name": "Pokemon.trainer",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 6,
+              "column": 5
+            },
+            "end": {
+              "line": 6,
+              "column": 108
+            }
+          }
+        ],
+        "parentBlockId": "pokedex/models.py#class@5:1",
+        "childrenBlockIds": [
+          "pokedex/models.py#effect@6:15"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "effect",
+          "event"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "pokedex/models.py",
+        "catalogue": null
+      },
+      {
+        "id": "pokedex/models.py#effect@6:15",
+        "type": "effect",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 6,
+              "column": 15
+            },
+            "end": {
+              "line": 6,
+              "column": 108
+            }
+          }
+        ],
+        "parentBlockId": "pokedex/models.py#property@6:5",
+        "childrenBlockIds": [
+          "pokedex/models.py#code-event@6:93"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "effect",
+          "event"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 6,
+                "column": 15
+              },
+              "end": {
+                "line": 6,
+                "column": 32
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "ForeignKey"
+              ],
+              "blockId": null
+            },
+            "type": "unopened-import",
+            "specifier": "django.db:models",
+            "importedName": "models",
+            "isLibrary": true
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 6,
+                "column": 33
+              },
+              "end": {
+                "line": 6,
+                "column": 57
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "AUTH_USER_MODEL"
+              ],
+              "blockId": null
+            },
+            "type": "unopened-import",
+            "specifier": "django.conf:settings",
+            "importedName": "settings",
+            "isLibrary": true
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "pokedex/models.py",
+        "catalogue": null
+      },
+      {
+        "id": "pokedex/models.py#code-event@6:93",
+        "name": "on_delete",
+        "type": "code-event",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 6,
+              "column": 93
+            },
+            "end": {
+              "line": 6,
+              "column": 107
+            }
+          }
+        ],
+        "parentBlockId": "pokedex/models.py#effect@6:15",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "event"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 6,
+                "column": 93
+              },
+              "end": {
+                "line": 6,
+                "column": 107
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "CASCADE"
+              ],
+              "blockId": null
+            },
+            "type": "unopened-import",
+            "specifier": "django.db:models",
+            "importedName": "models",
+            "isLibrary": true
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "pokedex/models.py",
+        "catalogue": null
+      },
+      {
+        "id": "pokedex/models.py#property@7:5",
+        "name": "Pokemon.name",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 7,
+              "column": 5
+            },
+            "end": {
+              "line": 7,
+              "column": 43
+            }
+          }
+        ],
+        "parentBlockId": "pokedex/models.py#class@5:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 7,
+                "column": 12
+              },
+              "end": {
+                "line": 7,
+                "column": 28
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "CharField"
+              ],
+              "blockId": null
+            },
+            "type": "unopened-import",
+            "specifier": "django.db:models",
+            "importedName": "models",
+            "isLibrary": true
+          }
+        ],
+        "usedByIds": [
+          "pokedex/models.py#property@11:32"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "pokedex/models.py",
+        "catalogue": null
+      },
+      {
+        "id": "pokedex/models.py#property@8:5",
+        "name": "Pokemon.level",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 8,
+              "column": 5
+            },
+            "end": {
+              "line": 8,
+              "column": 56
+            }
+          }
+        ],
+        "parentBlockId": "pokedex/models.py#class@5:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 8,
+                "column": 13
+              },
+              "end": {
+                "line": 8,
+                "column": 45
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "PositiveSmallIntegerField"
+              ],
+              "blockId": null
+            },
+            "type": "unopened-import",
+            "specifier": "django.db:models",
+            "importedName": "models",
+            "isLibrary": true
+          }
+        ],
+        "usedByIds": [
+          "pokedex/models.py#property@11:51"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "pokedex/models.py",
+        "catalogue": null
+      },
+      {
+        "id": "pokedex/models.py#method@10:5",
+        "name": "Pokemon.as_dict",
+        "type": "method",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 10,
+              "column": 5
+            },
+            "end": {
+              "line": 11,
+              "column": 71
+            }
+          }
+        ],
+        "parentBlockId": "pokedex/models.py#class@5:1",
+        "childrenBlockIds": [
+          "pokedex/models.py#property@11:17",
+          "pokedex/models.py#property@11:32",
+          "pokedex/models.py#property@11:51"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "returnsAt": [
+          {
+            "line": 11,
+            "column": 9
+          }
+        ],
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "pokedex/models.py",
+        "catalogue": null
+      },
+      {
+        "id": "pokedex/models.py#property@11:17",
+        "name": "id",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 11,
+              "column": 17
+            },
+            "end": {
+              "line": 11,
+              "column": 30
+            }
+          }
+        ],
+        "parentBlockId": "pokedex/models.py#method@10:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 11,
+                "column": 23
+              },
+              "end": {
+                "line": 11,
+                "column": 30
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "pk"
+              ],
+              "blockId": null
+            },
+            "type": "internal-variable",
+            "lineOfCodeReference": {
+              "start": {
+                "line": 10,
+                "column": 17
+              },
+              "end": {
+                "line": 10,
+                "column": 21
+              }
+            }
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "pokedex/models.py",
+        "catalogue": null
+      },
+      {
+        "id": "pokedex/models.py#property@11:32",
+        "name": "name",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 11,
+              "column": 32
+            },
+            "end": {
+              "line": 11,
+              "column": 49
+            }
+          }
+        ],
+        "parentBlockId": "pokedex/models.py#method@10:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 11,
+                "column": 40
+              },
+              "end": {
+                "line": 11,
+                "column": 49
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "pokedex/models.py#property@7:5"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "pokedex/models.py",
+        "catalogue": null
+      },
+      {
+        "id": "pokedex/models.py#property@11:51",
+        "name": "level",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 11,
+              "column": 51
+            },
+            "end": {
+              "line": 11,
+              "column": 70
+            }
+          }
+        ],
+        "parentBlockId": "pokedex/models.py#method@10:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 11,
+                "column": 60
+              },
+              "end": {
+                "line": 11,
+                "column": 70
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "pokedex/models.py#property@8:5"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "pokedex/models.py",
+        "catalogue": null
+      },
+      {
+        "id": "pokedex/urls.py#import@1:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 29
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "pokedex/urls.py",
+        "catalogue": null
+      },
+      {
+        "id": "pokedex/urls.py#import@3:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 3,
+              "column": 1
+            },
+            "end": {
+              "line": 3,
+              "column": 26
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "pokedex/urls.py",
+        "catalogue": null
+      },
+      {
+        "id": "pokedex/urls.py#root-variable@5:1",
+        "name": "urlpatterns",
+        "type": "root-variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 5,
+              "column": 1
+            },
+            "end": {
+              "line": 10,
+              "column": 2
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "pokedex/urls.py#route@6:5",
+          "pokedex/urls.py#route@7:5",
+          "pokedex/urls.py#route@8:5",
+          "pokedex/urls.py#route@9:5"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "pokedex/urls.py"
+        ],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 7,
+              "column": 34
+            },
+            "end": {
+              "line": 7,
+              "column": 35
+            }
+          },
+          {
+            "start": {
+              "line": 8,
+              "column": 59
+            },
+            "end": {
+              "line": 8,
+              "column": 60
+            }
+          },
+          {
+            "start": {
+              "line": 9,
+              "column": 55
+            },
+            "end": {
+              "line": 9,
+              "column": 56
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 7,
+                "column": 34
+              },
+              "end": {
+                "line": 7,
+                "column": 35
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 8,
+                "column": 59
+              },
+              "end": {
+                "line": 8,
+                "column": 60
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 9,
+                "column": 55
+              },
+              "end": {
+                "line": 9,
+                "column": 56
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "pokedex/urls.py#root-variable@5:1"
+        ],
+        "classifications": [
+          "api-route",
+          "effect"
+        ],
+        "diffClassifications": [
+          "api-route",
+          "effect"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "pokedex/urls.py",
+        "catalogue": null
+      },
+      {
+        "id": "pokedex/urls.py#route@6:5",
+        "type": "route",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 6,
+              "column": 5
+            },
+            "end": {
+              "line": 6,
+              "column": 36
+            }
+          }
+        ],
+        "parentBlockId": "pokedex/urls.py#root-variable@5:1",
+        "childrenBlockIds": [
+          "pokedex/urls.py#effect-callback@6:22"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "api-route",
+          "effect"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 6,
+                "column": 5
+              },
+              "end": {
+                "line": 6,
+                "column": 9
+              }
+            },
+            "use": "call",
+            "type": "unopened-import",
+            "specifier": "django.urls:path",
+            "importedName": "path",
+            "isLibrary": true
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "pokedex/urls.py",
+        "catalogue": {
+          "specifier": "django.urls",
+          "name": "path",
+          "runs": "route",
+          "path": "/api/trainer",
+          "method": "*",
+          "event": null,
+          "certainty": "proven"
+        },
+        "card": {
+          "library": "Django",
+          "kind": "route",
+          "part": "holder",
+          "heading": "ANY",
+          "groupKey": "/api/trainer",
+          "ownerId": null
+        }
+      },
+      {
+        "id": "pokedex/urls.py#effect-callback@6:22",
+        "name": "1",
+        "type": "effect-callback",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 6,
+              "column": 22
+            },
+            "end": {
+              "line": 6,
+              "column": 35
+            }
+          }
+        ],
+        "parentBlockId": "pokedex/urls.py#route@6:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "api-route",
+          "effect"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 6,
+                "column": 22
+              },
+              "end": {
+                "line": 6,
+                "column": 35
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "external-block",
+            "codeBlockId": "pokedex/views.py#function@14:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "pokedex/urls.py",
+        "catalogue": {
+          "specifier": "django.urls",
+          "name": "path",
+          "runs": "route",
+          "path": null,
+          "method": null,
+          "event": null,
+          "certainty": "proven"
+        },
+        "card": {
+          "library": "Django",
+          "kind": "route",
+          "part": "handler",
+          "heading": "ANY",
+          "groupKey": "/api/trainer",
+          "ownerId": null
+        }
+      },
+      {
+        "id": "pokedex/urls.py#route@7:5",
+        "type": "route",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 7,
+              "column": 5
+            },
+            "end": {
+              "line": 7,
+              "column": 34
+            }
+          }
+        ],
+        "parentBlockId": "pokedex/urls.py#root-variable@5:1",
+        "childrenBlockIds": [
+          "pokedex/urls.py#effect-callback@7:22"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 7,
+              "column": 5
+            },
+            "end": {
+              "line": 7,
+              "column": 22
+            }
+          },
+          {
+            "start": {
+              "line": 7,
+              "column": 33
+            },
+            "end": {
+              "line": 7,
+              "column": 34
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 7,
+                "column": 5
+              },
+              "end": {
+                "line": 7,
+                "column": 22
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 7,
+                "column": 33
+              },
+              "end": {
+                "line": 7,
+                "column": 34
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "pokedex/urls.py#route@7:5",
+          "pokedex/urls.py#effect-callback@7:22",
+          "pokedex/views.py#function@20:1",
+          "pokedex/views.py#condition@23:5",
+          "pokedex/views.py#external-value@24:9",
+          "pokedex/views.py#external-value@25:9",
+          "pokedex/views.py#data@25:19"
+        ],
+        "classifications": [
+          "api-route",
+          "effect"
+        ],
+        "diffClassifications": [
+          "api-route",
+          "effect"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 7,
+                "column": 5
+              },
+              "end": {
+                "line": 7,
+                "column": 9
+              }
+            },
+            "use": "call",
+            "type": "unopened-import",
+            "specifier": "django.urls:path",
+            "importedName": "path",
+            "isLibrary": true
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "pokedex/urls.py#effect-callback@7:22"
+        ],
+        "handedFrom": [],
+        "filePath": "pokedex/urls.py",
+        "catalogue": {
+          "specifier": "django.urls",
+          "name": "path",
+          "runs": "route",
+          "path": "/api/pokemon",
+          "method": "*",
+          "event": null,
+          "certainty": "proven"
+        },
+        "card": {
+          "library": "Django",
+          "kind": "route",
+          "part": "holder",
+          "heading": "ANY",
+          "groupKey": "/api/pokemon",
+          "ownerId": null
+        }
+      },
+      {
+        "id": "pokedex/urls.py#effect-callback@7:22",
+        "name": "1",
+        "type": "effect-callback",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 7,
+              "column": 22
+            },
+            "end": {
+              "line": 7,
+              "column": 33
+            }
+          }
+        ],
+        "parentBlockId": "pokedex/urls.py#route@7:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 7,
+              "column": 22
+            },
+            "end": {
+              "line": 7,
+              "column": 33
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 7,
+                "column": 22
+              },
+              "end": {
+                "line": 7,
+                "column": 33
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 7,
+                "column": 22
+              },
+              "end": {
+                "line": 7,
+                "column": 33
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "pokedex/urls.py#effect-callback@7:22",
+          "pokedex/views.py#function@20:1",
+          "pokedex/views.py#condition@23:5",
+          "pokedex/views.py#external-value@24:9",
+          "pokedex/views.py#external-value@25:9",
+          "pokedex/views.py#data@25:19"
+        ],
+        "classifications": [
+          "api-route",
+          "effect"
+        ],
+        "diffClassifications": [
+          "api-route",
+          "effect"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 7,
+                "column": 22
+              },
+              "end": {
+                "line": 7,
+                "column": 33
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "external-block",
+            "codeBlockId": "pokedex/views.py#function@20:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "pokedex/views.py#function@20:1"
+        ],
+        "handedFrom": [],
+        "filePath": "pokedex/urls.py",
+        "catalogue": {
+          "specifier": "django.urls",
+          "name": "path",
+          "runs": "route",
+          "path": null,
+          "method": null,
+          "event": null,
+          "certainty": "proven"
+        },
+        "card": {
+          "library": "Django",
+          "kind": "route",
+          "part": "handler",
+          "heading": "ANY",
+          "groupKey": "/api/pokemon",
+          "ownerId": null
+        }
+      },
+      {
+        "id": "pokedex/urls.py#route@8:5",
+        "type": "route",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 8,
+              "column": 5
+            },
+            "end": {
+              "line": 8,
+              "column": 59
+            }
+          }
+        ],
+        "parentBlockId": "pokedex/urls.py#root-variable@5:1",
+        "childrenBlockIds": [
+          "pokedex/urls.py#effect-callback@8:31"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 8,
+              "column": 5
+            },
+            "end": {
+              "line": 8,
+              "column": 31
+            }
+          },
+          {
+            "start": {
+              "line": 8,
+              "column": 58
+            },
+            "end": {
+              "line": 8,
+              "column": 59
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 8,
+                "column": 5
+              },
+              "end": {
+                "line": 8,
+                "column": 31
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 8,
+                "column": 58
+              },
+              "end": {
+                "line": 8,
+                "column": 59
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "pokedex/urls.py#route@8:5",
+          "pokedex/urls.py#effect-callback@8:31"
+        ],
+        "classifications": [
+          "api-route",
+          "effect"
+        ],
+        "diffClassifications": [
+          "api-route",
+          "effect"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 8,
+                "column": 5
+              },
+              "end": {
+                "line": 8,
+                "column": 9
+              }
+            },
+            "use": "call",
+            "type": "unopened-import",
+            "specifier": "django.urls:path",
+            "importedName": "path",
+            "isLibrary": true
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "pokedex/urls.py#effect-callback@8:31"
+        ],
+        "handedFrom": [],
+        "filePath": "pokedex/urls.py",
+        "catalogue": {
+          "specifier": "django.urls",
+          "name": "path",
+          "runs": "route",
+          "path": "/api/pokemon/<int:pk>",
+          "method": "*",
+          "event": null,
+          "certainty": "proven"
+        },
+        "card": {
+          "library": "Django",
+          "kind": "route",
+          "part": "holder",
+          "heading": "ANY",
+          "groupKey": "/api/pokemon/<int:pk>",
+          "ownerId": null
+        }
+      },
+      {
+        "id": "pokedex/urls.py#effect-callback@8:31",
+        "name": "1",
+        "type": "effect-callback",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 8,
+              "column": 31
+            },
+            "end": {
+              "line": 8,
+              "column": 58
+            }
+          }
+        ],
+        "parentBlockId": "pokedex/urls.py#route@8:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 8,
+              "column": 31
+            },
+            "end": {
+              "line": 8,
+              "column": 58
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 8,
+                "column": 31
+              },
+              "end": {
+                "line": 8,
+                "column": 58
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 8,
+                "column": 31
+              },
+              "end": {
+                "line": 8,
+                "column": 56
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "pokedex/urls.py#effect-callback@8:31"
+        ],
+        "classifications": [
+          "api-route",
+          "effect"
+        ],
+        "diffClassifications": [
+          "api-route",
+          "effect"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 8,
+                "column": 31
+              },
+              "end": {
+                "line": 8,
+                "column": 56
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "as_view"
+              ],
+              "blockId": null
+            },
+            "type": "external-block",
+            "codeBlockId": "pokedex/views.py#class@30:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "pokedex/urls.py",
+        "catalogue": {
+          "specifier": "django.urls",
+          "name": "path",
+          "runs": "route",
+          "path": null,
+          "method": null,
+          "event": null,
+          "certainty": "proven"
+        },
+        "card": {
+          "library": "Django",
+          "kind": "route",
+          "part": "handler",
+          "heading": "ANY",
+          "groupKey": "/api/pokemon/<int:pk>",
+          "ownerId": null
+        }
+      },
+      {
+        "id": "pokedex/urls.py#route@9:5",
+        "type": "route",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 9,
+              "column": 5
+            },
+            "end": {
+              "line": 9,
+              "column": 55
+            }
+          }
+        ],
+        "parentBlockId": "pokedex/urls.py#root-variable@5:1",
+        "childrenBlockIds": [
+          "pokedex/urls.py#effect-callback@9:40"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 9,
+              "column": 5
+            },
+            "end": {
+              "line": 9,
+              "column": 40
+            }
+          },
+          {
+            "start": {
+              "line": 9,
+              "column": 54
+            },
+            "end": {
+              "line": 9,
+              "column": 55
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 9,
+                "column": 5
+              },
+              "end": {
+                "line": 9,
+                "column": 40
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 9,
+                "column": 54
+              },
+              "end": {
+                "line": 9,
+                "column": 55
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "pokedex/urls.py#route@9:5",
+          "pokedex/urls.py#effect-callback@9:40",
+          "pokedex/views.py#root-variable@11:1",
+          "pokedex/views.py#function@45:1",
+          "pokedex/views.py#external-value@48:5",
+          "pokedex/views.py#data-fetch@48:15",
+          "pokedex/views.py#call@50:5"
+        ],
+        "classifications": [
+          "api-route",
+          "effect"
+        ],
+        "diffClassifications": [
+          "api-route",
+          "effect"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 9,
+                "column": 5
+              },
+              "end": {
+                "line": 9,
+                "column": 9
+              }
+            },
+            "use": "call",
+            "type": "unopened-import",
+            "specifier": "django.urls:path",
+            "importedName": "path",
+            "isLibrary": true
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "pokedex/urls.py#effect-callback@9:40"
+        ],
+        "handedFrom": [],
+        "filePath": "pokedex/urls.py",
+        "catalogue": {
+          "specifier": "django.urls",
+          "name": "path",
+          "runs": "route",
+          "path": "/api/pokemon/<int:pk>/level-up",
+          "method": "*",
+          "event": null,
+          "certainty": "proven"
+        },
+        "card": {
+          "library": "Django",
+          "kind": "route",
+          "part": "holder",
+          "heading": "ANY",
+          "groupKey": "/api/pokemon/<int:pk>/level-up",
+          "ownerId": null
+        }
+      },
+      {
+        "id": "pokedex/urls.py#effect-callback@9:40",
+        "name": "1",
+        "type": "effect-callback",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 9,
+              "column": 40
+            },
+            "end": {
+              "line": 9,
+              "column": 54
+            }
+          }
+        ],
+        "parentBlockId": "pokedex/urls.py#route@9:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 9,
+              "column": 40
+            },
+            "end": {
+              "line": 9,
+              "column": 54
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 9,
+                "column": 40
+              },
+              "end": {
+                "line": 9,
+                "column": 54
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 9,
+                "column": 40
+              },
+              "end": {
+                "line": 9,
+                "column": 54
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "pokedex/urls.py#effect-callback@9:40",
+          "pokedex/views.py#root-variable@11:1",
+          "pokedex/views.py#function@45:1",
+          "pokedex/views.py#external-value@48:5",
+          "pokedex/views.py#data-fetch@48:15",
+          "pokedex/views.py#call@50:5"
+        ],
+        "classifications": [
+          "api-route",
+          "effect"
+        ],
+        "diffClassifications": [
+          "api-route",
+          "effect"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 9,
+                "column": 40
+              },
+              "end": {
+                "line": 9,
+                "column": 54
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "external-block",
+            "codeBlockId": "pokedex/views.py#function@45:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "pokedex/views.py#function@45:1"
+        ],
+        "handedFrom": [],
+        "filePath": "pokedex/urls.py",
+        "catalogue": {
+          "specifier": "django.urls",
+          "name": "path",
+          "runs": "route",
+          "path": null,
+          "method": null,
+          "event": null,
+          "certainty": "proven"
+        },
+        "card": {
+          "library": "Django",
+          "kind": "route",
+          "part": "handler",
+          "heading": "ANY",
+          "groupKey": "/api/pokemon/<int:pk>/level-up",
+          "ownerId": null
+        }
+      },
+      {
+        "id": "pokedex/views.py#import@1:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 12
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 12
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 1,
+                "column": 1
+              },
+              "end": {
+                "line": 1,
+                "column": 12
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "pokedex/views.py",
+        "catalogue": null
+      },
+      {
+        "id": "pokedex/views.py#import@3:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 3,
+              "column": 1
+            },
+            "end": {
+              "line": 3,
+              "column": 58
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "pokedex/views.py",
+        "catalogue": null
+      },
+      {
+        "id": "pokedex/views.py#import@4:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 4,
+              "column": 1
+            },
+            "end": {
+              "line": 4,
+              "column": 51
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 4,
+              "column": 1
+            },
+            "end": {
+              "line": 4,
+              "column": 51
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 4,
+                "column": 1
+              },
+              "end": {
+                "line": 4,
+                "column": 51
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "pokedex/views.py",
+        "catalogue": null
+      },
+      {
+        "id": "pokedex/views.py#import@5:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 5,
+              "column": 1
+            },
+            "end": {
+              "line": 5,
+              "column": 47
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 5,
+              "column": 1
+            },
+            "end": {
+              "line": 5,
+              "column": 47
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 5,
+                "column": 1
+              },
+              "end": {
+                "line": 5,
+                "column": 47
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "pokedex/views.py",
+        "catalogue": null
+      },
+      {
+        "id": "pokedex/views.py#import@6:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 6,
+              "column": 1
+            },
+            "end": {
+              "line": 6,
+              "column": 30
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 6,
+              "column": 1
+            },
+            "end": {
+              "line": 6,
+              "column": 30
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 6,
+                "column": 1
+              },
+              "end": {
+                "line": 6,
+                "column": 30
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "pokedex/views.py",
+        "catalogue": null
+      },
+      {
+        "id": "pokedex/views.py#import@7:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 7,
+              "column": 1
+            },
+            "end": {
+              "line": 7,
+              "column": 89
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 7,
+              "column": 1
+            },
+            "end": {
+              "line": 7,
+              "column": 89
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 7,
+                "column": 1
+              },
+              "end": {
+                "line": 7,
+                "column": 89
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "pokedex/views.py",
+        "catalogue": null
+      },
+      {
+        "id": "pokedex/views.py#import@9:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 9,
+              "column": 1
+            },
+            "end": {
+              "line": 9,
+              "column": 35
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 9,
+              "column": 1
+            },
+            "end": {
+              "line": 9,
+              "column": 35
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 9,
+                "column": 1
+              },
+              "end": {
+                "line": 9,
+                "column": 35
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "pokedex/views.py",
+        "catalogue": null
+      },
+      {
+        "id": "pokedex/views.py#root-variable@11:1",
+        "name": "MAX_LEVEL",
+        "type": "root-variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 11,
+              "column": 1
+            },
+            "end": {
+              "line": 11,
+              "column": 16
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": true,
+        "isPlain": true,
+        "exportedByFilePaths": [
+          "pokedex/views.py"
+        ],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 11,
+              "column": 1
+            },
+            "end": {
+              "line": 11,
+              "column": 16
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 11,
+                "column": 1
+              },
+              "end": {
+                "line": 11,
+                "column": 16
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "pokedex/views.py#root-variable@11:1"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [
+          "pokedex/views.py#function@45:1"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "pokedex/views.py",
+        "catalogue": null
+      },
+      {
+        "id": "pokedex/views.py#function@14:1",
+        "name": "trainer",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 14,
+              "column": 1
+            },
+            "end": {
+              "line": 17,
+              "column": 96
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "pokedex/views.py#root-argument-value@16:13",
+          "pokedex/views.py#property@17:26",
+          "pokedex/views.py#property@17:57"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "returnsAt": [
+          {
+            "line": 17,
+            "column": 5
+          }
+        ],
+        "exportedByFilePaths": [
+          "pokedex/views.py"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "api-route"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 14,
+                "column": 2
+              },
+              "end": {
+                "line": 14,
+                "column": 16
+              }
+            },
+            "use": "call",
+            "type": "unopened-import",
+            "specifier": "django.contrib.auth.decorators:login_required",
+            "importedName": "login_required",
+            "isLibrary": true
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 15,
+                "column": 2
+              },
+              "end": {
+                "line": 15,
+                "column": 13
+              }
+            },
+            "use": "call",
+            "type": "unopened-import",
+            "specifier": "django.views.decorators.http:require_GET",
+            "importedName": "require_GET",
+            "isLibrary": true
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 17,
+                "column": 12
+              },
+              "end": {
+                "line": 17,
+                "column": 24
+              }
+            },
+            "use": "call",
+            "type": "unopened-import",
+            "specifier": "django.http:JsonResponse",
+            "importedName": "JsonResponse",
+            "isLibrary": true
+          }
+        ],
+        "usedByIds": [
+          "pokedex/urls.py#effect-callback@6:22"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "pokedex/views.py",
+        "catalogue": {
+          "specifier": "django.contrib.auth.decorators",
+          "name": "login_required",
+          "runs": null,
+          "path": null,
+          "method": "GET",
+          "event": null,
+          "certainty": "proven"
+        },
+        "card": {
+          "library": "Django",
+          "kind": "route",
+          "part": "handler",
+          "heading": "GET",
+          "groupKey": "/api/trainer",
+          "ownerId": "pokedex/urls.py#route@6:5"
+        }
+      },
+      {
+        "id": "pokedex/views.py#root-argument-value@16:13",
+        "name": "request",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 16,
+              "column": 13
+            },
+            "end": {
+              "line": 16,
+              "column": 20
+            }
+          }
+        ],
+        "parentBlockId": "pokedex/views.py#function@14:1",
+        "childrenBlockIds": [
+          "pokedex/views.py#root-argument-value@17:34"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "pokedex/views.py#property@17:26",
+          "pokedex/views.py#property@17:57"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "pokedex/views.py",
+        "catalogue": null
+      },
+      {
+        "id": "pokedex/views.py#root-argument-value@17:34",
+        "name": "user",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 17,
+              "column": 34
+            },
+            "end": {
+              "line": 17,
+              "column": 46
+            }
+          },
+          {
+            "start": {
+              "line": 17,
+              "column": 66
+            },
+            "end": {
+              "line": 17,
+              "column": 78
+            }
+          }
+        ],
+        "parentBlockId": "pokedex/views.py#root-argument-value@16:13",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "pokedex/views.py",
+        "catalogue": null
+      },
+      {
+        "id": "pokedex/views.py#property@17:26",
+        "name": "name",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 17,
+              "column": 26
+            },
+            "end": {
+              "line": 17,
+              "column": 55
+            }
+          }
+        ],
+        "parentBlockId": "pokedex/views.py#function@14:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 17,
+                "column": 34
+              },
+              "end": {
+                "line": 17,
+                "column": 55
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "user",
+                "username"
+              ],
+              "blockId": "pokedex/views.py#root-argument-value@17:34"
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "pokedex/views.py#root-argument-value@16:13"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "pokedex/views.py",
+        "catalogue": null
+      },
+      {
+        "id": "pokedex/views.py#property@17:57",
+        "name": "party",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 17,
+              "column": 57
+            },
+            "end": {
+              "line": 17,
+              "column": 94
+            }
+          }
+        ],
+        "parentBlockId": "pokedex/views.py#function@14:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 17,
+                "column": 66
+              },
+              "end": {
+                "line": 17,
+                "column": 92
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "user",
+                "pokemon",
+                "count"
+              ],
+              "blockId": "pokedex/views.py#root-argument-value@17:34"
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "pokedex/views.py#root-argument-value@16:13"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "pokedex/views.py",
+        "catalogue": null
+      },
+      {
+        "id": "pokedex/views.py#function@20:1",
+        "name": "party",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 20,
+              "column": 1
+            },
+            "end": {
+              "line": 27,
+              "column": 99
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "pokedex/views.py#root-argument-value@22:11",
+          "pokedex/views.py#condition@23:5"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "returnsAt": [
+          {
+            "line": 27,
+            "column": 5
+          }
+        ],
+        "exportedByFilePaths": [
+          "pokedex/views.py"
+        ],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 20,
+              "column": 1
+            },
+            "end": {
+              "line": 20,
+              "column": 16
+            }
+          },
+          {
+            "start": {
+              "line": 21,
+              "column": 1
+            },
+            "end": {
+              "line": 21,
+              "column": 39
+            }
+          },
+          {
+            "start": {
+              "line": 22,
+              "column": 1
+            },
+            "end": {
+              "line": 22,
+              "column": 11
+            }
+          },
+          {
+            "start": {
+              "line": 22,
+              "column": 18
+            },
+            "end": {
+              "line": 22,
+              "column": 20
+            }
+          },
+          {
+            "start": {
+              "line": 27,
+              "column": 5
+            },
+            "end": {
+              "line": 27,
+              "column": 59
+            }
+          },
+          {
+            "start": {
+              "line": 27,
+              "column": 71
+            },
+            "end": {
+              "line": 27,
+              "column": 99
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 20,
+                "column": 1
+              },
+              "end": {
+                "line": 20,
+                "column": 16
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 21,
+                "column": 1
+              },
+              "end": {
+                "line": 21,
+                "column": 39
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 22,
+                "column": 1
+              },
+              "end": {
+                "line": 22,
+                "column": 11
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 22,
+                "column": 18
+              },
+              "end": {
+                "line": 22,
+                "column": 20
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 27,
+                "column": 5
+              },
+              "end": {
+                "line": 27,
+                "column": 59
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 27,
+                "column": 71
+              },
+              "end": {
+                "line": 27,
+                "column": 99
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "pokedex/views.py#function@20:1",
+          "pokedex/views.py#condition@23:5",
+          "pokedex/views.py#external-value@24:9",
+          "pokedex/views.py#external-value@25:9",
+          "pokedex/views.py#data@25:19"
+        ],
+        "classifications": [
+          "api-route",
+          "database-read-write"
+        ],
+        "diffClassifications": [
+          "api-route",
+          "database-read-write"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 20,
+                "column": 2
+              },
+              "end": {
+                "line": 20,
+                "column": 16
+              }
+            },
+            "use": "call",
+            "type": "unopened-import",
+            "specifier": "django.contrib.auth.decorators:login_required",
+            "importedName": "login_required",
+            "isLibrary": true
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 21,
+                "column": 2
+              },
+              "end": {
+                "line": 21,
+                "column": 22
+              }
+            },
+            "use": "call",
+            "type": "unopened-import",
+            "specifier": "django.views.decorators.http:require_http_methods",
+            "importedName": "require_http_methods",
+            "isLibrary": true
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 27,
+                "column": 12
+              },
+              "end": {
+                "line": 27,
+                "column": 24
+              }
+            },
+            "use": "call",
+            "type": "unopened-import",
+            "specifier": "django.http:JsonResponse",
+            "importedName": "JsonResponse",
+            "isLibrary": true
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 27,
+                "column": 59
+              },
+              "end": {
+                "line": 27,
+                "column": 83
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "user",
+                "pokemon",
+                "all"
+              ],
+              "blockId": "pokedex/views.py#root-argument-value@25:50"
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "pokedex/views.py#root-argument-value@22:11"
+          }
+        ],
+        "usedByIds": [
+          "pokedex/urls.py#effect-callback@7:22"
+        ],
+        "nextBlockIds": [
+          "pokedex/views.py#condition@23:5"
+        ],
+        "handedFrom": [],
+        "filePath": "pokedex/views.py",
+        "catalogue": {
+          "specifier": "django.contrib.auth.decorators",
+          "name": "login_required",
+          "runs": null,
+          "path": null,
+          "method": "GET,POST",
+          "event": null,
+          "certainty": "proven"
+        },
+        "card": {
+          "library": "Django",
+          "kind": "route",
+          "part": "handler",
+          "heading": "GET · POST",
+          "groupKey": "/api/pokemon",
+          "ownerId": "pokedex/urls.py#route@7:5"
+        }
+      },
+      {
+        "id": "pokedex/views.py#root-argument-value@22:11",
+        "name": "request",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 22,
+              "column": 11
+            },
+            "end": {
+              "line": 22,
+              "column": 18
+            }
+          }
+        ],
+        "parentBlockId": "pokedex/views.py#function@20:1",
+        "childrenBlockIds": [
+          "pokedex/views.py#root-argument-value@23:8",
+          "pokedex/views.py#root-argument-value@24:27",
+          "pokedex/views.py#root-argument-value@25:50"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 22,
+              "column": 11
+            },
+            "end": {
+              "line": 22,
+              "column": 18
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 22,
+                "column": 11
+              },
+              "end": {
+                "line": 22,
+                "column": 18
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [
+          "pokedex/views.py#condition@23:5",
+          "pokedex/views.py#external-value@24:9",
+          "pokedex/views.py#data@25:19",
+          "pokedex/views.py#function@20:1"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "pokedex/views.py",
+        "catalogue": null
+      },
+      {
+        "id": "pokedex/views.py#root-argument-value@23:8",
+        "name": "method",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 23,
+              "column": 8
+            },
+            "end": {
+              "line": 23,
+              "column": 22
+            }
+          }
+        ],
+        "parentBlockId": "pokedex/views.py#root-argument-value@22:11",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 23,
+              "column": 8
+            },
+            "end": {
+              "line": 23,
+              "column": 22
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 23,
+                "column": 8
+              },
+              "end": {
+                "line": 23,
+                "column": 22
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "pokedex/views.py",
+        "catalogue": null
+      },
+      {
+        "id": "pokedex/views.py#root-argument-value@24:27",
+        "name": "body",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 24,
+              "column": 27
+            },
+            "end": {
+              "line": 24,
+              "column": 39
+            }
+          }
+        ],
+        "parentBlockId": "pokedex/views.py#root-argument-value@22:11",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 24,
+              "column": 27
+            },
+            "end": {
+              "line": 24,
+              "column": 39
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 24,
+                "column": 27
+              },
+              "end": {
+                "line": 24,
+                "column": 39
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "pokedex/views.py",
+        "catalogue": null
+      },
+      {
+        "id": "pokedex/views.py#root-argument-value@25:50",
+        "name": "user",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 25,
+              "column": 50
+            },
+            "end": {
+              "line": 25,
+              "column": 62
+            }
+          },
+          {
+            "start": {
+              "line": 27,
+              "column": 59
+            },
+            "end": {
+              "line": 27,
+              "column": 71
+            }
+          }
+        ],
+        "parentBlockId": "pokedex/views.py#root-argument-value@22:11",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 25,
+              "column": 50
+            },
+            "end": {
+              "line": 25,
+              "column": 62
+            }
+          },
+          {
+            "start": {
+              "line": 27,
+              "column": 59
+            },
+            "end": {
+              "line": 27,
+              "column": 71
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 25,
+                "column": 50
+              },
+              "end": {
+                "line": 25,
+                "column": 62
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 27,
+                "column": 59
+              },
+              "end": {
+                "line": 27,
+                "column": 71
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "pokedex/views.py",
+        "catalogue": null
+      },
+      {
+        "id": "pokedex/views.py#condition@23:5",
+        "type": "condition",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 23,
+              "column": 5
+            },
+            "end": {
+              "line": 26,
+              "column": 59
+            }
+          }
+        ],
+        "parentBlockId": "pokedex/views.py#function@20:1",
+        "childrenBlockIds": [
+          "pokedex/views.py#external-value@24:9",
+          "pokedex/views.py#external-value@25:9"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "returnsAt": [
+          {
+            "line": 26,
+            "column": 9
+          }
+        ],
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 23,
+              "column": 5
+            },
+            "end": {
+              "line": 23,
+              "column": 8
+            }
+          },
+          {
+            "start": {
+              "line": 23,
+              "column": 22
+            },
+            "end": {
+              "line": 23,
+              "column": 33
+            }
+          },
+          {
+            "start": {
+              "line": 26,
+              "column": 9
+            },
+            "end": {
+              "line": 26,
+              "column": 59
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 23,
+                "column": 5
+              },
+              "end": {
+                "line": 23,
+                "column": 8
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 23,
+                "column": 22
+              },
+              "end": {
+                "line": 23,
+                "column": 33
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 26,
+                "column": 9
+              },
+              "end": {
+                "line": 26,
+                "column": 59
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "pokedex/views.py#condition@23:5",
+          "pokedex/views.py#external-value@24:9",
+          "pokedex/views.py#external-value@25:9",
+          "pokedex/views.py#data@25:19"
+        ],
+        "classifications": [
+          "database-read-write"
+        ],
+        "diffClassifications": [
+          "database-read-write"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 23,
+                "column": 8
+              },
+              "end": {
+                "line": 23,
+                "column": 22
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "method"
+              ],
+              "blockId": "pokedex/views.py#root-argument-value@23:8"
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "pokedex/views.py#root-argument-value@22:11"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 26,
+                "column": 16
+              },
+              "end": {
+                "line": 26,
+                "column": 28
+              }
+            },
+            "use": "call",
+            "type": "unopened-import",
+            "specifier": "django.http:JsonResponse",
+            "importedName": "JsonResponse",
+            "isLibrary": true
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 26,
+                "column": 29
+              },
+              "end": {
+                "line": 26,
+                "column": 44
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "as_dict"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "pokedex/views.py#external-value@25:9"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "pokedex/views.py#external-value@24:9",
+          "pokedex/views.py#external-value@25:9"
+        ],
+        "handedFrom": [],
+        "filePath": "pokedex/views.py",
+        "catalogue": null
+      },
+      {
+        "id": "pokedex/views.py#external-value@24:9",
+        "name": "body",
+        "type": "external-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 24,
+              "column": 9
+            },
+            "end": {
+              "line": 24,
+              "column": 40
+            }
+          }
+        ],
+        "parentBlockId": "pokedex/views.py#condition@23:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 24,
+              "column": 9
+            },
+            "end": {
+              "line": 24,
+              "column": 27
+            }
+          },
+          {
+            "start": {
+              "line": 24,
+              "column": 39
+            },
+            "end": {
+              "line": 24,
+              "column": 40
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 24,
+                "column": 9
+              },
+              "end": {
+                "line": 24,
+                "column": 27
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 24,
+                "column": 39
+              },
+              "end": {
+                "line": 24,
+                "column": 40
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "pokedex/views.py#external-value@24:9"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 24,
+                "column": 16
+              },
+              "end": {
+                "line": 24,
+                "column": 26
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "loads"
+              ],
+              "blockId": null
+            },
+            "type": "unopened-import",
+            "specifier": "json",
+            "importedName": "*",
+            "isLibrary": true
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 24,
+                "column": 27
+              },
+              "end": {
+                "line": 24,
+                "column": 39
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "body"
+              ],
+              "blockId": "pokedex/views.py#root-argument-value@24:27"
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "pokedex/views.py#root-argument-value@22:11"
+          }
+        ],
+        "usedByIds": [
+          "pokedex/views.py#data@25:19"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "pokedex/views.py",
+        "catalogue": null
+      },
+      {
+        "id": "pokedex/views.py#external-value@25:9",
+        "name": "pokemon",
+        "type": "external-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 25,
+              "column": 9
+            },
+            "end": {
+              "line": 25,
+              "column": 103
+            }
+          }
+        ],
+        "parentBlockId": "pokedex/views.py#condition@23:5",
+        "childrenBlockIds": [
+          "pokedex/views.py#data@25:19"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 25,
+              "column": 9
+            },
+            "end": {
+              "line": 25,
+              "column": 19
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 25,
+                "column": 9
+              },
+              "end": {
+                "line": 25,
+                "column": 19
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "pokedex/views.py#external-value@24:9",
+          "pokedex/views.py#external-value@25:9",
+          "pokedex/views.py#data@25:19"
+        ],
+        "classifications": [
+          "database-read-write"
+        ],
+        "diffClassifications": [
+          "database-read-write"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [
+          "pokedex/views.py#condition@23:5"
+        ],
+        "nextBlockIds": [
+          "pokedex/views.py#data@25:19"
+        ],
+        "handedFrom": [],
+        "filePath": "pokedex/views.py",
+        "catalogue": null
+      },
+      {
+        "id": "pokedex/views.py#data@25:19",
+        "type": "data",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 25,
+              "column": 19
+            },
+            "end": {
+              "line": 25,
+              "column": 103
+            }
+          }
+        ],
+        "parentBlockId": "pokedex/views.py#external-value@25:9",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 25,
+              "column": 19
+            },
+            "end": {
+              "line": 25,
+              "column": 50
+            }
+          },
+          {
+            "start": {
+              "line": 25,
+              "column": 62
+            },
+            "end": {
+              "line": 25,
+              "column": 103
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 25,
+                "column": 19
+              },
+              "end": {
+                "line": 25,
+                "column": 50
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 25,
+                "column": 62
+              },
+              "end": {
+                "line": 25,
+                "column": 103
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 25,
+                "column": 69
+              },
+              "end": {
+                "line": 25,
+                "column": 81
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 25,
+                "column": 89
+              },
+              "end": {
+                "line": 25,
+                "column": 102
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "pokedex/views.py#external-value@24:9",
+          "pokedex/views.py#data@25:19"
+        ],
+        "classifications": [
+          "database-read-write"
+        ],
+        "diffClassifications": [
+          "database-read-write"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 25,
+                "column": 19
+              },
+              "end": {
+                "line": 25,
+                "column": 41
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "objects",
+                "create"
+              ],
+              "blockId": null
+            },
+            "type": "external-block",
+            "codeBlockId": "pokedex/models.py#class@5:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 25,
+                "column": 50
+              },
+              "end": {
+                "line": 25,
+                "column": 62
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "user"
+              ],
+              "blockId": "pokedex/views.py#root-argument-value@25:50"
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "pokedex/views.py#root-argument-value@22:11"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 25,
+                "column": 69
+              },
+              "end": {
+                "line": 25,
+                "column": 81
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "name"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "pokedex/views.py#external-value@24:9"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 25,
+                "column": 89
+              },
+              "end": {
+                "line": 25,
+                "column": 102
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "level"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "pokedex/views.py#external-value@24:9"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "pokedex/views.py#external-value@24:9"
+        ],
+        "handedFrom": [],
+        "filePath": "pokedex/views.py",
+        "catalogue": {
+          "specifier": "django.db.models",
+          "name": "create",
+          "runs": null,
+          "path": null,
+          "method": null,
+          "event": null,
+          "certainty": "proven"
+        }
+      },
+      {
+        "id": "pokedex/views.py#class@30:1",
+        "name": "PokemonView",
+        "type": "class",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 30,
+              "column": 1
+            },
+            "end": {
+              "line": 42,
+              "column": 40
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "pokedex/views.py#method@31:5",
+          "pokedex/views.py#method@34:5",
+          "pokedex/views.py#method@40:5"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "pokedex/views.py"
+        ],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 30,
+              "column": 1
+            },
+            "end": {
+              "line": 30,
+              "column": 25
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 30,
+                "column": 1
+              },
+              "end": {
+                "line": 30,
+                "column": 25
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "pokedex/views.py#class@30:1",
+          "pokedex/views.py#method@31:5",
+          "pokedex/views.py#data-fetch@32:29",
+          "pokedex/views.py#method@34:5",
+          "pokedex/views.py#external-value@35:9",
+          "pokedex/views.py#data-fetch@35:19",
+          "pokedex/views.py#call@37:9",
+          "pokedex/views.py#method@40:5",
+          "pokedex/views.py#call@41:9",
+          "pokedex/views.py#data-fetch@41:9"
+        ],
+        "classifications": [
+          "api-route",
+          "api-request"
+        ],
+        "diffClassifications": [
+          "api-route",
+          "api-request"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 30,
+                "column": 19
+              },
+              "end": {
+                "line": 30,
+                "column": 23
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "unopened-import",
+            "specifier": "django.views:View",
+            "importedName": "View",
+            "isLibrary": true
+          }
+        ],
+        "usedByIds": [
+          "pokedex/urls.py#effect-callback@8:31"
+        ],
+        "nextBlockIds": [
+          "pokedex/views.py#method@31:5",
+          "pokedex/views.py#method@34:5",
+          "pokedex/views.py#method@40:5"
+        ],
+        "handedFrom": [],
+        "filePath": "pokedex/views.py",
+        "catalogue": null
+      },
+      {
+        "id": "pokedex/views.py#method@31:5",
+        "name": "PokemonView.get",
+        "type": "method",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 31,
+              "column": 5
+            },
+            "end": {
+              "line": 32,
+              "column": 73
+            }
+          }
+        ],
+        "parentBlockId": "pokedex/views.py#class@30:1",
+        "childrenBlockIds": [
+          "pokedex/views.py#root-argument-value@31:19",
+          "pokedex/views.py#root-argument-value@31:28",
+          "pokedex/views.py#data-fetch@32:29"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "returnsAt": [
+          {
+            "line": 32,
+            "column": 9
+          }
+        ],
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 31,
+              "column": 5
+            },
+            "end": {
+              "line": 31,
+              "column": 19
+            }
+          },
+          {
+            "start": {
+              "line": 31,
+              "column": 26
+            },
+            "end": {
+              "line": 31,
+              "column": 28
+            }
+          },
+          {
+            "start": {
+              "line": 31,
+              "column": 30
+            },
+            "end": {
+              "line": 31,
+              "column": 32
+            }
+          },
+          {
+            "start": {
+              "line": 32,
+              "column": 9
+            },
+            "end": {
+              "line": 32,
+              "column": 29
+            }
+          },
+          {
+            "start": {
+              "line": 32,
+              "column": 62
+            },
+            "end": {
+              "line": 32,
+              "column": 73
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 31,
+                "column": 5
+              },
+              "end": {
+                "line": 31,
+                "column": 19
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 31,
+                "column": 26
+              },
+              "end": {
+                "line": 31,
+                "column": 28
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 31,
+                "column": 30
+              },
+              "end": {
+                "line": 31,
+                "column": 32
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 32,
+                "column": 9
+              },
+              "end": {
+                "line": 32,
+                "column": 29
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 32,
+                "column": 62
+              },
+              "end": {
+                "line": 32,
+                "column": 73
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "pokedex/views.py#method@31:5",
+          "pokedex/views.py#data-fetch@32:29"
+        ],
+        "classifications": [
+          "api-route",
+          "api-request"
+        ],
+        "diffClassifications": [
+          "api-route",
+          "api-request"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 32,
+                "column": 16
+              },
+              "end": {
+                "line": 32,
+                "column": 28
+              }
+            },
+            "use": "call",
+            "type": "unopened-import",
+            "specifier": "django.http:JsonResponse",
+            "importedName": "JsonResponse",
+            "isLibrary": true
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "pokedex/views.py#data-fetch@32:29"
+        ],
+        "handedFrom": [],
+        "filePath": "pokedex/views.py",
+        "catalogue": null,
+        "card": {
+          "library": "Django",
+          "kind": "route",
+          "part": "handler",
+          "heading": "GET",
+          "groupKey": "/api/pokemon/<int:pk>",
+          "ownerId": "pokedex/urls.py#route@8:5"
+        }
+      },
+      {
+        "id": "pokedex/views.py#root-argument-value@31:19",
+        "name": "request",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 31,
+              "column": 19
+            },
+            "end": {
+              "line": 31,
+              "column": 26
+            }
+          }
+        ],
+        "parentBlockId": "pokedex/views.py#method@31:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 31,
+              "column": 19
+            },
+            "end": {
+              "line": 31,
+              "column": 26
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 31,
+                "column": 19
+              },
+              "end": {
+                "line": 31,
+                "column": 26
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "pokedex/views.py",
+        "catalogue": null
+      },
+      {
+        "id": "pokedex/views.py#root-argument-value@31:28",
+        "name": "pk",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 31,
+              "column": 28
+            },
+            "end": {
+              "line": 31,
+              "column": 30
+            }
+          }
+        ],
+        "parentBlockId": "pokedex/views.py#method@31:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 31,
+              "column": 28
+            },
+            "end": {
+              "line": 31,
+              "column": 30
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 31,
+                "column": 28
+              },
+              "end": {
+                "line": 31,
+                "column": 30
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [
+          "pokedex/views.py#data-fetch@32:29"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "pokedex/views.py",
+        "catalogue": null
+      },
+      {
+        "id": "pokedex/views.py#data-fetch@32:29",
+        "type": "data-fetch",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 32,
+              "column": 29
+            },
+            "end": {
+              "line": 32,
+              "column": 62
+            }
+          }
+        ],
+        "parentBlockId": "pokedex/views.py#method@31:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 32,
+              "column": 29
+            },
+            "end": {
+              "line": 32,
+              "column": 62
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 32,
+                "column": 29
+              },
+              "end": {
+                "line": 32,
+                "column": 62
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "pokedex/views.py#data-fetch@32:29"
+        ],
+        "classifications": [
+          "api-request"
+        ],
+        "diffClassifications": [
+          "api-request"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 32,
+                "column": 29
+              },
+              "end": {
+                "line": 32,
+                "column": 46
+              }
+            },
+            "use": "call",
+            "type": "unopened-import",
+            "specifier": "django.shortcuts:get_object_or_404",
+            "importedName": "get_object_or_404",
+            "isLibrary": true
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 32,
+                "column": 47
+              },
+              "end": {
+                "line": 32,
+                "column": 54
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "external-block",
+            "codeBlockId": "pokedex/models.py#class@5:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 32,
+                "column": 59
+              },
+              "end": {
+                "line": 32,
+                "column": 61
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "pokedex/views.py#root-argument-value@31:28"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "pokedex/views.py",
+        "catalogue": {
+          "specifier": "django.shortcuts",
+          "name": "get_object_or_404",
+          "runs": null,
+          "path": null,
+          "method": null,
+          "event": null,
+          "certainty": "proven"
+        }
+      },
+      {
+        "id": "pokedex/views.py#method@34:5",
+        "name": "PokemonView.patch",
+        "type": "method",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 34,
+              "column": 5
+            },
+            "end": {
+              "line": 38,
+              "column": 47
+            }
+          }
+        ],
+        "parentBlockId": "pokedex/views.py#class@30:1",
+        "childrenBlockIds": [
+          "pokedex/views.py#root-argument-value@34:21",
+          "pokedex/views.py#root-argument-value@34:30",
+          "pokedex/views.py#external-value@35:9",
+          "pokedex/views.py#call@37:9"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "returnsAt": [
+          {
+            "line": 38,
+            "column": 9
+          }
+        ],
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 34,
+              "column": 5
+            },
+            "end": {
+              "line": 34,
+              "column": 21
+            }
+          },
+          {
+            "start": {
+              "line": 34,
+              "column": 28
+            },
+            "end": {
+              "line": 34,
+              "column": 30
+            }
+          },
+          {
+            "start": {
+              "line": 34,
+              "column": 32
+            },
+            "end": {
+              "line": 34,
+              "column": 34
+            }
+          },
+          {
+            "start": {
+              "line": 36,
+              "column": 9
+            },
+            "end": {
+              "line": 36,
+              "column": 35
+            }
+          },
+          {
+            "start": {
+              "line": 36,
+              "column": 47
+            },
+            "end": {
+              "line": 36,
+              "column": 56
+            }
+          },
+          {
+            "start": {
+              "line": 38,
+              "column": 9
+            },
+            "end": {
+              "line": 38,
+              "column": 47
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 34,
+                "column": 5
+              },
+              "end": {
+                "line": 34,
+                "column": 21
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 34,
+                "column": 28
+              },
+              "end": {
+                "line": 34,
+                "column": 30
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 34,
+                "column": 32
+              },
+              "end": {
+                "line": 34,
+                "column": 34
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 36,
+                "column": 9
+              },
+              "end": {
+                "line": 36,
+                "column": 35
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 36,
+                "column": 47
+              },
+              "end": {
+                "line": 36,
+                "column": 56
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 38,
+                "column": 9
+              },
+              "end": {
+                "line": 38,
+                "column": 47
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "pokedex/views.py#method@34:5",
+          "pokedex/views.py#external-value@35:9",
+          "pokedex/views.py#data-fetch@35:19",
+          "pokedex/views.py#call@37:9"
+        ],
+        "classifications": [
+          "api-route",
+          "api-request"
+        ],
+        "diffClassifications": [
+          "api-route",
+          "api-request"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 36,
+                "column": 9
+              },
+              "end": {
+                "line": 36,
+                "column": 21
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "name"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "pokedex/views.py#external-value@35:9"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 36,
+                "column": 24
+              },
+              "end": {
+                "line": 36,
+                "column": 34
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "loads"
+              ],
+              "blockId": null
+            },
+            "type": "unopened-import",
+            "specifier": "json",
+            "importedName": "*",
+            "isLibrary": true
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 36,
+                "column": 35
+              },
+              "end": {
+                "line": 36,
+                "column": 47
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "body"
+              ],
+              "blockId": "pokedex/views.py#root-argument-value@36:35"
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "pokedex/views.py#root-argument-value@34:21"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 38,
+                "column": 16
+              },
+              "end": {
+                "line": 38,
+                "column": 28
+              }
+            },
+            "use": "call",
+            "type": "unopened-import",
+            "specifier": "django.http:JsonResponse",
+            "importedName": "JsonResponse",
+            "isLibrary": true
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 38,
+                "column": 29
+              },
+              "end": {
+                "line": 38,
+                "column": 44
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "as_dict"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "pokedex/views.py#external-value@35:9"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "pokedex/views.py#external-value@35:9",
+          "pokedex/views.py#call@37:9"
+        ],
+        "handedFrom": [],
+        "filePath": "pokedex/views.py",
+        "catalogue": null,
+        "card": {
+          "library": "Django",
+          "kind": "route",
+          "part": "handler",
+          "heading": "PATCH",
+          "groupKey": "/api/pokemon/<int:pk>",
+          "ownerId": "pokedex/urls.py#route@8:5"
+        }
+      },
+      {
+        "id": "pokedex/views.py#root-argument-value@34:21",
+        "name": "request",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 34,
+              "column": 21
+            },
+            "end": {
+              "line": 34,
+              "column": 28
+            }
+          }
+        ],
+        "parentBlockId": "pokedex/views.py#method@34:5",
+        "childrenBlockIds": [
+          "pokedex/views.py#root-argument-value@36:35"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 34,
+              "column": 21
+            },
+            "end": {
+              "line": 34,
+              "column": 28
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 34,
+                "column": 21
+              },
+              "end": {
+                "line": 34,
+                "column": 28
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [
+          "pokedex/views.py#method@34:5"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "pokedex/views.py",
+        "catalogue": null
+      },
+      {
+        "id": "pokedex/views.py#root-argument-value@36:35",
+        "name": "body",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 36,
+              "column": 35
+            },
+            "end": {
+              "line": 36,
+              "column": 47
+            }
+          }
+        ],
+        "parentBlockId": "pokedex/views.py#root-argument-value@34:21",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 36,
+              "column": 35
+            },
+            "end": {
+              "line": 36,
+              "column": 47
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 36,
+                "column": 35
+              },
+              "end": {
+                "line": 36,
+                "column": 47
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "pokedex/views.py",
+        "catalogue": null
+      },
+      {
+        "id": "pokedex/views.py#root-argument-value@34:30",
+        "name": "pk",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 34,
+              "column": 30
+            },
+            "end": {
+              "line": 34,
+              "column": 32
+            }
+          }
+        ],
+        "parentBlockId": "pokedex/views.py#method@34:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 34,
+              "column": 30
+            },
+            "end": {
+              "line": 34,
+              "column": 32
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 34,
+                "column": 30
+              },
+              "end": {
+                "line": 34,
+                "column": 32
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [
+          "pokedex/views.py#data-fetch@35:19"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "pokedex/views.py",
+        "catalogue": null
+      },
+      {
+        "id": "pokedex/views.py#external-value@35:9",
+        "name": "pokemon",
+        "type": "external-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 35,
+              "column": 9
+            },
+            "end": {
+              "line": 35,
+              "column": 52
+            }
+          }
+        ],
+        "parentBlockId": "pokedex/views.py#method@34:5",
+        "childrenBlockIds": [
+          "pokedex/views.py#data-fetch@35:19"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 35,
+              "column": 9
+            },
+            "end": {
+              "line": 35,
+              "column": 19
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 35,
+                "column": 9
+              },
+              "end": {
+                "line": 35,
+                "column": 19
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "pokedex/views.py#external-value@35:9",
+          "pokedex/views.py#data-fetch@35:19"
+        ],
+        "classifications": [
+          "api-request"
+        ],
+        "diffClassifications": [
+          "api-request"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [
+          "pokedex/views.py#method@34:5",
+          "pokedex/views.py#call@37:9"
+        ],
+        "nextBlockIds": [
+          "pokedex/views.py#data-fetch@35:19"
+        ],
+        "handedFrom": [],
+        "filePath": "pokedex/views.py",
+        "catalogue": null
+      },
+      {
+        "id": "pokedex/views.py#data-fetch@35:19",
+        "type": "data-fetch",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 35,
+              "column": 19
+            },
+            "end": {
+              "line": 35,
+              "column": 52
+            }
+          }
+        ],
+        "parentBlockId": "pokedex/views.py#external-value@35:9",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 35,
+              "column": 19
+            },
+            "end": {
+              "line": 35,
+              "column": 52
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 35,
+                "column": 19
+              },
+              "end": {
+                "line": 35,
+                "column": 52
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "pokedex/views.py#data-fetch@35:19"
+        ],
+        "classifications": [
+          "api-request"
+        ],
+        "diffClassifications": [
+          "api-request"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 35,
+                "column": 19
+              },
+              "end": {
+                "line": 35,
+                "column": 36
+              }
+            },
+            "use": "call",
+            "type": "unopened-import",
+            "specifier": "django.shortcuts:get_object_or_404",
+            "importedName": "get_object_or_404",
+            "isLibrary": true
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 35,
+                "column": 37
+              },
+              "end": {
+                "line": 35,
+                "column": 44
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "external-block",
+            "codeBlockId": "pokedex/models.py#class@5:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 35,
+                "column": 49
+              },
+              "end": {
+                "line": 35,
+                "column": 51
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "pokedex/views.py#root-argument-value@34:30"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "pokedex/views.py",
+        "catalogue": {
+          "specifier": "django.shortcuts",
+          "name": "get_object_or_404",
+          "runs": null,
+          "path": null,
+          "method": null,
+          "event": null,
+          "certainty": "proven"
+        }
+      },
+      {
+        "id": "pokedex/views.py#call@37:9",
+        "name": "pokemon.save",
+        "type": "call",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 37,
+              "column": 9
+            },
+            "end": {
+              "line": 37,
+              "column": 23
+            }
+          }
+        ],
+        "parentBlockId": "pokedex/views.py#method@34:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 37,
+              "column": 9
+            },
+            "end": {
+              "line": 37,
+              "column": 23
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 37,
+                "column": 9
+              },
+              "end": {
+                "line": 37,
+                "column": 23
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 37,
+                "column": 9
+              },
+              "end": {
+                "line": 37,
+                "column": 21
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "pokedex/views.py#external-value@35:9",
+          "pokedex/views.py#data-fetch@35:19",
+          "pokedex/views.py#call@37:9"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 37,
+                "column": 9
+              },
+              "end": {
+                "line": 37,
+                "column": 21
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "save"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "pokedex/views.py#external-value@35:9"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "pokedex/views.py#external-value@35:9"
+        ],
+        "handedFrom": [],
+        "filePath": "pokedex/views.py",
+        "catalogue": null
+      },
+      {
+        "id": "pokedex/views.py#method@40:5",
+        "name": "PokemonView.delete",
+        "type": "method",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 40,
+              "column": 5
+            },
+            "end": {
+              "line": 42,
+              "column": 40
+            }
+          }
+        ],
+        "parentBlockId": "pokedex/views.py#class@30:1",
+        "childrenBlockIds": [
+          "pokedex/views.py#root-argument-value@40:22",
+          "pokedex/views.py#root-argument-value@40:31",
+          "pokedex/views.py#call@41:9"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "returnsAt": [
+          {
+            "line": 42,
+            "column": 9
+          }
+        ],
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 40,
+              "column": 5
+            },
+            "end": {
+              "line": 40,
+              "column": 22
+            }
+          },
+          {
+            "start": {
+              "line": 40,
+              "column": 29
+            },
+            "end": {
+              "line": 40,
+              "column": 31
+            }
+          },
+          {
+            "start": {
+              "line": 40,
+              "column": 33
+            },
+            "end": {
+              "line": 40,
+              "column": 35
+            }
+          },
+          {
+            "start": {
+              "line": 42,
+              "column": 9
+            },
+            "end": {
+              "line": 42,
+              "column": 40
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 40,
+                "column": 5
+              },
+              "end": {
+                "line": 40,
+                "column": 22
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 40,
+                "column": 29
+              },
+              "end": {
+                "line": 40,
+                "column": 31
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 40,
+                "column": 33
+              },
+              "end": {
+                "line": 40,
+                "column": 35
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 42,
+                "column": 9
+              },
+              "end": {
+                "line": 42,
+                "column": 40
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "pokedex/views.py#method@40:5",
+          "pokedex/views.py#call@41:9",
+          "pokedex/views.py#data-fetch@41:9"
+        ],
+        "classifications": [
+          "api-route",
+          "api-request"
+        ],
+        "diffClassifications": [
+          "api-route",
+          "api-request"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 42,
+                "column": 16
+              },
+              "end": {
+                "line": 42,
+                "column": 28
+              }
+            },
+            "use": "call",
+            "type": "unopened-import",
+            "specifier": "django.http:HttpResponse",
+            "importedName": "HttpResponse",
+            "isLibrary": true
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "pokedex/views.py#call@41:9"
+        ],
+        "handedFrom": [],
+        "filePath": "pokedex/views.py",
+        "catalogue": null,
+        "card": {
+          "library": "Django",
+          "kind": "route",
+          "part": "handler",
+          "heading": "DELETE",
+          "groupKey": "/api/pokemon/<int:pk>",
+          "ownerId": "pokedex/urls.py#route@8:5"
+        }
+      },
+      {
+        "id": "pokedex/views.py#root-argument-value@40:22",
+        "name": "request",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 40,
+              "column": 22
+            },
+            "end": {
+              "line": 40,
+              "column": 29
+            }
+          }
+        ],
+        "parentBlockId": "pokedex/views.py#method@40:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 40,
+              "column": 22
+            },
+            "end": {
+              "line": 40,
+              "column": 29
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 40,
+                "column": 22
+              },
+              "end": {
+                "line": 40,
+                "column": 29
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "pokedex/views.py",
+        "catalogue": null
+      },
+      {
+        "id": "pokedex/views.py#root-argument-value@40:31",
+        "name": "pk",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 40,
+              "column": 31
+            },
+            "end": {
+              "line": 40,
+              "column": 33
+            }
+          }
+        ],
+        "parentBlockId": "pokedex/views.py#method@40:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 40,
+              "column": 31
+            },
+            "end": {
+              "line": 40,
+              "column": 33
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 40,
+                "column": 31
+              },
+              "end": {
+                "line": 40,
+                "column": 33
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [
+          "pokedex/views.py#data-fetch@41:9"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "pokedex/views.py",
+        "catalogue": null
+      },
+      {
+        "id": "pokedex/views.py#call@41:9",
+        "type": "call",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 41,
+              "column": 9
+            },
+            "end": {
+              "line": 41,
+              "column": 51
+            }
+          }
+        ],
+        "parentBlockId": "pokedex/views.py#method@40:5",
+        "childrenBlockIds": [
+          "pokedex/views.py#data-fetch@41:9"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 41,
+              "column": 42
+            },
+            "end": {
+              "line": 41,
+              "column": 51
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 41,
+                "column": 42
+              },
+              "end": {
+                "line": 41,
+                "column": 51
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "pokedex/views.py#call@41:9",
+          "pokedex/views.py#data-fetch@41:9"
+        ],
+        "classifications": [
+          "api-request"
+        ],
+        "diffClassifications": [
+          "api-request"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "pokedex/views.py#data-fetch@41:9"
+        ],
+        "handedFrom": [],
+        "filePath": "pokedex/views.py",
+        "catalogue": null
+      },
+      {
+        "id": "pokedex/views.py#data-fetch@41:9",
+        "type": "data-fetch",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 41,
+              "column": 9
+            },
+            "end": {
+              "line": 41,
+              "column": 42
+            }
+          }
+        ],
+        "parentBlockId": "pokedex/views.py#call@41:9",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 41,
+              "column": 9
+            },
+            "end": {
+              "line": 41,
+              "column": 42
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 41,
+                "column": 9
+              },
+              "end": {
+                "line": 41,
+                "column": 42
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "pokedex/views.py#data-fetch@41:9"
+        ],
+        "classifications": [
+          "api-request"
+        ],
+        "diffClassifications": [
+          "api-request"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 41,
+                "column": 9
+              },
+              "end": {
+                "line": 41,
+                "column": 26
+              }
+            },
+            "use": "call",
+            "type": "unopened-import",
+            "specifier": "django.shortcuts:get_object_or_404",
+            "importedName": "get_object_or_404",
+            "isLibrary": true
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 41,
+                "column": 27
+              },
+              "end": {
+                "line": 41,
+                "column": 34
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "external-block",
+            "codeBlockId": "pokedex/models.py#class@5:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 41,
+                "column": 39
+              },
+              "end": {
+                "line": 41,
+                "column": 41
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "pokedex/views.py#root-argument-value@40:31"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "pokedex/views.py",
+        "catalogue": {
+          "specifier": "django.shortcuts",
+          "name": "get_object_or_404",
+          "runs": null,
+          "path": null,
+          "method": null,
+          "event": null,
+          "certainty": "proven"
+        }
+      },
+      {
+        "id": "pokedex/views.py#function@45:1",
+        "name": "level_up",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 45,
+              "column": 1
+            },
+            "end": {
+              "line": 51,
+              "column": 43
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "pokedex/views.py#root-argument-value@47:14",
+          "pokedex/views.py#root-argument-value@47:23",
+          "pokedex/views.py#external-value@48:5",
+          "pokedex/views.py#call@50:5"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "returnsAt": [
+          {
+            "line": 51,
+            "column": 5
+          }
+        ],
+        "exportedByFilePaths": [
+          "pokedex/views.py"
+        ],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 45,
+              "column": 1
+            },
+            "end": {
+              "line": 45,
+              "column": 16
+            }
+          },
+          {
+            "start": {
+              "line": 46,
+              "column": 1
+            },
+            "end": {
+              "line": 46,
+              "column": 14
+            }
+          },
+          {
+            "start": {
+              "line": 47,
+              "column": 1
+            },
+            "end": {
+              "line": 47,
+              "column": 14
+            }
+          },
+          {
+            "start": {
+              "line": 47,
+              "column": 21
+            },
+            "end": {
+              "line": 47,
+              "column": 23
+            }
+          },
+          {
+            "start": {
+              "line": 47,
+              "column": 25
+            },
+            "end": {
+              "line": 47,
+              "column": 27
+            }
+          },
+          {
+            "start": {
+              "line": 49,
+              "column": 5
+            },
+            "end": {
+              "line": 49,
+              "column": 54
+            }
+          },
+          {
+            "start": {
+              "line": 51,
+              "column": 5
+            },
+            "end": {
+              "line": 51,
+              "column": 43
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 45,
+                "column": 1
+              },
+              "end": {
+                "line": 45,
+                "column": 16
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 46,
+                "column": 1
+              },
+              "end": {
+                "line": 46,
+                "column": 14
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 47,
+                "column": 1
+              },
+              "end": {
+                "line": 47,
+                "column": 14
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 47,
+                "column": 21
+              },
+              "end": {
+                "line": 47,
+                "column": 23
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 47,
+                "column": 25
+              },
+              "end": {
+                "line": 47,
+                "column": 27
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 49,
+                "column": 5
+              },
+              "end": {
+                "line": 49,
+                "column": 54
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 49,
+                "column": 44
+              },
+              "end": {
+                "line": 49,
+                "column": 53
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 51,
+                "column": 5
+              },
+              "end": {
+                "line": 51,
+                "column": 43
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "pokedex/views.py#root-variable@11:1",
+          "pokedex/views.py#function@45:1",
+          "pokedex/views.py#external-value@48:5",
+          "pokedex/views.py#data-fetch@48:15",
+          "pokedex/views.py#call@50:5"
+        ],
+        "classifications": [
+          "api-route",
+          "api-request"
+        ],
+        "diffClassifications": [
+          "api-route",
+          "api-request"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 45,
+                "column": 2
+              },
+              "end": {
+                "line": 45,
+                "column": 16
+              }
+            },
+            "use": "call",
+            "type": "unopened-import",
+            "specifier": "django.contrib.auth.decorators:login_required",
+            "importedName": "login_required",
+            "isLibrary": true
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 46,
+                "column": 2
+              },
+              "end": {
+                "line": 46,
+                "column": 14
+              }
+            },
+            "use": "call",
+            "type": "unopened-import",
+            "specifier": "django.views.decorators.http:require_POST",
+            "importedName": "require_POST",
+            "isLibrary": true
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 49,
+                "column": 5
+              },
+              "end": {
+                "line": 49,
+                "column": 18
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "level"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "pokedex/views.py#external-value@48:5"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 49,
+                "column": 25
+              },
+              "end": {
+                "line": 49,
+                "column": 38
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "level"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "pokedex/views.py#external-value@48:5"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 49,
+                "column": 44
+              },
+              "end": {
+                "line": 49,
+                "column": 53
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "pokedex/views.py#root-variable@11:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 51,
+                "column": 12
+              },
+              "end": {
+                "line": 51,
+                "column": 24
+              }
+            },
+            "use": "call",
+            "type": "unopened-import",
+            "specifier": "django.http:JsonResponse",
+            "importedName": "JsonResponse",
+            "isLibrary": true
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 51,
+                "column": 25
+              },
+              "end": {
+                "line": 51,
+                "column": 40
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "as_dict"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "pokedex/views.py#external-value@48:5"
+          }
+        ],
+        "usedByIds": [
+          "pokedex/urls.py#effect-callback@9:40"
+        ],
+        "nextBlockIds": [
+          "pokedex/views.py#external-value@48:5",
+          "pokedex/views.py#call@50:5",
+          "pokedex/views.py#root-variable@11:1"
+        ],
+        "handedFrom": [],
+        "filePath": "pokedex/views.py",
+        "catalogue": {
+          "specifier": "django.contrib.auth.decorators",
+          "name": "login_required",
+          "runs": null,
+          "path": null,
+          "method": "POST",
+          "event": null,
+          "certainty": "proven"
+        },
+        "card": {
+          "library": "Django",
+          "kind": "route",
+          "part": "handler",
+          "heading": "POST",
+          "groupKey": "/api/pokemon/<int:pk>/level-up",
+          "ownerId": "pokedex/urls.py#route@9:5"
+        }
+      },
+      {
+        "id": "pokedex/views.py#root-argument-value@47:14",
+        "name": "request",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 47,
+              "column": 14
+            },
+            "end": {
+              "line": 47,
+              "column": 21
+            }
+          }
+        ],
+        "parentBlockId": "pokedex/views.py#function@45:1",
+        "childrenBlockIds": [
+          "pokedex/views.py#root-argument-value@48:57"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 47,
+              "column": 14
+            },
+            "end": {
+              "line": 47,
+              "column": 21
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 47,
+                "column": 14
+              },
+              "end": {
+                "line": 47,
+                "column": 21
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [
+          "pokedex/views.py#data-fetch@48:15"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "pokedex/views.py",
+        "catalogue": null
+      },
+      {
+        "id": "pokedex/views.py#root-argument-value@48:57",
+        "name": "user",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 48,
+              "column": 57
+            },
+            "end": {
+              "line": 48,
+              "column": 69
+            }
+          }
+        ],
+        "parentBlockId": "pokedex/views.py#root-argument-value@47:14",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 48,
+              "column": 57
+            },
+            "end": {
+              "line": 48,
+              "column": 69
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 48,
+                "column": 57
+              },
+              "end": {
+                "line": 48,
+                "column": 69
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "pokedex/views.py",
+        "catalogue": null
+      },
+      {
+        "id": "pokedex/views.py#root-argument-value@47:23",
+        "name": "pk",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 47,
+              "column": 23
+            },
+            "end": {
+              "line": 47,
+              "column": 25
+            }
+          }
+        ],
+        "parentBlockId": "pokedex/views.py#function@45:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 47,
+              "column": 23
+            },
+            "end": {
+              "line": 47,
+              "column": 25
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 47,
+                "column": 23
+              },
+              "end": {
+                "line": 47,
+                "column": 25
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [
+          "pokedex/views.py#data-fetch@48:15"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "pokedex/views.py",
+        "catalogue": null
+      },
+      {
+        "id": "pokedex/views.py#external-value@48:5",
+        "name": "pokemon",
+        "type": "external-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 48,
+              "column": 5
+            },
+            "end": {
+              "line": 48,
+              "column": 70
+            }
+          }
+        ],
+        "parentBlockId": "pokedex/views.py#function@45:1",
+        "childrenBlockIds": [
+          "pokedex/views.py#data-fetch@48:15"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 48,
+              "column": 5
+            },
+            "end": {
+              "line": 48,
+              "column": 15
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 48,
+                "column": 5
+              },
+              "end": {
+                "line": 48,
+                "column": 15
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "pokedex/views.py#external-value@48:5",
+          "pokedex/views.py#data-fetch@48:15"
+        ],
+        "classifications": [
+          "api-request"
+        ],
+        "diffClassifications": [
+          "api-request"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [
+          "pokedex/views.py#function@45:1",
+          "pokedex/views.py#call@50:5"
+        ],
+        "nextBlockIds": [
+          "pokedex/views.py#data-fetch@48:15"
+        ],
+        "handedFrom": [],
+        "filePath": "pokedex/views.py",
+        "catalogue": null
+      },
+      {
+        "id": "pokedex/views.py#data-fetch@48:15",
+        "type": "data-fetch",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 48,
+              "column": 15
+            },
+            "end": {
+              "line": 48,
+              "column": 70
+            }
+          }
+        ],
+        "parentBlockId": "pokedex/views.py#external-value@48:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 48,
+              "column": 15
+            },
+            "end": {
+              "line": 48,
+              "column": 57
+            }
+          },
+          {
+            "start": {
+              "line": 48,
+              "column": 69
+            },
+            "end": {
+              "line": 48,
+              "column": 70
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 48,
+                "column": 15
+              },
+              "end": {
+                "line": 48,
+                "column": 57
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 48,
+                "column": 69
+              },
+              "end": {
+                "line": 48,
+                "column": 70
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "pokedex/views.py#data-fetch@48:15"
+        ],
+        "classifications": [
+          "api-request"
+        ],
+        "diffClassifications": [
+          "api-request"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 48,
+                "column": 15
+              },
+              "end": {
+                "line": 48,
+                "column": 32
+              }
+            },
+            "use": "call",
+            "type": "unopened-import",
+            "specifier": "django.shortcuts:get_object_or_404",
+            "importedName": "get_object_or_404",
+            "isLibrary": true
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 48,
+                "column": 33
+              },
+              "end": {
+                "line": 48,
+                "column": 40
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "external-block",
+            "codeBlockId": "pokedex/models.py#class@5:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 48,
+                "column": 45
+              },
+              "end": {
+                "line": 48,
+                "column": 47
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "pokedex/views.py#root-argument-value@47:23"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 48,
+                "column": 57
+              },
+              "end": {
+                "line": 48,
+                "column": 69
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "user"
+              ],
+              "blockId": "pokedex/views.py#root-argument-value@48:57"
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "pokedex/views.py#root-argument-value@47:14"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "pokedex/views.py",
+        "catalogue": {
+          "specifier": "django.shortcuts",
+          "name": "get_object_or_404",
+          "runs": null,
+          "path": null,
+          "method": null,
+          "event": null,
+          "certainty": "proven"
+        }
+      },
+      {
+        "id": "pokedex/views.py#call@50:5",
+        "name": "pokemon.save",
+        "type": "call",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 50,
+              "column": 5
+            },
+            "end": {
+              "line": 50,
+              "column": 19
+            }
+          }
+        ],
+        "parentBlockId": "pokedex/views.py#function@45:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 50,
+              "column": 5
+            },
+            "end": {
+              "line": 50,
+              "column": 19
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 50,
+                "column": 5
+              },
+              "end": {
+                "line": 50,
+                "column": 19
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 50,
+                "column": 5
+              },
+              "end": {
+                "line": 50,
+                "column": 17
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "pokedex/views.py#external-value@48:5",
+          "pokedex/views.py#data-fetch@48:15",
+          "pokedex/views.py#call@50:5"
+        ],
+        "classifications": [
+          "logic"
+        ],
+        "diffClassifications": [
+          "logic"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 50,
+                "column": 5
+              },
+              "end": {
+                "line": 50,
+                "column": 17
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "save"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "pokedex/views.py#external-value@48:5"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "pokedex/views.py#external-value@48:5"
+        ],
+        "handedFrom": [],
+        "filePath": "pokedex/views.py",
+        "catalogue": null
+      }
+    ],
+    "diffBlockIds": [
+      "pokedex/urls.py#root-variable@5:1",
+      "pokedex/urls.py#route@7:5",
+      "pokedex/urls.py#effect-callback@7:22",
+      "pokedex/urls.py#route@8:5",
+      "pokedex/urls.py#effect-callback@8:31",
+      "pokedex/urls.py#route@9:5",
+      "pokedex/urls.py#effect-callback@9:40",
+      "pokedex/views.py#import@1:1",
+      "pokedex/views.py#import@4:1",
+      "pokedex/views.py#import@5:1",
+      "pokedex/views.py#import@6:1",
+      "pokedex/views.py#import@7:1",
+      "pokedex/views.py#import@9:1",
+      "pokedex/views.py#root-variable@11:1",
+      "pokedex/views.py#function@20:1",
+      "pokedex/views.py#root-argument-value@22:11",
+      "pokedex/views.py#root-argument-value@23:8",
+      "pokedex/views.py#root-argument-value@24:27",
+      "pokedex/views.py#root-argument-value@25:50",
+      "pokedex/views.py#condition@23:5",
+      "pokedex/views.py#external-value@24:9",
+      "pokedex/views.py#external-value@25:9",
+      "pokedex/views.py#data@25:19",
+      "pokedex/views.py#class@30:1",
+      "pokedex/views.py#method@31:5",
+      "pokedex/views.py#root-argument-value@31:19",
+      "pokedex/views.py#root-argument-value@31:28",
+      "pokedex/views.py#data-fetch@32:29",
+      "pokedex/views.py#method@34:5",
+      "pokedex/views.py#root-argument-value@34:21",
+      "pokedex/views.py#root-argument-value@36:35",
+      "pokedex/views.py#root-argument-value@34:30",
+      "pokedex/views.py#external-value@35:9",
+      "pokedex/views.py#data-fetch@35:19",
+      "pokedex/views.py#call@37:9",
+      "pokedex/views.py#method@40:5",
+      "pokedex/views.py#root-argument-value@40:22",
+      "pokedex/views.py#root-argument-value@40:31",
+      "pokedex/views.py#call@41:9",
+      "pokedex/views.py#data-fetch@41:9",
+      "pokedex/views.py#function@45:1",
+      "pokedex/views.py#root-argument-value@47:14",
+      "pokedex/views.py#root-argument-value@48:57",
+      "pokedex/views.py#root-argument-value@47:23",
+      "pokedex/views.py#external-value@48:5",
+      "pokedex/views.py#data-fetch@48:15",
+      "pokedex/views.py#call@50:5"
+    ],
+    "diffContains": [
+      "effect",
+      "route",
+      "data",
+      "logic"
+    ],
+    "chainContains": [
+      "effect",
+      "route",
+      "data",
+      "logic"
+    ],
+    "diffChainIds": [
+      "pokedex/urls.py#root-variable@5:1",
+      "pokedex/urls.py#route@7:5",
+      "pokedex/urls.py#route@8:5",
+      "pokedex/urls.py#route@9:5",
+      "pokedex/views.py#class@30:1"
+    ]
+  }
+]

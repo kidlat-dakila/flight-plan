@@ -40,9 +40,17 @@ const triggerLabelEditSchema = z.strictObject({
   label: prose.describe("What the event or the data fetch is, in the reader's terms: what the user does, or what is loaded."),
 })
 
+const rowPositionSchema = z.strictObject({
+  line: z.number().int().positive(),
+  column: z.number().int().positive(),
+})
+
 const blockLabelEditSchema = z.strictObject({
   codeBlockId: z.string().min(1).describe("The `codeBlockId` of one of the node's `blockLabels`, as the artifact has it."),
-  label: prose.describe("What the argument, the state, the hook, the effect or the step is for, in the reader's terms."),
+  at: rowPositionSchema
+    .optional()
+    .describe("The `at` of that block label, as the artifact has it: where its call, its return or its rendered value starts. Several rows of a card can share one `codeBlockId` and differ by `at`. Leave it out only on a block label that has none."),
+  label: prose.describe("What the row does, in the reader's terms: what a call is for, what a return gives back or what a component renders there, what a throw raises and when, what a render row renders, what a memo works out, what an effect does, or what a row of a class, a route, a router or a store is for."),
 })
 
 const traceEditSchema = z.strictObject({
@@ -50,7 +58,7 @@ const traceEditSchema = z.strictObject({
   label: prose.optional().describe("What this step does, not which code it is."),
   description: prose.nullable().optional().describe("How the step is reached and what it runs next. The page draws every edge as the same line with no label, so what matters about a connection belongs here."),
   triggerLabels: z.array(triggerLabelEditSchema).min(1).optional().describe("Labels for the node's events and data fetches, each by its `codeBlockId`."),
-  blockLabels: z.array(blockLabelEditSchema).min(1).optional().describe("Labels for the node's arguments, state, hooks, effects and steps, each by its `codeBlockId`."),
+  blockLabels: z.array(blockLabelEditSchema).min(1).optional().describe("Labels for the node's rows, each by its `codeBlockId` and its `at`: the calls, returns and throws of a function, memo or effect card, the calls, memos, effects, returns and render rows of a component, and the rows of any other card."),
 })
 
 const blastEditSchema = z.strictObject({

@@ -2,7 +2,9 @@ import { NAMESPACE_IMPORT } from "@/ast-graph/languages/base"
 import { readBindings as readScopedBindings } from "@/ast-graph/languages/python/bindings"
 import { parseWithGrammar, type GrammarId, type SyntaxNode, type SyntaxTree } from "@/ast-graph/parser"
 import { nodesMatching, patternOfTypes } from "@/ast-graph/query-nodes"
+import { chainFrom, selfAndAncestorsOf } from "@/ast-graph/walk-tree"
 import { annotatedTypeFilling, annotatedTypeOf } from "@/code-blocks/languages/python/annotated"
+import { once } from "@/shared/memo"
 import { NO_EXPRESSION, type Binding, type DeclaredMember, type Expression, type ParameterBinding, type PassedValue, type Site, type SyntaxReader } from "./syntax-reader"
 
 const GRAMMAR: GrammarId = "python"
@@ -198,11 +200,11 @@ const parameterNamesOf = (definition: SyntaxNode): (string | null)[] => paramete
 
 const TYPE_NAME_TYPES: ReadonlySet<string> = new Set([NAME_TYPE, MEMBER_TYPE])
 
-const typeNameOf = (annotation: SyntaxNode | null): SyntaxNode | null => {
-  if (annotation === null) return null
-  if (TYPE_NAME_TYPES.has(annotation.type)) return annotation
-  return typeNameOf(annotatedTypeOf(annotation))
-}
+const ancestorsOf = (node: SyntaxNode): SyntaxNode[] => selfAndAncestorsOf(node).slice(1)
+
+const isTypeName = (node: SyntaxNode): boolean => TYPE_NAME_TYPES.has(node.type)
+
+const typeNameOf = (annotation: SyntaxNode | null): SyntaxNode | null => [...chainFrom(annotation, annotatedTypeOf)].find(isTypeName) ?? null
 
 const parameterTypeOf = (parameter: SyntaxNode): SyntaxNode | null => typeNameOf(parameter.childForFieldName("type")?.firstNamedChild ?? null)
 
@@ -215,20 +217,21 @@ const classOfMethod = (definition: SyntaxNode): SyntaxNode | null => {
   return block?.type === BLOCK_TYPE && block.parent?.type === CLASS_TYPE && !isStaticMethod(definition) ? block.parent : null
 }
 
-const definingFunctionOf = (node: SyntaxNode | null, name: string): SyntaxNode | null => {
-  if (node === null || node.type === CLASS_TYPE) return null
-  if (node.type === FUNCTION_TYPE && parameterNamesOf(node).includes(name)) return node
-  return definingFunctionOf(node.parent, name)
+const isDefiningFunction = (node: SyntaxNode, name: string): boolean => node.type === FUNCTION_TYPE && parameterNamesOf(node).includes(name)
+
+const definingFunctionOf = (name: SyntaxNode): SyntaxNode | null => {
+  const scope = ancestorsOf(name).find((ancestor) => ancestor.type === CLASS_TYPE || isDefiningFunction(ancestor, name.text))
+  return scope?.type === FUNCTION_TYPE ? scope : null
 }
 
 const receiverBindingOf = (name: SyntaxNode): Binding | null => {
-  const definition = definingFunctionOf(name.parent, name.text)
+  const definition = definingFunctionOf(name)
   const declaration = definition === null || parameterNamesOf(definition)[0] !== name.text ? null : classOfMethod(definition)
   return declaration === null ? null : { kind: "class", declaration }
 }
 
 const parameterBindingOf = (name: SyntaxNode): ParameterBinding | null => {
-  const definition = definingFunctionOf(name.parent, name.text)
+  const definition = definingFunctionOf(name)
   const parameters = definition === null ? [] : parametersOf(definition)
   const position = parameters.findIndex((parameter) => nameOfParameter(parameter) === name.text)
   return definition === null || position < 0 ? null : { kind: "parameter", holder: definition, parameter: parameters[position], position }
@@ -269,15 +272,26 @@ const listDeclaredMembers = (declaration: SyntaxNode, name: string): DeclaredMem
 const builtinBindingOf = (name: SyntaxNode, boundNames: ReadonlySet<string>): Binding | null =>
   boundNames.has(name.text) ? null : { kind: "import", specifier: BUILTINS_MODULE, importedName: name.text }
 
-export const pythonReaderOf = (tree: SyntaxTree, findImported: FindImportedBinding = findNothingImported): SyntaxReader => {
+export interface PythonReading {
+  readonly reader: SyntaxReader
+  readonly declaredBindingAt: (declaredName: SyntaxNode) => Binding | null
+}
+
+const withReader = (binding: Binding | null, reader: SyntaxReader): Binding | null =>
+  binding?.kind === "value" || binding?.kind === "class" ? { ...binding, reader } : binding
+
+const bindingDeclaredAt = (bindings: readonly NamedBinding[], declaredName: SyntaxNode): Binding | null =>
+  bindings.find(({ startIndex }) => startIndex === declaredName.startIndex)?.binding ?? null
+
+export const pythonReadingOf = (tree: SyntaxTree, findImported: FindImportedBinding = findNothingImported): PythonReading => {
   const bindings = readBindings(tree)
-  const boundNames = listBoundNames(tree)
-  return {
+  const boundNames = once(() => listBoundNames(tree))
+  const reader: SyntaxReader = {
     language: "python",
     tree,
     expressionOf,
     bindingOf: (name) =>
-      receiverBindingOf(name) ?? followedImport(bindingAmong(bindings, name), name, findImported) ?? parameterBindingOf(name) ?? builtinBindingOf(name, boundNames),
+      receiverBindingOf(name) ?? followedImport(bindingAmong(bindings, name), name, findImported) ?? parameterBindingOf(name) ?? builtinBindingOf(name, boundNames()),
     basesOf,
     handedAt: () => null,
     parameterTypeOf,
@@ -292,14 +306,7 @@ export const pythonReaderOf = (tree: SyntaxTree, findImported: FindImportedBindi
     textOf,
     isFunction: (value) => value.type === FUNCTION_VALUE_TYPE,
   }
+  return { reader, declaredBindingAt: (declaredName) => withReader(bindingDeclaredAt(bindings, declaredName), reader) }
 }
 
-export const readPython = (source: string): SyntaxReader => pythonReaderOf(parseWithGrammar(GRAMMAR, source))
-
-const withReader = (binding: Binding | null, reader: SyntaxReader): Binding | null =>
-  binding?.kind === "value" || binding?.kind === "class" ? { ...binding, reader } : binding
-
-export const declaredBindingAt = (reader: SyntaxReader, declaredName: SyntaxNode): Binding | null => {
-  const declared = readBindings(reader.tree).find(({ startIndex }) => startIndex === declaredName.startIndex)
-  return withReader(declared?.binding ?? null, reader)
-}
+export const readPython = (source: string): SyntaxReader => pythonReadingOf(parseWithGrammar(GRAMMAR, source)).reader

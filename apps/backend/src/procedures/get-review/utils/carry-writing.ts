@@ -3,13 +3,13 @@ import { MARK_PREFIXES, rangeOfDeclaration } from "@/procedures/read-artifact/ut
 import { codeLinkIdsIn, contextIdOf, listTraceNodes, rowSpanOf } from "@flightplan/codegraph"
 import type {
   Blast,
-  BlockLabel,
   CodeBlock,
   ContextCodeBlock,
   FileSection,
   TraceDiagram,
   TraceNode,
   LineRange,
+  Position,
   ReviewArtifact,
   Segment,
   SourceFile,
@@ -46,6 +46,8 @@ const KEY_SEPARATOR = "\n"
 const TARGET_SEPARATOR = "#"
 const UNNAMED = ""
 const UNWRITTEN = ""
+const UNPLACED = ""
+const POSITION_SEPARATOR = ":"
 
 const sourcesByPath = (artifact: ReviewArtifact): SourcesByPath =>
   new Map(artifact.sources.map((source) => [source.path, source]))
@@ -133,11 +135,28 @@ const blockKeyOf = (block: CodeBlock, sources: SourcesByPath): string | null => 
   return code === null ? null : [path, block.type, block.name ?? UNNAMED, code].join(KEY_SEPARATOR)
 }
 
-const carryBlockLabel = (listed: BlockLabel, writtenLabels: readonly BlockLabel[], comparison: CodeComparison): BlockLabel => {
-  const key = blockKeyOf(listed.codeBlock, comparison.rebuilt)
+interface RowLabel {
+  readonly label: string | null
+  readonly codeBlock: CodeBlock
+  readonly at?: Position | undefined
+}
+
+const placeInBlockOf = ({ codeBlock, at }: RowLabel): string => {
+  if (at === undefined) return UNPLACED
+  const [{ start }] = codeBlock.lineOfCodeRangeReference
+  return [String(at.line - start.line), String(at.column)].join(POSITION_SEPARATOR)
+}
+
+const rowKeyOf = (listed: RowLabel, sources: SourcesByPath): string | null => {
+  const blockKey = blockKeyOf(listed.codeBlock, sources)
+  return blockKey === null ? null : [blockKey, placeInBlockOf(listed)].join(KEY_SEPARATOR)
+}
+
+const carryRowLabel = <Listed extends RowLabel>(listed: Listed, writtenLabels: readonly Listed[], comparison: CodeComparison): Listed => {
+  const key = rowKeyOf(listed, comparison.rebuilt)
   const written = key === null
     ? undefined
-    : writtenLabels.find((candidate) => blockKeyOf(candidate.codeBlock, comparison.previous) === key)
+    : writtenLabels.find((candidate) => rowKeyOf(candidate, comparison.previous) === key)
   return written === undefined ? listed : { ...listed, label: written.label ?? listed.label }
 }
 
@@ -150,8 +169,8 @@ const carryTraceNode = (node: TraceNode, carry: Carry): TraceNode => {
     ...walked,
     label: written.label ?? node.label,
     description: written.description ?? node.description,
-    triggerLabels: node.triggerLabels.map((trigger) => carryBlockLabel(trigger, written.triggerLabels, carry.comparison)),
-    blockLabels: node.blockLabels.map((listed) => carryBlockLabel(listed, written.blockLabels, carry.comparison)),
+    triggerLabels: node.triggerLabels.map((trigger) => carryRowLabel(trigger, written.triggerLabels, carry.comparison)),
+    blockLabels: node.blockLabels.map((listed) => carryRowLabel(listed, written.blockLabels, carry.comparison)),
   }
 }
 

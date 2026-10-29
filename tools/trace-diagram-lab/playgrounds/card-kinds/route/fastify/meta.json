@@ -1,0 +1,6 @@
+{
+  "title": "Route card in Fastify",
+  "packages": ["fastify"],
+  "language": "typescript",
+  "mainFramework": "fastify"
+}

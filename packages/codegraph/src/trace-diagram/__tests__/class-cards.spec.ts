@@ -42,12 +42,12 @@ describe("the card of a class", () => {
   })
 
   it("gives a method no row for what it reaches through this", () => {
-    const store = codeOf("export class Store {", "  items = []", "  add(item) {", "    this.items.push(item)", "    log(item)", "  }", "}")
+    const store = codeOf("export class Store {", "  items = []", "  add(item) {", "    this.items.push(item)", "    record(item)", "  }", "}", "export const record = (item) => item")
     const diagram = presentDiagramOf({ "src/store.ts": store }, { "src/store.ts": [rangeAt(4, 5, 5, 14)] })
     const add = nodeNamed(diagram.traceNodes, "Store.add")
 
     expect(add?.diffCodeBlocks.map((block) => block.name)).toContain("this.items.push")
-    expect(rowNamesOf(add)).toStrictEqual(["log"])
+    expect(rowNamesOf(add)).toStrictEqual(["record"])
   })
 
   it("nests a class that extends another inside it, and leaves out a method the class extending it writes again", () => {
@@ -108,17 +108,18 @@ describe("the card of a class that holds another class by type", () => {
     const report = codeOf(
       "export class Report {",
       "  constructor(private readonly users: UsersService, public title: string, limit: number) {",
-      "    log(limit)",
+      "    record(limit)",
       "  }",
       "  run() {",
       "    return this.users.findAll()",
       "  }",
       "}",
+      "export const record = (value) => value",
     )
     const diagram = presentDiagramOf({ "src/report.ts": report }, { "src/report.ts": [rangeAt(2, 15, 2, 87), rangeAt(3, 5, 3, 15)] })
 
     expect(rowNamesOf(nodeNamed(diagram.traceNodes, "Report"))).toStrictEqual(["users", "title"])
-    expect(rowNamesOf(nodeNamed(diagram.traceNodes, "Report.constructor"))).toStrictEqual(["log"])
+    expect(rowNamesOf(nodeNamed(diagram.traceNodes, "Report.constructor"))).toStrictEqual(["record"])
   })
 })
 
@@ -153,9 +154,11 @@ const PYTHON_STORE = codeOf(
   "        self.owner = owner",
   "    def add(self, item):",
   "        self.items.append(item)",
-  "        log(item)",
+  "        record(item)",
   "    def total(self):",
   "        return price_of(self.items[0])",
+  "def record(item):",
+  "    return item",
 )
 
 const PYTHON_CHECKOUT = codeOf("from shop.store import Store", "def open_store(owner):", "    return Store(owner)")
@@ -171,7 +174,7 @@ describe("the card of a Python class", () => {
   it("gives a method no row for what it reaches through self", () => {
     const diagram = presentDiagramOf({ "shop/store.py": PYTHON_STORE }, { "shop/store.py": [rangeAt(8, 9, 9, 18)] })
 
-    expect(rowNamesOf(nodeNamed(diagram.traceNodes, "Store.add"))).toStrictEqual(["log"])
+    expect(rowNamesOf(nodeNamed(diagram.traceNodes, "Store.add"))).toStrictEqual(["record"])
   })
 
   it("nests a class that extends another from another file, and leaves out a method the class extending it writes again", () => {

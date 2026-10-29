@@ -8,7 +8,7 @@ import { compareRanges, rangeOfNode } from "@/code-blocks/source-range"
 import type { CodeBlockCatalogue, CodeBlockType, Position, SourceRange } from "@/code-blocks/types"
 import { groupBy } from "@/shared/group-by"
 import { annotatedTypeFilling, callFilledByAnnotatedType, isAnnotated } from "./annotated"
-import { attributeOfReceiver, keyPathOf, listAttributeNames } from "./members"
+import { attributeOfReceiver, keyPathIn, keyScopeWithin, listAttributeNames, NO_KEY_SCOPE, type KeyScope } from "./members"
 import { namesOutside, resolutionAt, type PythonOutline } from "./outline"
 import { isPlainValue } from "./plain-values"
 import { isReturnedFunction } from "./returned-functions"
@@ -25,6 +25,7 @@ interface WalkContext {
   readonly takenIds: readonly string[]
   readonly className: string | null
   readonly isInRootClass: boolean
+  readonly keyScope: KeyScope
 }
 
 interface Seed {
@@ -89,7 +90,7 @@ const BLOCKLESS_ROOT_TYPES: ReadonlySet<string> = new Set([
   "pass_statement",
 ])
 
-const START: WalkContext = { parentId: null, takenIds: [], className: null, isInRootClass: false }
+const START: WalkContext = { parentId: null, takenIds: [], className: null, isInRootClass: false, keyScope: NO_KEY_SCOPE }
 
 const isAtRoot = (context: WalkContext): boolean => context.parentId === null
 
@@ -170,8 +171,8 @@ const memberNameOf = (name: string, { className }: WalkContext): string => (clas
 const isDeclaredAttribute = (attribute: SyntaxNode): boolean =>
   listAttributeNames(attribute.closest(CLASS_TYPE)).some((declared) => declared.id === attribute.id)
 
-const readPair: ReadSeeds = (pair) => {
-  const keys = keyPathOf(pair)
+const readPair: ReadSeeds = (pair, { keyScope }) => {
+  const keys = keyPathIn(pair, keyScope)
   const isHoldingValue = keys.length > 0 && pair.childForFieldName("value")?.type !== FUNCTION_VALUE_TYPE
   return isHoldingValue ? [seedAt(pair, "property", keys[keys.length - 1])] : []
 }
@@ -440,7 +441,7 @@ const readIterated = (node: SyntaxNode, blocks: readonly ReadBlock[], reader: Py
 }
 
 const readBlocksAt = (node: SyntaxNode, context: WalkContext, reader: PythonBlockReader): ReadBlock[] => {
-  const keys = keyPathOf(node)
+  const keys = keyPathIn(node, context.keyScope)
   const blocks = blocksOf(readSeeds(node, context, reader), context, reader.filePath).map((block) => (block.type === PROPERTY && keys.length > 0 ? { ...block, memberPath: keys } : block))
   return [...blocks, ...readRootArguments(node, blocks, context, reader), ...readInnerParameters(node, blocks, context, reader), ...readIterated(node, blocks, reader)]
 }
@@ -448,13 +449,15 @@ const readBlocksAt = (node: SyntaxNode, context: WalkContext, reader: PythonBloc
 const contextWithin = (node: SyntaxNode, blocks: readonly ReadBlock[], context: WalkContext): WalkContext => {
   const held = blocks.filter((block) => block.argument === undefined && block.isParameter !== true)
   const className = node.type === CLASS_TYPE ? (node.childForFieldName("name")?.text ?? null) : context.className
-  if (held.length === 0) return { ...context, className }
+  const keyScope = keyScopeWithin(node, context.keyScope)
+  if (held.length === 0) return { ...context, className, keyScope }
   const innermost = held[held.length - 1]
   return {
     parentId: innermost.id,
     takenIds: [...context.takenIds, ...held.map((block) => block.id)],
     className,
     isInRootClass: innermost.type === "class" && isAtRoot(context),
+    keyScope,
   }
 }
 

@@ -1,5 +1,5 @@
 import { parseWithGrammar, type SyntaxNode, type SyntaxTree } from "@/ast-graph/parser"
-import { collectFromNode, type NodeReading } from "@/ast-graph/walk-tree"
+import { chainFrom, collectFromNode, selfAndAncestorsOf, type NodeReading } from "@/ast-graph/walk-tree"
 
 const SOURCE = [
   "function outer(first) {",
@@ -82,5 +82,47 @@ describe("collectFromNode", () => {
     const cart = tree.rootNode.namedChildren[1]
 
     expect(collectFromNode(cart, (node) => ({ found: node.type === "property_identifier" ? [node.text] : [], shouldDescend: true }))).toStrictEqual(["total"])
+  })
+})
+
+const DEEP_NESTING = 10_000
+
+const SECOND = "second"
+
+const secondOf = (tree: SyntaxTree): SyntaxNode => {
+  const second = tree.rootNode.descendantsOfType("identifier").find((node) => node.text === SECOND)
+  if (second === undefined) throw new Error(`There is no identifier named ${SECOND}.`)
+  return second
+}
+
+describe("selfAndAncestorsOf a node", () => {
+  it("lists the node and every node around it, nearest first", () => {
+    expect(selfAndAncestorsOf(secondOf(parse(SOURCE))).map((node) => node.type)).toStrictEqual([
+      "identifier",
+      "required_parameter",
+      "formal_parameters",
+      "arrow_function",
+      "variable_declarator",
+      "lexical_declaration",
+      "statement_block",
+      "function_declaration",
+      "program",
+    ])
+  })
+
+  it("lists every node around a node nested deeper than a call stack holds", () => {
+    const tree = parse(`const value = ${"(".repeat(DEEP_NESTING)}second${")".repeat(DEEP_NESTING)}`)
+    expect(selfAndAncestorsOf(secondOf(tree)).filter((node) => node.type === "parenthesized_expression")).toHaveLength(DEEP_NESTING)
+  })
+})
+
+describe("chainFrom a node", () => {
+  it("follows each next node until there is none", () => {
+    const tree = parse(SOURCE)
+    expect([...chainFrom(secondOf(tree), (node) => node.parent)].map((node) => node.type).slice(-1)).toStrictEqual(["program"])
+  })
+
+  it("lists nothing when it starts from no node", () => {
+    expect([...chainFrom(null, (node) => node.parent)]).toStrictEqual([])
   })
 })

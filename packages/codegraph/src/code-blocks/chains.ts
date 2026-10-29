@@ -1,4 +1,5 @@
 import { groupBy } from "@/shared/group-by"
+import { walkBreadthFirst, walkBreadthFirstInTurns } from "@/shared/reach"
 import { listFilledClassIds } from "./filled-classes"
 import { listCalledProcedureIds, listRouterIds } from "./procedure-calls"
 import { listMountedRouterIds } from "./route-mounts"
@@ -87,6 +88,9 @@ const NAMING_A_TYPE: StoredCodeBlockSymbol["use"] = "type"
 
 type BlockIndex = Pick<ChainIndex, "blockById">
 
+const reach = (startIds: readonly string[], nextOf: (blockId: string) => readonly string[]): ReadonlySet<string> =>
+  new Set(walkBreadthFirst(startIds, { nextOf, keyOf: (blockId) => blockId }))
+
 const blocksOf = (blockIds: readonly string[], { blockById }: BlockIndex): StoredCodeBlock[] =>
   blockIds.flatMap((blockId) => {
     const block = blockById.get(blockId)
@@ -173,12 +177,8 @@ const listArgumentIdsHandedTo = (argument: StoredCodeBlock, index: BlockIndex): 
     blocksOf([blockId], index).flatMap((holder) => argumentNamedBy(holder.outerSymbols[symbolIndex], index)?.id ?? []),
   )
 
-const withArgumentsHandedOn = (pendingIds: readonly string[], index: BlockIndex, calledIds: ReadonlySet<string> = new Set()): ReadonlySet<string> => {
-  const arrivingIds = [...new Set(pendingIds)].filter((argumentId) => !calledIds.has(argumentId))
-  if (arrivingIds.length === 0) return calledIds
-  const handedIds = blocksOf(arrivingIds, index).flatMap((argument) => listArgumentIdsHandedTo(argument, index))
-  return withArgumentsHandedOn(handedIds, index, new Set([...calledIds, ...arrivingIds]))
-}
+const withArgumentsHandedOn = (calledIds: readonly string[], index: BlockIndex): ReadonlySet<string> =>
+  reach(calledIds, (argumentId) => blocksOf([argumentId], index).flatMap((argument) => listArgumentIdsHandedTo(argument, index)))
 
 const listCalledArgumentIds = (codeBlocks: readonly StoredCodeBlock[], index: BlockIndex): ReadonlySet<string> =>
   withArgumentsHandedOn(
@@ -242,11 +242,12 @@ const sourceOf = (changed: StoredCodeBlock, index: ChainIndex): StoredCodeBlock 
   return parent === null ? changed : sourceOf(parent, index)
 }
 
-const reach = (pending: readonly string[], nextOf: (blockId: string) => readonly string[], reached: ReadonlySet<string> = new Set()): ReadonlySet<string> => {
-  const unvisited = [...new Set(pending)].filter((blockId) => !reached.has(blockId))
-  if (unvisited.length === 0) return reached
-  return reach(unvisited.flatMap(nextOf), nextOf, new Set([...reached, ...unvisited]))
+interface TopVisit {
+  readonly blockId: string
+  readonly isTop: boolean
 }
+
+const topVisitOf = (blockId: string): TopVisit => ({ blockId, isTop: true })
 
 const listTops = (
   onChainIds: readonly string[],
@@ -254,12 +255,12 @@ const listTops = (
   nextOf: (blockId: string) => readonly string[],
 ): string[] => {
   const started = onChainIds.filter((blockId) => (runnerIdsById.get(blockId) ?? []).length === 0)
-  const withLoops = (tops: readonly string[]): string[] => {
-    const reached = reach(tops, nextOf)
-    const unreached = onChainIds.find((blockId) => !reached.has(blockId))
-    return unreached === undefined ? [...tops] : withLoops([...tops, unreached])
-  }
-  return withLoops(started)
+  const turns = [started.map(topVisitOf), ...onChainIds.map((blockId) => [topVisitOf(blockId)])]
+  const visits = walkBreadthFirstInTurns(turns, {
+    nextOf: ({ blockId }) => nextOf(blockId).map((nextId) => ({ blockId: nextId, isTop: false })),
+    keyOf: ({ blockId }) => blockId,
+  })
+  return [...visits].filter((visit) => visit.isTop).map((visit) => visit.blockId)
 }
 
 export interface ChainHints {

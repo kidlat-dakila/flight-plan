@@ -1,0 +1,1184 @@
+{
+  "title": "Implement store useBagStore",
+  "diff": [
+    "diff --git a/src/lib/bag-lines.ts b/src/lib/bag-lines.ts",
+    "new file mode 100644",
+    "--- /dev/null",
+    "+++ b/src/lib/bag-lines.ts",
+    "@@ -0,0 +1,12 @@",
+    "+import type { Item } from \"@/types/item\"",
+    "+",
+    "+export interface BagLine {",
+    "+  item: Item",
+    "+  quantity: number",
+    "+}",
+    "+",
+    "+export function addLine(lines: BagLine[], item: Item): BagLine[] {",
+    "+  const line = lines.find((entry) => entry.item.id === item.id)",
+    "+  if (line === undefined) return [...lines, { item, quantity: 1 }]",
+    "+  return lines.map((entry) => (entry === line ? { ...entry, quantity: entry.quantity + 1 } : entry))",
+    "+}",
+    "diff --git a/src/stores/bag.ts b/src/stores/bag.ts",
+    "new file mode 100644",
+    "--- /dev/null",
+    "+++ b/src/stores/bag.ts",
+    "@@ -0,0 +1,26 @@",
+    "+import { defineStore } from \"pinia\"",
+    "+import { addLine, type BagLine } from \"@/lib/bag-lines\"",
+    "+import type { Item } from \"@/types/item\"",
+    "+",
+    "+export const useBagStore = defineStore(\"bag\", {",
+    "+  state: () => ({",
+    "+    lines: [] as BagLine[],",
+    "+    lastAddedId: null as number | null,",
+    "+  }),",
+    "+  getters: {",
+    "+    count: (state): number => state.lines.reduce((sum, line) => sum + line.quantity, 0),",
+    "+    isEmpty(): boolean {",
+    "+      return this.lines.length === 0",
+    "+    },",
+    "+  },",
+    "+  actions: {",
+    "+    addItem(item: Item) {",
+    "+      this.lines = addLine(this.lines, item)",
+    "+      this.lastAddedId = item.id",
+    "+    },",
+    "+    clear() {",
+    "+      this.lines = []",
+    "+      this.lastAddedId = null",
+    "+    },",
+    "+  },",
+    "+})",
+    "diff --git a/src/views/items/ItemsPage.vue b/src/views/items/ItemsPage.vue",
+    "--- a/src/views/items/ItemsPage.vue",
+    "+++ b/src/views/items/ItemsPage.vue",
+    "@@ -2,0 +3,7 @@ import { ITEMS } from \"@/data/items\"",
+    "+import { useBagStore } from \"@/stores/bag\"",
+    "+",
+    "+const bag = useBagStore()",
+    "+",
+    "+const emptyBag = () => {",
+    "+  bag.clear()",
+    "+}",
+    "@@ -5,0 +13,4 @@ import { ITEMS } from \"@/data/items\"",
+    "+  <p>",
+    "+    {{ bag.count }} items in the bag",
+    "+    <button type=\"button\" :disabled=\"bag.isEmpty\" @click=\"emptyBag\">Empty the bag</button>",
+    "+  </p>",
+    "@@ -7 +18,4 @@ import { ITEMS } from \"@/data/items\"",
+    "-    <li v-for=\"item in ITEMS\" :key=\"item.id\">{{ item.name }} ₽{{ item.price }}</li>",
+    "+    <li v-for=\"item in ITEMS\" :key=\"item.id\">",
+    "+      {{ item.name }} ₽{{ item.price }}",
+    "+      <button type=\"button\" @click=\"bag.addItem(item)\">Add to bag</button>",
+    "+    </li>"
+  ],
+  "codegraph": {
+    "segments": [
+      {
+        "title": "New useBagStore and addLine, modified ItemsPage",
+        "importGraph": [
+          {
+            "filePath": "src/App.vue",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/main.ts"
+            ],
+            "importsTo": [
+              "src/views/items/ItemsPage.vue"
+            ],
+            "importedFilePaths": {
+              "@/views/items/ItemsPage.vue": "src/views/items/ItemsPage.vue"
+            }
+          },
+          {
+            "filePath": "src/data/items.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/views/items/ItemsPage.vue"
+            ],
+            "importsTo": [
+              "src/types/item.ts"
+            ],
+            "importedFilePaths": {
+              "@/types/item": "src/types/item.ts"
+            }
+          },
+          {
+            "filePath": "src/lib/bag-lines.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "added",
+            "importedBy": [
+              "src/stores/bag.ts"
+            ],
+            "importsTo": [
+              "src/types/item.ts"
+            ],
+            "importedFilePaths": {
+              "@/types/item": "src/types/item.ts"
+            }
+          },
+          {
+            "filePath": "src/main.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [],
+            "importsTo": [
+              "src/App.vue"
+            ],
+            "importedFilePaths": {
+              "@/App.vue": "src/App.vue"
+            }
+          },
+          {
+            "filePath": "src/stores/bag.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "added",
+            "importedBy": [
+              "src/views/items/ItemsPage.vue"
+            ],
+            "importsTo": [
+              "src/lib/bag-lines.ts",
+              "src/types/item.ts"
+            ],
+            "importedFilePaths": {
+              "@/lib/bag-lines": "src/lib/bag-lines.ts",
+              "@/types/item": "src/types/item.ts"
+            }
+          },
+          {
+            "filePath": "src/types/item.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/data/items.ts",
+              "src/lib/bag-lines.ts",
+              "src/stores/bag.ts"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/views/items/ItemsPage.vue",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "modified",
+            "importedBy": [
+              "src/App.vue"
+            ],
+            "importsTo": [
+              "src/data/items.ts",
+              "src/stores/bag.ts"
+            ],
+            "importedFilePaths": {
+              "@/data/items": "src/data/items.ts",
+              "@/stores/bag": "src/stores/bag.ts"
+            }
+          }
+        ],
+        "traceDiagram": {
+          "title": "Items page flow diagram",
+          "description": "This diagram shows how the items page reads `count` and `isEmpty` of the bag store and renders them above the items. It also shows what happens when the user clicks Empty the bag or Add to bag, and how each click reaches the bag store through `clear()` or `addItem()`.",
+          "traceNodes": [
+            {
+              "id": "src/stores/bag.ts#state@5:1",
+              "type": "state",
+              "label": "Keeps the lines of the bag and the last item added",
+              "description": "Three paths reach this store:\n- When `ItemsPage` renders, [it calls `useBagStore()`](code:src/views/items/ItemsPage.vue#L5) and [reads `count` and `isEmpty`](code:src/views/items/ItemsPage.vue#L14-15).\n- When a user clicks \"Empty the bag\", [`emptyBag()` calls `clear()`](code:src/views/items/ItemsPage.vue#L8).\n- When a user clicks \"Add to bag\", [the button calls `addItem()` with the item of its row](code:src/views/items/ItemsPage.vue#L20).",
+              "codeBlockIds": [
+                "src/stores/bag.ts#state@5:1",
+                "src/stores/bag.ts#effect@5:28",
+                "src/stores/bag.ts#effect-callback@6:3",
+                "src/stores/bag.ts#function@6:10",
+                "src/stores/bag.ts#property@7:5",
+                "src/stores/bag.ts#property@8:5",
+                "src/stores/bag.ts#property@10:3",
+                "src/stores/bag.ts#function@11:5",
+                "src/stores/bag.ts#variable@11:13",
+                "src/stores/bag.ts#function@11:50",
+                "src/stores/bag.ts#variable@11:51",
+                "src/stores/bag.ts#variable@11:56",
+                "src/stores/bag.ts#function@12:5",
+                "src/stores/bag.ts#property@16:3",
+                "src/stores/bag.ts#function@17:5",
+                "src/stores/bag.ts#variable@17:13",
+                "src/stores/bag.ts#function@21:5"
+              ],
+              "diffCodeBlockIds": [
+                "src/stores/bag.ts#state@5:1",
+                "src/stores/bag.ts#effect@5:28",
+                "src/stores/bag.ts#effect-callback@6:3",
+                "src/stores/bag.ts#function@6:10",
+                "src/stores/bag.ts#property@7:5",
+                "src/stores/bag.ts#property@8:5",
+                "src/stores/bag.ts#property@10:3",
+                "src/stores/bag.ts#function@11:5",
+                "src/stores/bag.ts#variable@11:13",
+                "src/stores/bag.ts#function@11:50",
+                "src/stores/bag.ts#variable@11:51",
+                "src/stores/bag.ts#variable@11:56",
+                "src/stores/bag.ts#function@12:5",
+                "src/stores/bag.ts#property@16:3",
+                "src/stores/bag.ts#function@17:5",
+                "src/stores/bag.ts#variable@17:13",
+                "src/stores/bag.ts#function@21:5"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Starts the bag with no line",
+                  "codeBlockId": "src/stores/bag.ts#property@7:5"
+                },
+                {
+                  "label": "Starts with no item added",
+                  "codeBlockId": "src/stores/bag.ts#property@8:5"
+                },
+                {
+                  "label": "Adds up the quantities of the lines",
+                  "codeBlockId": "src/stores/bag.ts#function@11:5"
+                },
+                {
+                  "label": "Checks whether the bag has no line",
+                  "codeBlockId": "src/stores/bag.ts#function@12:5"
+                },
+                {
+                  "label": "Adds the item to the lines and keeps its id",
+                  "codeBlockId": "src/stores/bag.ts#function@17:5"
+                },
+                {
+                  "label": "Empties the lines and forgets the last item",
+                  "codeBlockId": "src/stores/bag.ts#function@21:5"
+                }
+              ]
+            },
+            {
+              "id": "src/main.ts#root-variable@5:1",
+              "type": "root-variable",
+              "label": "Creates the app with App as its root component",
+              "description": "When the browser loads the page, [`app.use(createPinia())` installs Pinia](code:src/main.ts#L7) and [`app.mount(\"#app\")` mounts this app](code:src/main.ts#L8).",
+              "codeBlockIds": [
+                "src/main.ts#root-variable@5:1",
+                "src/main.ts#effect-callback@5:23"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Takes App as the root component",
+                  "codeBlockId": "src/main.ts#effect-callback@5:23"
+                }
+              ]
+            },
+            {
+              "id": "src/lib/bag-lines.ts#function@8:1",
+              "type": "function",
+              "label": "Adds one of the item, as a new line or to its line",
+              "description": "When a user clicks \"Add to bag\", `ItemsPage` calls `addItem()`, and [`addItem()` calls this function](code:src/stores/bag.ts#L18) with the current lines and the item.",
+              "codeBlockIds": [
+                "src/lib/bag-lines.ts#function@8:1",
+                "src/lib/bag-lines.ts#root-argument-value@8:25",
+                "src/lib/bag-lines.ts#root-argument-value@8:43",
+                "src/lib/bag-lines.ts#variable@9:3",
+                "src/lib/bag-lines.ts#root-argument-value@9:16",
+                "src/lib/bag-lines.ts#function@9:27",
+                "src/lib/bag-lines.ts#variable@9:28",
+                "src/lib/bag-lines.ts#root-argument-value@9:56",
+                "src/lib/bag-lines.ts#condition@10:3",
+                "src/lib/bag-lines.ts#property@10:47",
+                "src/lib/bag-lines.ts#property@10:53",
+                "src/lib/bag-lines.ts#root-argument-value@11:10",
+                "src/lib/bag-lines.ts#function@11:20",
+                "src/lib/bag-lines.ts#variable@11:21",
+                "src/lib/bag-lines.ts#condition@11:32",
+                "src/lib/bag-lines.ts#property@11:61"
+              ],
+              "diffCodeBlockIds": [
+                "src/lib/bag-lines.ts#function@8:1",
+                "src/lib/bag-lines.ts#root-argument-value@8:25",
+                "src/lib/bag-lines.ts#root-argument-value@8:43",
+                "src/lib/bag-lines.ts#variable@9:3",
+                "src/lib/bag-lines.ts#root-argument-value@9:16",
+                "src/lib/bag-lines.ts#function@9:27",
+                "src/lib/bag-lines.ts#variable@9:28",
+                "src/lib/bag-lines.ts#root-argument-value@9:56",
+                "src/lib/bag-lines.ts#condition@10:3",
+                "src/lib/bag-lines.ts#property@10:47",
+                "src/lib/bag-lines.ts#property@10:53",
+                "src/lib/bag-lines.ts#root-argument-value@11:10",
+                "src/lib/bag-lines.ts#function@11:20",
+                "src/lib/bag-lines.ts#variable@11:21",
+                "src/lib/bag-lines.ts#condition@11:32",
+                "src/lib/bag-lines.ts#property@11:61"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Returns the lines with a new line for the item when it has none",
+                  "codeBlockId": "src/lib/bag-lines.ts#condition@10:3",
+                  "at": {
+                    "line": 10,
+                    "column": 27
+                  }
+                },
+                {
+                  "label": "Returns the lines with one more of the item on its line",
+                  "codeBlockId": "src/lib/bag-lines.ts#function@8:1",
+                  "at": {
+                    "line": 11,
+                    "column": 3
+                  }
+                }
+              ]
+            },
+            {
+              "id": "src/App.vue#component@1:1",
+              "type": "component",
+              "label": "Renders the title and the items page",
+              "description": "When the browser loads the page, [`createApp()` makes this component the root of the app](code:src/main.ts#L5), and [`app.mount(\"#app\")` renders it](code:src/main.ts#L8).",
+              "codeBlockIds": [
+                "src/App.vue#component@1:1",
+                "src/App.vue#render-root@5:1",
+                "src/App.vue#render@6:3",
+                "src/App.vue#render@8:5"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [
+                {
+                  "id": "src/views/items/ItemsPage.vue#component@1:1",
+                  "type": "component",
+                  "label": "Lists the items below the count of the bag",
+                  "description": "When the browser loads the page, [`App` renders this page](code:src/App.vue#L8).",
+                  "codeBlockIds": [
+                    "src/views/items/ItemsPage.vue#component@1:1",
+                    "src/views/items/ItemsPage.vue#external-value@5:1",
+                    "src/views/items/ItemsPage.vue#render-root@12:1",
+                    "src/views/items/ItemsPage.vue#render@13:3",
+                    "src/views/items/ItemsPage.vue#render@15:5",
+                    "src/views/items/ItemsPage.vue#render-event@15:51",
+                    "src/views/items/ItemsPage.vue#render@17:3",
+                    "src/views/items/ItemsPage.vue#render-loop@18:5",
+                    "src/views/items/ItemsPage.vue#render@18:5",
+                    "src/views/items/ItemsPage.vue#render@20:7",
+                    "src/views/items/ItemsPage.vue#render-event@20:29"
+                  ],
+                  "diffCodeBlockIds": [
+                    "src/views/items/ItemsPage.vue#external-value@5:1",
+                    "src/views/items/ItemsPage.vue#render@13:3",
+                    "src/views/items/ItemsPage.vue#render@15:5",
+                    "src/views/items/ItemsPage.vue#render-event@15:51",
+                    "src/views/items/ItemsPage.vue#render@18:5",
+                    "src/views/items/ItemsPage.vue#render@20:7",
+                    "src/views/items/ItemsPage.vue#render-event@20:29"
+                  ],
+                  "children": [],
+                  "triggerLabels": [
+                    {
+                      "label": "A user clicks \"Empty the bag\"",
+                      "codeBlockId": "src/views/items/ItemsPage.vue#render-event@15:51"
+                    },
+                    {
+                      "label": "A user clicks \"Add to bag\"",
+                      "codeBlockId": "src/views/items/ItemsPage.vue#render-event@20:29"
+                    }
+                  ],
+                  "blockLabels": [
+                    {
+                      "label": "Calls useBagStore to get the bag store",
+                      "codeBlockId": "src/views/items/ItemsPage.vue#external-value@5:1",
+                      "at": {
+                        "line": 5,
+                        "column": 13
+                      }
+                    },
+                    {
+                      "label": "Renders the count of the bag, an Empty the bag button that is off while the bag is empty, and the items",
+                      "codeBlockId": "src/views/items/ItemsPage.vue#render-root@12:1"
+                    },
+                    {
+                      "label": "Renders one row with an Add to bag button for each item",
+                      "codeBlockId": "src/views/items/ItemsPage.vue#render-loop@18:5"
+                    }
+                  ]
+                }
+              ],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Renders the title and the items page",
+                  "codeBlockId": "src/App.vue#render-root@5:1"
+                },
+                {
+                  "label": "Renders `<ItemsPage />` below the title",
+                  "codeBlockId": "src/App.vue#render@8:5"
+                }
+              ]
+            },
+            {
+              "id": "src/views/items/ItemsPage.vue#render-event@15:51",
+              "type": "render-event",
+              "label": "Empties the bag",
+              "description": "When a user clicks \"Empty the bag\", Vue calls [`emptyBag()`](code:src/views/items/ItemsPage.vue#L7-9), which `ItemsPage` passes to the button as `@click`.",
+              "codeBlockIds": [
+                "src/views/items/ItemsPage.vue#render-event@15:51",
+                "src/views/items/ItemsPage.vue#function@7:1",
+                "src/views/items/ItemsPage.vue#call@8:3"
+              ],
+              "diffCodeBlockIds": [
+                "src/views/items/ItemsPage.vue#render-event@15:51",
+                "src/views/items/ItemsPage.vue#function@7:1",
+                "src/views/items/ItemsPage.vue#call@8:3"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Calls bag.clear to empty the bag",
+                  "codeBlockId": "src/views/items/ItemsPage.vue#call@8:3",
+                  "at": {
+                    "line": 8,
+                    "column": 3
+                  }
+                }
+              ]
+            },
+            {
+              "id": "src/views/items/ItemsPage.vue#render-event@20:29",
+              "type": "render-event",
+              "label": "Adds the item of the row to the bag",
+              "description": "When a user clicks \"Add to bag\" beside an item, Vue runs [this handler](code:src/views/items/ItemsPage.vue#L20) with the item of that row, and the handler calls `addItem()` of the bag store.",
+              "codeBlockIds": [
+                "src/views/items/ItemsPage.vue#render-event@20:29"
+              ],
+              "diffCodeBlockIds": [
+                "src/views/items/ItemsPage.vue#render-event@20:29"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Calls bag.addItem to add the item of the row to the bag",
+                  "codeBlockId": "src/views/items/ItemsPage.vue#render-event@20:29",
+                  "at": {
+                    "line": 20,
+                    "column": 37
+                  }
+                }
+              ]
+            }
+          ],
+          "traceNodeEdges": [
+            {
+              "id": "src/stores/bag.ts#state@5:1 -> src/lib/bag-lines.ts#function@8:1",
+              "from": "src/stores/bag.ts#state@5:1",
+              "to": "src/lib/bag-lines.ts#function@8:1"
+            },
+            {
+              "id": "src/views/items/ItemsPage.vue#render-event@20:29 -> src/stores/bag.ts#state@5:1",
+              "from": "src/views/items/ItemsPage.vue#render-event@20:29",
+              "to": "src/stores/bag.ts#state@5:1"
+            },
+            {
+              "id": "src/views/items/ItemsPage.vue#component@1:1 -> src/stores/bag.ts#state@5:1",
+              "from": "src/views/items/ItemsPage.vue#component@1:1",
+              "to": "src/stores/bag.ts#state@5:1"
+            },
+            {
+              "id": "src/main.ts#root-variable@5:1 -> src/App.vue#component@1:1",
+              "from": "src/main.ts#root-variable@5:1",
+              "to": "src/App.vue#component@1:1"
+            },
+            {
+              "id": "src/views/items/ItemsPage.vue#render-event@15:51 -> src/stores/bag.ts#state@5:1",
+              "from": "src/views/items/ItemsPage.vue#render-event@15:51",
+              "to": "src/stores/bag.ts#state@5:1"
+            },
+            {
+              "id": "src/App.vue#component@1:1 -> src/views/items/ItemsPage.vue#component@1:1",
+              "from": "src/App.vue#component@1:1",
+              "to": "src/views/items/ItemsPage.vue#component@1:1"
+            },
+            {
+              "id": "src/views/items/ItemsPage.vue#component@1:1 -> src/views/items/ItemsPage.vue#render-event@15:51",
+              "from": "src/views/items/ItemsPage.vue#component@1:1",
+              "to": "src/views/items/ItemsPage.vue#render-event@15:51"
+            },
+            {
+              "id": "src/views/items/ItemsPage.vue#component@1:1 -> src/views/items/ItemsPage.vue#render-event@20:29",
+              "from": "src/views/items/ItemsPage.vue#component@1:1",
+              "to": "src/views/items/ItemsPage.vue#render-event@20:29"
+            }
+          ]
+        },
+        "codeWalkthrough": {
+          "files": [
+            {
+              "path": "src/lib/bag-lines.ts",
+              "waypoints": [
+                {
+                  "id": "w1",
+                  "declaration": "BagLine",
+                  "range": {
+                    "lineStart": 3,
+                    "lineEnd": 6
+                  },
+                  "codeBlockIds": [
+                    "src/lib/bag-lines.ts#type-declaration@3:1"
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "w2",
+                  "declaration": "addLine",
+                  "range": {
+                    "lineStart": 8,
+                    "lineEnd": 12
+                  },
+                  "codeBlockIds": [
+                    "src/lib/bag-lines.ts#function@8:1",
+                    "src/lib/bag-lines.ts#root-argument-value@8:25",
+                    "src/lib/bag-lines.ts#root-argument-value@8:43",
+                    "src/lib/bag-lines.ts#variable@9:3",
+                    "src/lib/bag-lines.ts#root-argument-value@9:16",
+                    "src/lib/bag-lines.ts#function@9:27",
+                    "src/lib/bag-lines.ts#variable@9:28",
+                    "src/lib/bag-lines.ts#root-argument-value@9:56",
+                    "src/lib/bag-lines.ts#condition@10:3",
+                    "src/lib/bag-lines.ts#property@10:47",
+                    "src/lib/bag-lines.ts#property@10:53",
+                    "src/lib/bag-lines.ts#root-argument-value@11:10",
+                    "src/lib/bag-lines.ts#function@11:20",
+                    "src/lib/bag-lines.ts#variable@11:21",
+                    "src/lib/bag-lines.ts#condition@11:32",
+                    "src/lib/bag-lines.ts#property@11:61"
+                  ],
+                  "children": []
+                }
+              ]
+            },
+            {
+              "path": "src/stores/bag.ts",
+              "waypoints": [
+                {
+                  "id": "w3",
+                  "declaration": "useBagStore",
+                  "range": {
+                    "lineStart": 5,
+                    "lineEnd": 26
+                  },
+                  "codeBlockIds": [
+                    "src/stores/bag.ts#state@5:1",
+                    "src/stores/bag.ts#effect@5:28",
+                    "src/stores/bag.ts#effect-callback@6:3",
+                    "src/stores/bag.ts#function@6:10",
+                    "src/stores/bag.ts#property@7:5",
+                    "src/stores/bag.ts#property@8:5",
+                    "src/stores/bag.ts#property@10:3",
+                    "src/stores/bag.ts#function@11:5",
+                    "src/stores/bag.ts#variable@11:13",
+                    "src/stores/bag.ts#function@11:50",
+                    "src/stores/bag.ts#variable@11:51",
+                    "src/stores/bag.ts#variable@11:56",
+                    "src/stores/bag.ts#function@12:5",
+                    "src/stores/bag.ts#property@16:3",
+                    "src/stores/bag.ts#function@17:5",
+                    "src/stores/bag.ts#variable@17:13",
+                    "src/stores/bag.ts#function@21:5"
+                  ],
+                  "children": []
+                }
+              ]
+            },
+            {
+              "path": "src/views/items/ItemsPage.vue",
+              "waypoints": [
+                {
+                  "id": "w4",
+                  "declaration": "ItemsPage",
+                  "range": {
+                    "lineStart": 1,
+                    "lineEnd": 23
+                  },
+                  "codeBlockIds": [
+                    "src/views/items/ItemsPage.vue#component@1:1",
+                    "src/views/items/ItemsPage.vue#external-value@5:1",
+                    "src/views/items/ItemsPage.vue#function@7:1",
+                    "src/views/items/ItemsPage.vue#call@8:3",
+                    "src/views/items/ItemsPage.vue#render@13:3",
+                    "src/views/items/ItemsPage.vue#render@15:5",
+                    "src/views/items/ItemsPage.vue#render-event@15:51",
+                    "src/views/items/ItemsPage.vue#render@18:5",
+                    "src/views/items/ItemsPage.vue#render@20:7",
+                    "src/views/items/ItemsPage.vue#render-event@20:29"
+                  ],
+                  "children": [
+                    {
+                      "id": "w4.1",
+                      "declaration": "ItemsPage › bag",
+                      "range": {
+                        "lineStart": 5,
+                        "lineEnd": 5
+                      },
+                      "codeBlockIds": [
+                        "src/views/items/ItemsPage.vue#external-value@5:1"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w4.2",
+                      "declaration": "ItemsPage › emptyBag",
+                      "range": {
+                        "lineStart": 7,
+                        "lineEnd": 9
+                      },
+                      "codeBlockIds": [
+                        "src/views/items/ItemsPage.vue#function@7:1",
+                        "src/views/items/ItemsPage.vue#call@8:3"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w4.3",
+                      "declaration": "ItemsPage › button.onClick",
+                      "range": {
+                        "lineStart": 15,
+                        "lineEnd": 15
+                      },
+                      "codeBlockIds": [
+                        "src/views/items/ItemsPage.vue#render-event@15:51"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w4.4",
+                      "declaration": "ItemsPage › Markup loop :18",
+                      "range": {
+                        "lineStart": 18,
+                        "lineEnd": 21
+                      },
+                      "codeBlockIds": [
+                        "src/views/items/ItemsPage.vue#render-loop@18:5",
+                        "src/views/items/ItemsPage.vue#render@18:5",
+                        "src/views/items/ItemsPage.vue#render@20:7",
+                        "src/views/items/ItemsPage.vue#render-event@20:29"
+                      ],
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "codeReferences": [
+          {
+            "path": "src/App.vue",
+            "references": [
+              {
+                "line": 8,
+                "startColumn": 5,
+                "endColumn": 14,
+                "path": "src/views/items/ItemsPage.vue",
+                "lines": [
+                  1,
+                  23
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 1,
+                "startColumn": 0,
+                "endColumn": 24,
+                "lines": [
+                  1,
+                  10
+                ],
+                "usages": [
+                  {
+                    "line": 5,
+                    "startColumn": 22,
+                    "endColumn": 25,
+                    "path": "src/main.ts",
+                    "text": "const app = createApp(App)"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/lib/bag-lines.ts",
+            "references": [
+              {
+                "line": 4,
+                "startColumn": 8,
+                "endColumn": 12,
+                "path": "src/types/item.ts",
+                "lines": [
+                  1,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 8,
+                "startColumn": 31,
+                "endColumn": 38,
+                "path": "src/lib/bag-lines.ts",
+                "lines": [
+                  3,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 8,
+                "startColumn": 48,
+                "endColumn": 52,
+                "path": "src/types/item.ts",
+                "lines": [
+                  1,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 8,
+                "startColumn": 55,
+                "endColumn": 62,
+                "path": "src/lib/bag-lines.ts",
+                "lines": [
+                  3,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 15,
+                "endColumn": 20,
+                "path": "src/lib/bag-lines.ts",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 55,
+                "endColumn": 59,
+                "path": "src/lib/bag-lines.ts",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 6,
+                "endColumn": 10,
+                "path": "src/lib/bag-lines.ts",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 37,
+                "endColumn": 42,
+                "path": "src/lib/bag-lines.ts",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 46,
+                "endColumn": 50,
+                "path": "src/lib/bag-lines.ts",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 9,
+                "endColumn": 14,
+                "path": "src/lib/bag-lines.ts",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 41,
+                "endColumn": 45,
+                "path": "src/lib/bag-lines.ts",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 3,
+                "startColumn": 17,
+                "endColumn": 24,
+                "lines": [
+                  3,
+                  6
+                ],
+                "usages": [
+                  {
+                    "line": 7,
+                    "startColumn": 17,
+                    "endColumn": 24,
+                    "path": "src/stores/bag.ts",
+                    "text": "    lines: [] as BagLine[],"
+                  }
+                ]
+              },
+              {
+                "line": 8,
+                "startColumn": 16,
+                "endColumn": 23,
+                "lines": [
+                  8,
+                  12
+                ],
+                "usages": [
+                  {
+                    "line": 18,
+                    "startColumn": 19,
+                    "endColumn": 26,
+                    "path": "src/stores/bag.ts",
+                    "text": "      this.lines = addLine(this.lines, item)"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/main.ts",
+            "references": [
+              {
+                "line": 5,
+                "startColumn": 12,
+                "endColumn": 21,
+                "path": "src/main.ts",
+                "lines": [
+                  2,
+                  2
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "vue",
+                  "name": "createApp"
+                }
+              },
+              {
+                "line": 5,
+                "startColumn": 22,
+                "endColumn": 25,
+                "path": "src/App.vue",
+                "lines": [
+                  1,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 7,
+                "startColumn": 0,
+                "endColumn": 3,
+                "path": "src/main.ts",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 7,
+                "startColumn": 8,
+                "endColumn": 19,
+                "path": "src/main.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "pinia",
+                  "name": "createPinia"
+                }
+              },
+              {
+                "line": 8,
+                "startColumn": 0,
+                "endColumn": 3,
+                "path": "src/main.ts",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [],
+            "exports": []
+          },
+          {
+            "path": "src/stores/bag.ts",
+            "references": [
+              {
+                "line": 5,
+                "startColumn": 27,
+                "endColumn": 38,
+                "path": "src/stores/bag.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "pinia",
+                  "name": "defineStore"
+                }
+              },
+              {
+                "line": 7,
+                "startColumn": 17,
+                "endColumn": 24,
+                "path": "src/lib/bag-lines.ts",
+                "lines": [
+                  3,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 17,
+                "startColumn": 18,
+                "endColumn": 22,
+                "path": "src/types/item.ts",
+                "lines": [
+                  1,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 18,
+                "startColumn": 19,
+                "endColumn": 26,
+                "path": "src/lib/bag-lines.ts",
+                "lines": [
+                  8,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 18,
+                "startColumn": 39,
+                "endColumn": 43,
+                "path": "src/stores/bag.ts",
+                "lines": [
+                  17,
+                  17
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 19,
+                "startColumn": 25,
+                "endColumn": 29,
+                "path": "src/stores/bag.ts",
+                "lines": [
+                  17,
+                  17
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 5,
+                "startColumn": 13,
+                "endColumn": 24,
+                "lines": [
+                  5,
+                  26
+                ],
+                "usages": [
+                  {
+                    "line": 5,
+                    "startColumn": 12,
+                    "endColumn": 23,
+                    "path": "src/views/items/ItemsPage.vue",
+                    "text": "const bag = useBagStore()"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/views/items/ItemsPage.vue",
+            "references": [
+              {
+                "line": 5,
+                "startColumn": 12,
+                "endColumn": 23,
+                "path": "src/stores/bag.ts",
+                "lines": [
+                  5,
+                  26
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 8,
+                "startColumn": 2,
+                "endColumn": 5,
+                "path": "src/views/items/ItemsPage.vue",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 14,
+                "startColumn": 7,
+                "endColumn": 10,
+                "path": "src/views/items/ItemsPage.vue",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 37,
+                "endColumn": 40,
+                "path": "src/views/items/ItemsPage.vue",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 58,
+                "endColumn": 66,
+                "path": "src/views/items/ItemsPage.vue",
+                "lines": [
+                  7,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 18,
+                "startColumn": 23,
+                "endColumn": 28,
+                "path": "src/data/items.ts",
+                "lines": [
+                  3,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 19,
+                "startColumn": 9,
+                "endColumn": 13,
+                "path": "src/views/items/ItemsPage.vue",
+                "lines": [
+                  18,
+                  18
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 19,
+                "startColumn": 26,
+                "endColumn": 30,
+                "path": "src/views/items/ItemsPage.vue",
+                "lines": [
+                  18,
+                  18
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 20,
+                "startColumn": 36,
+                "endColumn": 39,
+                "path": "src/views/items/ItemsPage.vue",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 20,
+                "startColumn": 48,
+                "endColumn": 52,
+                "path": "src/views/items/ItemsPage.vue",
+                "lines": [
+                  18,
+                  18
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 1,
+                "startColumn": 0,
+                "endColumn": 24,
+                "lines": [
+                  1,
+                  23
+                ],
+                "usages": [
+                  {
+                    "line": 8,
+                    "startColumn": 5,
+                    "endColumn": 14,
+                    "path": "src/App.vue",
+                    "text": "    <ItemsPage />"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

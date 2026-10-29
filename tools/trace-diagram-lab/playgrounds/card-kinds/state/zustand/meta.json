@@ -1,0 +1,6 @@
+{
+  "title": "State card in Zustand",
+  "packages": ["react", "react-dom", "zustand"],
+  "language": "typescript",
+  "mainFramework": "react"
+}

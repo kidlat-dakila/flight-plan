@@ -699,6 +699,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 6,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/api/client.ts"
         ],
@@ -1106,6 +1112,12 @@
         "childrenBlockIds": [],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 5,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/api/items.ts"
         ],
@@ -1259,6 +1271,12 @@
         "childrenBlockIds": [],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 5,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/api/trainers.ts"
         ],
@@ -1346,6 +1364,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 9,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/api/trainers.ts"
         ],
@@ -3682,6 +3706,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 6,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/routes/items/index.tsx"
         ],
@@ -4130,6 +4160,12 @@
         "childrenBlockIds": [],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 4,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/routes/items/loader.ts"
         ],
@@ -4222,6 +4258,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 4,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/routes/root-layout.tsx"
         ],
@@ -4712,6 +4754,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 12,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/routes/trainer/index.tsx"
         ],
@@ -5968,6 +6016,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 5,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/routes/trainer/loader.ts"
         ],
@@ -6338,6 +6392,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 5,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/routes/trainers/components/TrainerRow.tsx"
         ],
@@ -6917,6 +6977,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 7,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/routes/trainers/index.tsx"
         ],
@@ -7440,6 +7506,12 @@
         "childrenBlockIds": [],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 4,
+            "column": 3
+          }
+        ],
         "exportedByFilePaths": [
           "src/routes/trainers/loader.ts"
         ],

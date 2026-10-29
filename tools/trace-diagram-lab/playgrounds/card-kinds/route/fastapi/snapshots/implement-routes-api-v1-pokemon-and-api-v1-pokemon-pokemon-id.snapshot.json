@@ -1,0 +1,1941 @@
+{
+  "title": "Implement routes /api/v1/pokemon and /api/v1/pokemon/{pokemon_id}",
+  "diff": [
+    "diff --git a/src/pokedex/pokemon/schemas.py b/src/pokedex/pokemon/schemas.py",
+    "new file mode 100644",
+    "--- /dev/null",
+    "+++ b/src/pokedex/pokemon/schemas.py",
+    "@@ -0,0 +1,6 @@",
+    "+from pydantic import BaseModel, Field",
+    "+",
+    "+",
+    "+class PokemonDraft(BaseModel):",
+    "+    name: str = Field(min_length=1, max_length=20)",
+    "+    level: int = Field(ge=1, le=100)",
+    "diff --git a/src/pokedex/pokemon/dependencies.py b/src/pokedex/pokemon/dependencies.py",
+    "new file mode 100644",
+    "--- /dev/null",
+    "+++ b/src/pokedex/pokemon/dependencies.py",
+    "@@ -0,0 +1,22 @@",
+    "+import logging",
+    "+from typing import Annotated",
+    "+",
+    "+from fastapi import Depends, Header, HTTPException, Request",
+    "+",
+    "+from pokedex.settings import API_KEY",
+    "+",
+    "+",
+    "+def require_api_key(x_api_key: Annotated[str, Header()]) -> None:",
+    "+    if x_api_key != API_KEY:",
+    "+        raise HTTPException(status_code=401, detail=\"The API key is missing or wrong.\")",
+    "+",
+    "+",
+    "+def log_change(request: Request) -> None:",
+    "+    logging.getLogger(\"pokedex.pokemon\").info(\"%s %s\", request.method, request.url.path)",
+    "+",
+    "+",
+    "+def current_trainer(x_trainer: Annotated[str, Header()]) -> str:",
+    "+    return x_trainer.strip().lower()",
+    "+",
+    "+",
+    "+CurrentTrainer = Annotated[str, Depends(current_trainer)]",
+    "diff --git a/src/pokedex/pokemon/routes.py b/src/pokedex/pokemon/routes.py",
+    "new file mode 100644",
+    "--- /dev/null",
+    "+++ b/src/pokedex/pokemon/routes.py",
+    "@@ -0,0 +1,36 @@",
+    "+from fastapi import APIRouter, Depends, HTTPException",
+    "+",
+    "+from pokedex.pokemon.dependencies import CurrentTrainer, log_change, require_api_key",
+    "+from pokedex.pokemon.schemas import PokemonDraft",
+    "+from pokedex.pokemon.store import Pokemon, find_pokemon, list_pokemon, remove_pokemon, save_pokemon",
+    "+",
+    "+router = APIRouter(prefix=\"/pokemon\", dependencies=[Depends(require_api_key)])",
+    "+",
+    "+",
+    "+@router.post(\"/\", status_code=201)",
+    "+def catch_pokemon(draft: PokemonDraft, trainer: CurrentTrainer):",
+    "+    pokemon = Pokemon(id=len(list_pokemon(trainer)) + 1, trainer=trainer, name=draft.name, level=draft.level)",
+    "+    return save_pokemon(pokemon)",
+    "+",
+    "+",
+    "+@router.get(\"/\")",
+    "+def read_party(trainer: CurrentTrainer):",
+    "+    return list_pokemon(trainer)",
+    "+",
+    "+",
+    "+@router.get(\"/{pokemon_id}\")",
+    "+def read_pokemon(pokemon_id: int):",
+    "+    pokemon = find_pokemon(pokemon_id)",
+    "+    if pokemon is None:",
+    "+        raise HTTPException(status_code=404, detail=\"No Pokemon has this id.\")",
+    "+    return pokemon",
+    "+",
+    "+",
+    "+@router.api_route(\"/{pokemon_id}\", methods=[\"PUT\", \"PATCH\"], dependencies=[Depends(log_change)])",
+    "+def train_pokemon(pokemon_id: int, draft: PokemonDraft, trainer: CurrentTrainer):",
+    "+    return save_pokemon(Pokemon(id=pokemon_id, trainer=trainer, name=draft.name, level=draft.level))",
+    "+",
+    "+",
+    "+@router.delete(\"/{pokemon_id}\", status_code=204, dependencies=[Depends(log_change)])",
+    "+def release_pokemon(pokemon_id: int):",
+    "+    remove_pokemon(pokemon_id)",
+    "diff --git a/src/pokedex/main.py b/src/pokedex/main.py",
+    "--- a/src/pokedex/main.py",
+    "+++ b/src/pokedex/main.py",
+    "@@ -3,0 +4 @@ from pokedex.health.routes import router as health_router",
+    "+from pokedex.pokemon.routes import router as pokemon_router",
+    "@@ -7,0 +9 @@ app.include_router(health_router)",
+    "+app.include_router(pokemon_router, prefix=\"/api/v1\")"
+  ],
+  "codegraph": {
+    "segments": [
+      {
+        "title": "New Pokemon routes, dependencies and PokemonDraft, modified app",
+        "importGraph": [
+          {
+            "filePath": "src/pokedex/health/routes.py",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/pokedex/main.py"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/pokedex/main.py",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "modified",
+            "importedBy": [],
+            "importsTo": [
+              "src/pokedex/health/routes.py",
+              "src/pokedex/pokemon/routes.py"
+            ],
+            "importedFilePaths": {
+              "pokedex.health.routes:router": "src/pokedex/health/routes.py",
+              "pokedex.pokemon.routes:router": "src/pokedex/pokemon/routes.py"
+            }
+          },
+          {
+            "filePath": "src/pokedex/pokemon/dependencies.py",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "added",
+            "importedBy": [
+              "src/pokedex/pokemon/routes.py"
+            ],
+            "importsTo": [
+              "src/pokedex/settings.py"
+            ],
+            "importedFilePaths": {
+              "pokedex.settings:API_KEY": "src/pokedex/settings.py"
+            }
+          },
+          {
+            "filePath": "src/pokedex/pokemon/routes.py",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "added",
+            "importedBy": [
+              "src/pokedex/main.py"
+            ],
+            "importsTo": [
+              "src/pokedex/pokemon/dependencies.py",
+              "src/pokedex/pokemon/schemas.py",
+              "src/pokedex/pokemon/store.py"
+            ],
+            "importedFilePaths": {
+              "pokedex.pokemon.dependencies:CurrentTrainer": "src/pokedex/pokemon/dependencies.py",
+              "pokedex.pokemon.dependencies:log_change": "src/pokedex/pokemon/dependencies.py",
+              "pokedex.pokemon.dependencies:require_api_key": "src/pokedex/pokemon/dependencies.py",
+              "pokedex.pokemon.schemas:PokemonDraft": "src/pokedex/pokemon/schemas.py",
+              "pokedex.pokemon.store:Pokemon": "src/pokedex/pokemon/store.py",
+              "pokedex.pokemon.store:find_pokemon": "src/pokedex/pokemon/store.py",
+              "pokedex.pokemon.store:list_pokemon": "src/pokedex/pokemon/store.py",
+              "pokedex.pokemon.store:remove_pokemon": "src/pokedex/pokemon/store.py",
+              "pokedex.pokemon.store:save_pokemon": "src/pokedex/pokemon/store.py"
+            }
+          },
+          {
+            "filePath": "src/pokedex/pokemon/schemas.py",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "added",
+            "importedBy": [
+              "src/pokedex/pokemon/routes.py"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/pokedex/pokemon/store.py",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/pokedex/pokemon/routes.py"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/pokedex/settings.py",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/pokedex/pokemon/dependencies.py"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          }
+        ],
+        "traceDiagram": {
+          "title": "Pokemon API requests flow diagram",
+          "description": "This diagram shows how FastAPI runs `require_api_key()` before every handler of `/api/v1/pokemon` and `/api/v1/pokemon/{pokemon_id}`. It also shows what happens when a request reaches each method of the two paths, and how the Pokemon reach the party in `pokedex.pokemon.store` through `save_pokemon()`, `find_pokemon()` and `remove_pokemon()`.",
+          "traceNodes": [
+            {
+              "id": "src/pokedex/pokemon/routes.py#route@/api/v1/pokemon",
+              "type": "route",
+              "label": "Catches a Pokemon or lists the party of a trainer",
+              "description": "When a client sends `POST` or `GET` to `/api/v1/pokemon`, FastAPI matches the path below [the `/pokemon` prefix of the router](code:src/pokedex/pokemon/routes.py#L7), which [`main.py` includes under `/api/v1`](code:src/pokedex/main.py#L9). FastAPI then runs [`require_api_key()` from the dependencies of the router](code:src/pokedex/pokemon/routes.py#L7) and calls the handler of the method.",
+              "codeBlockIds": [
+                "src/pokedex/pokemon/routes.py#function@10:1"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [
+                {
+                  "id": "src/pokedex/pokemon/routes.py#function@10:1",
+                  "type": "function",
+                  "label": "Saves a new Pokemon to the party of the trainer",
+                  "description": "When a client sends `POST /api/v1/pokemon`, FastAPI [parses the body into `PokemonDraft`](code:src/pokedex/pokemon/routes.py#L11) and [calls `current_trainer()` for the `CurrentTrainer` parameter](code:src/pokedex/pokemon/dependencies.py#L22). FastAPI then calls this handler and [answers with a 201](code:src/pokedex/pokemon/routes.py#L10).",
+                  "codeBlockIds": [
+                    "src/pokedex/pokemon/routes.py#function@10:1",
+                    "src/pokedex/pokemon/routes.py#root-argument-value@11:19",
+                    "src/pokedex/pokemon/routes.py#root-argument-value@11:40",
+                    "src/pokedex/pokemon/routes.py#external-value@12:5",
+                    "src/pokedex/pokemon/routes.py#root-argument-value@12:80",
+                    "src/pokedex/pokemon/routes.py#root-argument-value@12:98",
+                    "src/pokedex/pokemon/dependencies.py#root-variable@22:1",
+                    "src/pokedex/pokemon/dependencies.py#effect@22:33",
+                    "src/pokedex/pokemon/dependencies.py#effect-callback@22:41"
+                  ],
+                  "diffCodeBlockIds": [
+                    "src/pokedex/pokemon/routes.py#function@10:1",
+                    "src/pokedex/pokemon/routes.py#root-argument-value@11:19",
+                    "src/pokedex/pokemon/routes.py#root-argument-value@11:40",
+                    "src/pokedex/pokemon/routes.py#external-value@12:5",
+                    "src/pokedex/pokemon/routes.py#root-argument-value@12:80",
+                    "src/pokedex/pokemon/routes.py#root-argument-value@12:98",
+                    "src/pokedex/pokemon/dependencies.py#root-variable@22:1",
+                    "src/pokedex/pokemon/dependencies.py#effect@22:33",
+                    "src/pokedex/pokemon/dependencies.py#effect-callback@22:41"
+                  ],
+                  "children": [],
+                  "triggerLabels": [],
+                  "blockLabels": [
+                    {
+                      "label": "Calls Pokemon to make the new Pokemon of the draft",
+                      "codeBlockId": "src/pokedex/pokemon/routes.py#external-value@12:5",
+                      "at": {
+                        "line": 12,
+                        "column": 15
+                      }
+                    },
+                    {
+                      "label": "Calls list_pokemon to count the Pokemon the trainer has",
+                      "codeBlockId": "src/pokedex/pokemon/routes.py#external-value@12:5",
+                      "at": {
+                        "line": 12,
+                        "column": 30
+                      }
+                    },
+                    {
+                      "label": "Returns the saved Pokemon",
+                      "codeBlockId": "src/pokedex/pokemon/routes.py#function@10:1",
+                      "at": {
+                        "line": 13,
+                        "column": 5
+                      }
+                    },
+                    {
+                      "label": "Calls save_pokemon to store the new Pokemon in the party",
+                      "codeBlockId": "src/pokedex/pokemon/routes.py#function@10:1",
+                      "at": {
+                        "line": 13,
+                        "column": 12
+                      }
+                    }
+                  ]
+                },
+                {
+                  "id": "src/pokedex/pokemon/routes.py#function@16:1",
+                  "type": "function",
+                  "label": "Returns every Pokemon of the trainer",
+                  "description": "When a client sends `GET /api/v1/pokemon`, FastAPI [calls `current_trainer()` for the `CurrentTrainer` parameter](code:src/pokedex/pokemon/dependencies.py#L22), then calls this handler.",
+                  "codeBlockIds": [
+                    "src/pokedex/pokemon/routes.py#function@16:1",
+                    "src/pokedex/pokemon/routes.py#root-argument-value@17:16",
+                    "src/pokedex/pokemon/dependencies.py#root-variable@22:1",
+                    "src/pokedex/pokemon/dependencies.py#effect@22:33",
+                    "src/pokedex/pokemon/dependencies.py#effect-callback@22:41"
+                  ],
+                  "diffCodeBlockIds": [
+                    "src/pokedex/pokemon/routes.py#function@16:1",
+                    "src/pokedex/pokemon/routes.py#root-argument-value@17:16",
+                    "src/pokedex/pokemon/dependencies.py#root-variable@22:1",
+                    "src/pokedex/pokemon/dependencies.py#effect@22:33",
+                    "src/pokedex/pokemon/dependencies.py#effect-callback@22:41"
+                  ],
+                  "children": [],
+                  "triggerLabels": [],
+                  "blockLabels": [
+                    {
+                      "label": "Returns every Pokemon of the trainer",
+                      "codeBlockId": "src/pokedex/pokemon/routes.py#function@16:1",
+                      "at": {
+                        "line": 18,
+                        "column": 5
+                      }
+                    },
+                    {
+                      "label": "Calls list_pokemon to read the Pokemon of the trainer",
+                      "codeBlockId": "src/pokedex/pokemon/routes.py#function@16:1",
+                      "at": {
+                        "line": 18,
+                        "column": 12
+                      }
+                    }
+                  ]
+                }
+              ],
+              "triggerLabels": [],
+              "blockLabels": []
+            },
+            {
+              "id": "src/pokedex/pokemon/routes.py#route@/api/v1/pokemon/{pokemon_id}",
+              "type": "route",
+              "label": "Shows, trains and releases one Pokemon",
+              "description": "When a client sends `GET`, `PUT`, `PATCH` or `DELETE` to `/api/v1/pokemon/{pokemon_id}`, FastAPI matches the path below [the `/pokemon` prefix of the router](code:src/pokedex/pokemon/routes.py#L7), which [`main.py` includes under `/api/v1`](code:src/pokedex/main.py#L9). FastAPI then runs [`require_api_key()` from the dependencies of the router](code:src/pokedex/pokemon/routes.py#L7) and calls the handler of the method.",
+              "codeBlockIds": [
+                "src/pokedex/pokemon/routes.py#function@21:1"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [
+                {
+                  "id": "src/pokedex/pokemon/routes.py#function@21:1",
+                  "type": "function",
+                  "label": "Returns the Pokemon of the id, or a 404",
+                  "description": "When a client sends `GET /api/v1/pokemon/{pokemon_id}`, FastAPI [reads `pokemon_id` from the path as an `int`](code:src/pokedex/pokemon/routes.py#L22) and calls this handler.",
+                  "codeBlockIds": [
+                    "src/pokedex/pokemon/routes.py#function@21:1",
+                    "src/pokedex/pokemon/routes.py#root-argument-value@22:18",
+                    "src/pokedex/pokemon/routes.py#external-value@23:5",
+                    "src/pokedex/pokemon/routes.py#condition@24:5",
+                    "src/pokedex/pokemon/routes.py#throw@25:9"
+                  ],
+                  "diffCodeBlockIds": [
+                    "src/pokedex/pokemon/routes.py#function@21:1",
+                    "src/pokedex/pokemon/routes.py#root-argument-value@22:18",
+                    "src/pokedex/pokemon/routes.py#external-value@23:5",
+                    "src/pokedex/pokemon/routes.py#condition@24:5",
+                    "src/pokedex/pokemon/routes.py#throw@25:9"
+                  ],
+                  "children": [],
+                  "triggerLabels": [],
+                  "blockLabels": [
+                    {
+                      "label": "Calls find_pokemon to look up the Pokemon of the id",
+                      "codeBlockId": "src/pokedex/pokemon/routes.py#external-value@23:5",
+                      "at": {
+                        "line": 23,
+                        "column": 15
+                      }
+                    },
+                    {
+                      "label": "Raises an HTTPException when no Pokemon has the id",
+                      "codeBlockId": "src/pokedex/pokemon/routes.py#throw@25:9"
+                    },
+                    {
+                      "label": "Returns the Pokemon found",
+                      "codeBlockId": "src/pokedex/pokemon/routes.py#function@21:1",
+                      "at": {
+                        "line": 26,
+                        "column": 5
+                      }
+                    }
+                  ]
+                },
+                {
+                  "id": "src/pokedex/pokemon/routes.py#function@29:1",
+                  "type": "function",
+                  "label": "Replaces the name and the level of the Pokemon",
+                  "description": "When a client sends `PUT` or `PATCH` to `/api/v1/pokemon/{pokemon_id}`, FastAPI first runs [`log_change()` from the dependencies of the route](code:src/pokedex/pokemon/routes.py#L29). FastAPI then [parses the body into `PokemonDraft`](code:src/pokedex/pokemon/routes.py#L30), [calls `current_trainer()` for the `CurrentTrainer` parameter](code:src/pokedex/pokemon/dependencies.py#L22) and calls this handler.",
+                  "codeBlockIds": [
+                    "src/pokedex/pokemon/routes.py#function@29:1",
+                    "src/pokedex/pokemon/dependencies.py#root-variable@22:1",
+                    "src/pokedex/pokemon/dependencies.py#effect@22:33",
+                    "src/pokedex/pokemon/dependencies.py#effect-callback@22:41",
+                    "src/pokedex/pokemon/routes.py#effect-callback@29:84",
+                    "src/pokedex/pokemon/routes.py#root-argument-value@30:19",
+                    "src/pokedex/pokemon/routes.py#root-argument-value@30:36",
+                    "src/pokedex/pokemon/routes.py#root-argument-value@30:57",
+                    "src/pokedex/pokemon/routes.py#root-argument-value@31:70",
+                    "src/pokedex/pokemon/routes.py#root-argument-value@31:88"
+                  ],
+                  "diffCodeBlockIds": [
+                    "src/pokedex/pokemon/routes.py#function@29:1",
+                    "src/pokedex/pokemon/dependencies.py#root-variable@22:1",
+                    "src/pokedex/pokemon/dependencies.py#effect@22:33",
+                    "src/pokedex/pokemon/dependencies.py#effect-callback@22:41",
+                    "src/pokedex/pokemon/routes.py#effect-callback@29:84",
+                    "src/pokedex/pokemon/routes.py#root-argument-value@30:19",
+                    "src/pokedex/pokemon/routes.py#root-argument-value@30:36",
+                    "src/pokedex/pokemon/routes.py#root-argument-value@30:57",
+                    "src/pokedex/pokemon/routes.py#root-argument-value@31:70",
+                    "src/pokedex/pokemon/routes.py#root-argument-value@31:88"
+                  ],
+                  "children": [],
+                  "triggerLabels": [],
+                  "blockLabels": [
+                    {
+                      "label": "Returns the saved Pokemon",
+                      "codeBlockId": "src/pokedex/pokemon/routes.py#function@29:1",
+                      "at": {
+                        "line": 31,
+                        "column": 5
+                      }
+                    },
+                    {
+                      "label": "Calls save_pokemon to store the new name and level",
+                      "codeBlockId": "src/pokedex/pokemon/routes.py#function@29:1",
+                      "at": {
+                        "line": 31,
+                        "column": 12
+                      }
+                    },
+                    {
+                      "label": "Calls Pokemon to make the Pokemon from the draft",
+                      "codeBlockId": "src/pokedex/pokemon/routes.py#function@29:1",
+                      "at": {
+                        "line": 31,
+                        "column": 25
+                      }
+                    }
+                  ]
+                },
+                {
+                  "id": "src/pokedex/pokemon/routes.py#function@34:1",
+                  "type": "function",
+                  "label": "Removes the Pokemon from the party",
+                  "description": "When a client sends `DELETE /api/v1/pokemon/{pokemon_id}`, FastAPI first runs [`log_change()` from the dependencies of the route](code:src/pokedex/pokemon/routes.py#L34). FastAPI then calls this handler and [answers with a 204](code:src/pokedex/pokemon/routes.py#L34).",
+                  "codeBlockIds": [
+                    "src/pokedex/pokemon/routes.py#function@34:1",
+                    "src/pokedex/pokemon/routes.py#effect-callback@34:72",
+                    "src/pokedex/pokemon/routes.py#root-argument-value@35:21",
+                    "src/pokedex/pokemon/routes.py#call@36:5"
+                  ],
+                  "diffCodeBlockIds": [
+                    "src/pokedex/pokemon/routes.py#function@34:1",
+                    "src/pokedex/pokemon/routes.py#effect-callback@34:72",
+                    "src/pokedex/pokemon/routes.py#root-argument-value@35:21",
+                    "src/pokedex/pokemon/routes.py#call@36:5"
+                  ],
+                  "children": [],
+                  "triggerLabels": [],
+                  "blockLabels": [
+                    {
+                      "label": "Calls remove_pokemon to take the Pokemon out of the party",
+                      "codeBlockId": "src/pokedex/pokemon/routes.py#call@36:5",
+                      "at": {
+                        "line": 36,
+                        "column": 5
+                      }
+                    }
+                  ]
+                }
+              ],
+              "triggerLabels": [],
+              "blockLabels": []
+            },
+            {
+              "id": "src/pokedex/pokemon/schemas.py#class@4:1",
+              "type": "class",
+              "label": "Parses and checks the name and the level of the body",
+              "description": "Two paths reach this model.\n- When a client sends `POST /api/v1/pokemon`, FastAPI [parses the body into this model](code:src/pokedex/pokemon/routes.py#L11) before it calls `catch_pokemon()`.\n- When a client sends `PUT` or `PATCH` to `/api/v1/pokemon/{pokemon_id}`, FastAPI [parses the body into this model](code:src/pokedex/pokemon/routes.py#L30) before it calls `train_pokemon()`.",
+              "codeBlockIds": [
+                "src/pokedex/pokemon/schemas.py#class@4:1",
+                "src/pokedex/pokemon/schemas.py#property@5:5",
+                "src/pokedex/pokemon/schemas.py#property@6:5"
+              ],
+              "diffCodeBlockIds": [
+                "src/pokedex/pokemon/schemas.py#class@4:1",
+                "src/pokedex/pokemon/schemas.py#property@5:5",
+                "src/pokedex/pokemon/schemas.py#property@6:5"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Checks that the name has 1 to 20 characters",
+                  "codeBlockId": "src/pokedex/pokemon/schemas.py#property@5:5"
+                },
+                {
+                  "label": "Checks that the level is from 1 to 100",
+                  "codeBlockId": "src/pokedex/pokemon/schemas.py#property@6:5"
+                }
+              ]
+            },
+            {
+              "id": "src/pokedex/pokemon/dependencies.py#function@14:1",
+              "type": "function",
+              "label": "Logs each request that changes a Pokemon",
+              "description": "Two paths reach this dependency.\n- When a client sends `PUT` or `PATCH` to `/api/v1/pokemon/{pokemon_id}`, FastAPI calls it before `train_pokemon()`, because [the route lists it in its `dependencies`](code:src/pokedex/pokemon/routes.py#L29).\n- When a client sends `DELETE /api/v1/pokemon/{pokemon_id}`, FastAPI calls it before `release_pokemon()`, because [the route lists it in its `dependencies`](code:src/pokedex/pokemon/routes.py#L34).",
+              "codeBlockIds": [
+                "src/pokedex/pokemon/dependencies.py#function@14:1",
+                "src/pokedex/pokemon/dependencies.py#root-argument-value@14:16",
+                "src/pokedex/pokemon/dependencies.py#call@15:5",
+                "src/pokedex/pokemon/dependencies.py#root-argument-value@15:56",
+                "src/pokedex/pokemon/dependencies.py#root-argument-value@15:72"
+              ],
+              "diffCodeBlockIds": [
+                "src/pokedex/pokemon/dependencies.py#function@14:1",
+                "src/pokedex/pokemon/dependencies.py#root-argument-value@14:16",
+                "src/pokedex/pokemon/dependencies.py#call@15:5",
+                "src/pokedex/pokemon/dependencies.py#root-argument-value@15:56",
+                "src/pokedex/pokemon/dependencies.py#root-argument-value@15:72"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": []
+            },
+            {
+              "id": "src/pokedex/pokemon/dependencies.py#function@9:1",
+              "type": "function",
+              "label": "Returns a 401 for a wrong API key",
+              "description": "When a client sends any request to `/api/v1/pokemon` or `/api/v1/pokemon/{pokemon_id}`, FastAPI calls this dependency before the handler, because [the router lists it in its `dependencies`](code:src/pokedex/pokemon/routes.py#L7). FastAPI reads `x_api_key` from the `x-api-key` header of the request.",
+              "codeBlockIds": [
+                "src/pokedex/pokemon/dependencies.py#function@9:1",
+                "src/pokedex/pokemon/dependencies.py#root-argument-value@9:21",
+                "src/pokedex/pokemon/dependencies.py#condition@10:5",
+                "src/pokedex/pokemon/dependencies.py#throw@11:9"
+              ],
+              "diffCodeBlockIds": [
+                "src/pokedex/pokemon/dependencies.py#function@9:1",
+                "src/pokedex/pokemon/dependencies.py#root-argument-value@9:21",
+                "src/pokedex/pokemon/dependencies.py#condition@10:5",
+                "src/pokedex/pokemon/dependencies.py#throw@11:9"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Raises an HTTPException when the API key is missing or wrong",
+                  "codeBlockId": "src/pokedex/pokemon/dependencies.py#throw@11:9"
+                }
+              ]
+            },
+            {
+              "id": "src/pokedex/pokemon/dependencies.py#function@18:1",
+              "type": "function",
+              "label": "Reads the trainer from the x-trainer header",
+              "description": "Three paths reach this dependency.\n- When a client sends `POST /api/v1/pokemon`, FastAPI calls it for the `trainer` parameter of [`catch_pokemon()`](code:src/pokedex/pokemon/routes.py#L11).\n- When a client sends `GET /api/v1/pokemon`, FastAPI calls it for the `trainer` parameter of [`read_party()`](code:src/pokedex/pokemon/routes.py#L17).\n- When a client sends `PUT` or `PATCH` to `/api/v1/pokemon/{pokemon_id}`, FastAPI calls it for the `trainer` parameter of [`train_pokemon()`](code:src/pokedex/pokemon/routes.py#L30).\n\nEach parameter is typed [`CurrentTrainer`](code:src/pokedex/pokemon/dependencies.py#L22), which names this function in `Depends()`.",
+              "codeBlockIds": [
+                "src/pokedex/pokemon/dependencies.py#function@18:1",
+                "src/pokedex/pokemon/dependencies.py#root-argument-value@18:21",
+                "src/pokedex/pokemon/dependencies.py#root-argument-value@19:12"
+              ],
+              "diffCodeBlockIds": [
+                "src/pokedex/pokemon/dependencies.py#function@18:1",
+                "src/pokedex/pokemon/dependencies.py#root-argument-value@18:21",
+                "src/pokedex/pokemon/dependencies.py#root-argument-value@19:12"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Returns the trainer name trimmed and in lower case",
+                  "codeBlockId": "src/pokedex/pokemon/dependencies.py#function@18:1",
+                  "at": {
+                    "line": 19,
+                    "column": 5
+                  }
+                }
+              ]
+            }
+          ],
+          "traceNodeEdges": [
+            {
+              "id": "src/pokedex/pokemon/routes.py#function@10:1 -> src/pokedex/pokemon/schemas.py#class@4:1",
+              "from": "src/pokedex/pokemon/routes.py#function@10:1",
+              "to": "src/pokedex/pokemon/schemas.py#class@4:1"
+            },
+            {
+              "id": "src/pokedex/pokemon/routes.py#function@29:1 -> src/pokedex/pokemon/schemas.py#class@4:1",
+              "from": "src/pokedex/pokemon/routes.py#function@29:1",
+              "to": "src/pokedex/pokemon/schemas.py#class@4:1"
+            },
+            {
+              "id": "src/pokedex/pokemon/routes.py#function@10:1 -> src/pokedex/pokemon/dependencies.py#function@18:1",
+              "from": "src/pokedex/pokemon/routes.py#function@10:1",
+              "to": "src/pokedex/pokemon/dependencies.py#function@18:1"
+            },
+            {
+              "id": "src/pokedex/pokemon/routes.py#function@16:1 -> src/pokedex/pokemon/dependencies.py#function@18:1",
+              "from": "src/pokedex/pokemon/routes.py#function@16:1",
+              "to": "src/pokedex/pokemon/dependencies.py#function@18:1"
+            },
+            {
+              "id": "src/pokedex/pokemon/routes.py#function@29:1 -> src/pokedex/pokemon/dependencies.py#function@18:1",
+              "from": "src/pokedex/pokemon/routes.py#function@29:1",
+              "to": "src/pokedex/pokemon/dependencies.py#function@18:1"
+            },
+            {
+              "id": "src/pokedex/pokemon/dependencies.py#function@14:1 -> src/pokedex/pokemon/routes.py#function@29:1",
+              "from": "src/pokedex/pokemon/dependencies.py#function@14:1",
+              "to": "src/pokedex/pokemon/routes.py#function@29:1"
+            },
+            {
+              "id": "src/pokedex/pokemon/dependencies.py#function@14:1 -> src/pokedex/pokemon/routes.py#function@34:1",
+              "from": "src/pokedex/pokemon/dependencies.py#function@14:1",
+              "to": "src/pokedex/pokemon/routes.py#function@34:1"
+            },
+            {
+              "id": "src/pokedex/pokemon/dependencies.py#function@9:1 -> src/pokedex/pokemon/routes.py#route@/api/v1/pokemon",
+              "from": "src/pokedex/pokemon/dependencies.py#function@9:1",
+              "to": "src/pokedex/pokemon/routes.py#route@/api/v1/pokemon"
+            },
+            {
+              "id": "src/pokedex/pokemon/dependencies.py#function@9:1 -> src/pokedex/pokemon/routes.py#route@/api/v1/pokemon/{pokemon_id}",
+              "from": "src/pokedex/pokemon/dependencies.py#function@9:1",
+              "to": "src/pokedex/pokemon/routes.py#route@/api/v1/pokemon/{pokemon_id}"
+            }
+          ]
+        },
+        "codeWalkthrough": {
+          "files": [
+            {
+              "path": "src/pokedex/main.py",
+              "waypoints": [
+                {
+                  "id": "w1",
+                  "declaration": "Lines 9–9",
+                  "range": {
+                    "lineStart": 9,
+                    "lineEnd": 9
+                  },
+                  "codeBlockIds": [
+                    "src/pokedex/main.py#root-statement@9:1"
+                  ],
+                  "children": []
+                }
+              ]
+            },
+            {
+              "path": "src/pokedex/pokemon/dependencies.py",
+              "waypoints": [
+                {
+                  "id": "w2",
+                  "declaration": "require_api_key",
+                  "range": {
+                    "lineStart": 9,
+                    "lineEnd": 11
+                  },
+                  "codeBlockIds": [
+                    "src/pokedex/pokemon/dependencies.py#function@9:1",
+                    "src/pokedex/pokemon/dependencies.py#root-argument-value@9:21",
+                    "src/pokedex/pokemon/dependencies.py#condition@10:5",
+                    "src/pokedex/pokemon/dependencies.py#throw@11:9"
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "w3",
+                  "declaration": "log_change",
+                  "range": {
+                    "lineStart": 14,
+                    "lineEnd": 15
+                  },
+                  "codeBlockIds": [
+                    "src/pokedex/pokemon/dependencies.py#function@14:1",
+                    "src/pokedex/pokemon/dependencies.py#root-argument-value@14:16",
+                    "src/pokedex/pokemon/dependencies.py#call@15:5",
+                    "src/pokedex/pokemon/dependencies.py#root-argument-value@15:56",
+                    "src/pokedex/pokemon/dependencies.py#root-argument-value@15:72"
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "w4",
+                  "declaration": "current_trainer",
+                  "range": {
+                    "lineStart": 18,
+                    "lineEnd": 19
+                  },
+                  "codeBlockIds": [
+                    "src/pokedex/pokemon/dependencies.py#function@18:1",
+                    "src/pokedex/pokemon/dependencies.py#root-argument-value@18:21",
+                    "src/pokedex/pokemon/dependencies.py#root-argument-value@19:12"
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "w5",
+                  "declaration": "CurrentTrainer",
+                  "range": {
+                    "lineStart": 22,
+                    "lineEnd": 22
+                  },
+                  "codeBlockIds": [
+                    "src/pokedex/pokemon/dependencies.py#root-variable@22:1",
+                    "src/pokedex/pokemon/dependencies.py#effect@22:33",
+                    "src/pokedex/pokemon/dependencies.py#effect-callback@22:41"
+                  ],
+                  "children": []
+                }
+              ]
+            },
+            {
+              "path": "src/pokedex/pokemon/routes.py",
+              "waypoints": [
+                {
+                  "id": "w6",
+                  "declaration": "router",
+                  "range": {
+                    "lineStart": 7,
+                    "lineEnd": 7
+                  },
+                  "codeBlockIds": [
+                    "src/pokedex/pokemon/routes.py#root-variable@7:1",
+                    "src/pokedex/pokemon/routes.py#effect@7:53",
+                    "src/pokedex/pokemon/routes.py#effect-callback@7:61"
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "w7",
+                  "declaration": "catch_pokemon",
+                  "range": {
+                    "lineStart": 10,
+                    "lineEnd": 13
+                  },
+                  "codeBlockIds": [
+                    "src/pokedex/pokemon/routes.py#function@10:1",
+                    "src/pokedex/pokemon/routes.py#root-argument-value@11:19",
+                    "src/pokedex/pokemon/routes.py#root-argument-value@11:40",
+                    "src/pokedex/pokemon/routes.py#external-value@12:5",
+                    "src/pokedex/pokemon/routes.py#root-argument-value@12:80",
+                    "src/pokedex/pokemon/routes.py#root-argument-value@12:98"
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "w8",
+                  "declaration": "read_party",
+                  "range": {
+                    "lineStart": 16,
+                    "lineEnd": 18
+                  },
+                  "codeBlockIds": [
+                    "src/pokedex/pokemon/routes.py#function@16:1",
+                    "src/pokedex/pokemon/routes.py#root-argument-value@17:16"
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "w9",
+                  "declaration": "read_pokemon",
+                  "range": {
+                    "lineStart": 21,
+                    "lineEnd": 26
+                  },
+                  "codeBlockIds": [
+                    "src/pokedex/pokemon/routes.py#function@21:1",
+                    "src/pokedex/pokemon/routes.py#root-argument-value@22:18",
+                    "src/pokedex/pokemon/routes.py#external-value@23:5",
+                    "src/pokedex/pokemon/routes.py#condition@24:5",
+                    "src/pokedex/pokemon/routes.py#throw@25:9"
+                  ],
+                  "children": [
+                    {
+                      "id": "w9.1",
+                      "declaration": "read_pokemon › pokemon",
+                      "range": {
+                        "lineStart": 23,
+                        "lineEnd": 23
+                      },
+                      "codeBlockIds": [
+                        "src/pokedex/pokemon/routes.py#external-value@23:5"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w9.2",
+                      "declaration": "read_pokemon › Condition :24",
+                      "range": {
+                        "lineStart": 24,
+                        "lineEnd": 25
+                      },
+                      "codeBlockIds": [
+                        "src/pokedex/pokemon/routes.py#condition@24:5",
+                        "src/pokedex/pokemon/routes.py#throw@25:9"
+                      ],
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "id": "w10",
+                  "declaration": "Lines 29–29",
+                  "range": {
+                    "lineStart": 29,
+                    "lineEnd": 29
+                  },
+                  "codeBlockIds": [
+                    "src/pokedex/pokemon/routes.py#effect@29:76",
+                    "src/pokedex/pokemon/routes.py#effect-callback@29:84"
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "w11",
+                  "declaration": "train_pokemon",
+                  "range": {
+                    "lineStart": 29,
+                    "lineEnd": 31
+                  },
+                  "codeBlockIds": [
+                    "src/pokedex/pokemon/routes.py#function@29:1",
+                    "src/pokedex/pokemon/routes.py#root-argument-value@30:19",
+                    "src/pokedex/pokemon/routes.py#root-argument-value@30:36",
+                    "src/pokedex/pokemon/routes.py#root-argument-value@30:57",
+                    "src/pokedex/pokemon/routes.py#root-argument-value@31:70",
+                    "src/pokedex/pokemon/routes.py#root-argument-value@31:88"
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "w12",
+                  "declaration": "Lines 34–34",
+                  "range": {
+                    "lineStart": 34,
+                    "lineEnd": 34
+                  },
+                  "codeBlockIds": [
+                    "src/pokedex/pokemon/routes.py#effect@34:64",
+                    "src/pokedex/pokemon/routes.py#effect-callback@34:72"
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "w13",
+                  "declaration": "release_pokemon",
+                  "range": {
+                    "lineStart": 34,
+                    "lineEnd": 36
+                  },
+                  "codeBlockIds": [
+                    "src/pokedex/pokemon/routes.py#function@34:1",
+                    "src/pokedex/pokemon/routes.py#root-argument-value@35:21",
+                    "src/pokedex/pokemon/routes.py#call@36:5"
+                  ],
+                  "children": []
+                }
+              ]
+            },
+            {
+              "path": "src/pokedex/pokemon/schemas.py",
+              "waypoints": [
+                {
+                  "id": "w14",
+                  "declaration": "PokemonDraft",
+                  "range": {
+                    "lineStart": 4,
+                    "lineEnd": 6
+                  },
+                  "codeBlockIds": [
+                    "src/pokedex/pokemon/schemas.py#class@4:1",
+                    "src/pokedex/pokemon/schemas.py#property@5:5",
+                    "src/pokedex/pokemon/schemas.py#property@6:5"
+                  ],
+                  "children": [
+                    {
+                      "id": "w14.1",
+                      "declaration": "PokemonDraft › PokemonDraft.name",
+                      "range": {
+                        "lineStart": 5,
+                        "lineEnd": 5
+                      },
+                      "codeBlockIds": [
+                        "src/pokedex/pokemon/schemas.py#property@5:5"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w14.2",
+                      "declaration": "PokemonDraft › PokemonDraft.level",
+                      "range": {
+                        "lineStart": 6,
+                        "lineEnd": 6
+                      },
+                      "codeBlockIds": [
+                        "src/pokedex/pokemon/schemas.py#property@6:5"
+                      ],
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "codeReferences": [
+          {
+            "path": "src/pokedex/main.py",
+            "references": [
+              {
+                "line": 6,
+                "startColumn": 6,
+                "endColumn": 13,
+                "path": "src/pokedex/main.py",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "fastapi:FastAPI",
+                  "name": "FastAPI"
+                }
+              },
+              {
+                "line": 8,
+                "startColumn": 0,
+                "endColumn": 3,
+                "path": "src/pokedex/main.py",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 8,
+                "startColumn": 19,
+                "endColumn": 32,
+                "path": "src/pokedex/health/routes.py",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 0,
+                "endColumn": 3,
+                "path": "src/pokedex/main.py",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 19,
+                "endColumn": 33,
+                "path": "src/pokedex/pokemon/routes.py",
+                "lines": [
+                  7,
+                  7
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 6,
+                "startColumn": 0,
+                "endColumn": 3,
+                "lines": [
+                  6,
+                  6
+                ],
+                "usages": []
+              }
+            ]
+          },
+          {
+            "path": "src/pokedex/pokemon/dependencies.py",
+            "references": [
+              {
+                "line": 9,
+                "startColumn": 31,
+                "endColumn": 40,
+                "path": "src/pokedex/pokemon/dependencies.py",
+                "lines": [
+                  2,
+                  2
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "typing:Annotated",
+                  "name": "Annotated"
+                }
+              },
+              {
+                "line": 9,
+                "startColumn": 46,
+                "endColumn": 52,
+                "path": "src/pokedex/pokemon/dependencies.py",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "fastapi:Header",
+                  "name": "Header"
+                }
+              },
+              {
+                "line": 10,
+                "startColumn": 7,
+                "endColumn": 16,
+                "path": "src/pokedex/pokemon/dependencies.py",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 20,
+                "endColumn": 27,
+                "path": "src/pokedex/settings.py",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 14,
+                "endColumn": 27,
+                "path": "src/pokedex/pokemon/dependencies.py",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "fastapi:HTTPException",
+                  "name": "HTTPException"
+                }
+              },
+              {
+                "line": 14,
+                "startColumn": 24,
+                "endColumn": 31,
+                "path": "src/pokedex/pokemon/dependencies.py",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "fastapi:Request",
+                  "name": "Request"
+                }
+              },
+              {
+                "line": 15,
+                "startColumn": 4,
+                "endColumn": 11,
+                "path": "src/pokedex/pokemon/dependencies.py",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "logging",
+                  "name": "*"
+                }
+              },
+              {
+                "line": 15,
+                "startColumn": 55,
+                "endColumn": 62,
+                "path": "src/pokedex/pokemon/dependencies.py",
+                "lines": [
+                  14,
+                  14
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 71,
+                "endColumn": 78,
+                "path": "src/pokedex/pokemon/dependencies.py",
+                "lines": [
+                  14,
+                  14
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 18,
+                "startColumn": 31,
+                "endColumn": 40,
+                "path": "src/pokedex/pokemon/dependencies.py",
+                "lines": [
+                  2,
+                  2
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "typing:Annotated",
+                  "name": "Annotated"
+                }
+              },
+              {
+                "line": 18,
+                "startColumn": 46,
+                "endColumn": 52,
+                "path": "src/pokedex/pokemon/dependencies.py",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "fastapi:Header",
+                  "name": "Header"
+                }
+              },
+              {
+                "line": 19,
+                "startColumn": 11,
+                "endColumn": 20,
+                "path": "src/pokedex/pokemon/dependencies.py",
+                "lines": [
+                  18,
+                  18
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 22,
+                "startColumn": 17,
+                "endColumn": 26,
+                "path": "src/pokedex/pokemon/dependencies.py",
+                "lines": [
+                  2,
+                  2
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "typing:Annotated",
+                  "name": "Annotated"
+                }
+              },
+              {
+                "line": 22,
+                "startColumn": 32,
+                "endColumn": 39,
+                "path": "src/pokedex/pokemon/dependencies.py",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "fastapi:Depends",
+                  "name": "Depends"
+                }
+              },
+              {
+                "line": 22,
+                "startColumn": 40,
+                "endColumn": 55,
+                "path": "src/pokedex/pokemon/dependencies.py",
+                "lines": [
+                  18,
+                  19
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [
+              {
+                "line": 9,
+                "startColumn": 41,
+                "endColumn": 44,
+                "name": "str"
+              },
+              {
+                "line": 18,
+                "startColumn": 41,
+                "endColumn": 44,
+                "name": "str"
+              },
+              {
+                "line": 18,
+                "startColumn": 60,
+                "endColumn": 63,
+                "name": "str"
+              },
+              {
+                "line": 22,
+                "startColumn": 27,
+                "endColumn": 30,
+                "name": "str"
+              }
+            ],
+            "exports": [
+              {
+                "line": 9,
+                "startColumn": 4,
+                "endColumn": 19,
+                "lines": [
+                  9,
+                  11
+                ],
+                "usages": [
+                  {
+                    "line": 7,
+                    "startColumn": 60,
+                    "endColumn": 75,
+                    "path": "src/pokedex/pokemon/routes.py",
+                    "text": "router = APIRouter(prefix=\"/pokemon\", dependencies=[Depends(require_api_key)])"
+                  }
+                ]
+              },
+              {
+                "line": 14,
+                "startColumn": 4,
+                "endColumn": 14,
+                "lines": [
+                  14,
+                  15
+                ],
+                "usages": [
+                  {
+                    "line": 29,
+                    "startColumn": 83,
+                    "endColumn": 93,
+                    "path": "src/pokedex/pokemon/routes.py",
+                    "text": "@router.api_route(\"/{pokemon_id}\", methods=[\"PUT\", \"PATCH\"], dependencies=[Depends(log_change)])"
+                  },
+                  {
+                    "line": 34,
+                    "startColumn": 71,
+                    "endColumn": 81,
+                    "path": "src/pokedex/pokemon/routes.py",
+                    "text": "@router.delete(\"/{pokemon_id}\", status_code=204, dependencies=[Depends(log_change)])"
+                  }
+                ]
+              },
+              {
+                "line": 18,
+                "startColumn": 4,
+                "endColumn": 19,
+                "lines": [
+                  18,
+                  19
+                ],
+                "usages": []
+              },
+              {
+                "line": 22,
+                "startColumn": 0,
+                "endColumn": 14,
+                "lines": [
+                  22,
+                  22
+                ],
+                "usages": [
+                  {
+                    "line": 11,
+                    "startColumn": 48,
+                    "endColumn": 62,
+                    "path": "src/pokedex/pokemon/routes.py",
+                    "text": "def catch_pokemon(draft: PokemonDraft, trainer: CurrentTrainer):"
+                  },
+                  {
+                    "line": 17,
+                    "startColumn": 24,
+                    "endColumn": 38,
+                    "path": "src/pokedex/pokemon/routes.py",
+                    "text": "def read_party(trainer: CurrentTrainer):"
+                  },
+                  {
+                    "line": 30,
+                    "startColumn": 65,
+                    "endColumn": 79,
+                    "path": "src/pokedex/pokemon/routes.py",
+                    "text": "def train_pokemon(pokemon_id: int, draft: PokemonDraft, trainer: CurrentTrainer):"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/pokedex/pokemon/routes.py",
+            "references": [
+              {
+                "line": 7,
+                "startColumn": 9,
+                "endColumn": 18,
+                "path": "src/pokedex/pokemon/routes.py",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "fastapi:APIRouter",
+                  "name": "APIRouter"
+                }
+              },
+              {
+                "line": 7,
+                "startColumn": 52,
+                "endColumn": 59,
+                "path": "src/pokedex/pokemon/routes.py",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "fastapi:Depends",
+                  "name": "Depends"
+                }
+              },
+              {
+                "line": 7,
+                "startColumn": 60,
+                "endColumn": 75,
+                "path": "src/pokedex/pokemon/dependencies.py",
+                "lines": [
+                  9,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 1,
+                "endColumn": 7,
+                "path": "src/pokedex/pokemon/routes.py",
+                "lines": [
+                  7,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 25,
+                "endColumn": 37,
+                "path": "src/pokedex/pokemon/schemas.py",
+                "lines": [
+                  4,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 48,
+                "endColumn": 62,
+                "path": "src/pokedex/pokemon/dependencies.py",
+                "lines": [
+                  22,
+                  22
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 14,
+                "endColumn": 21,
+                "path": "src/pokedex/pokemon/store.py",
+                "lines": [
+                  4,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 29,
+                "endColumn": 41,
+                "path": "src/pokedex/pokemon/store.py",
+                "lines": [
+                  15,
+                  16
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 42,
+                "endColumn": 49,
+                "path": "src/pokedex/pokemon/routes.py",
+                "lines": [
+                  11,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 65,
+                "endColumn": 72,
+                "path": "src/pokedex/pokemon/routes.py",
+                "lines": [
+                  11,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 79,
+                "endColumn": 84,
+                "path": "src/pokedex/pokemon/routes.py",
+                "lines": [
+                  11,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 97,
+                "endColumn": 102,
+                "path": "src/pokedex/pokemon/routes.py",
+                "lines": [
+                  11,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 11,
+                "endColumn": 23,
+                "path": "src/pokedex/pokemon/store.py",
+                "lines": [
+                  23,
+                  25
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 24,
+                "endColumn": 31,
+                "path": "src/pokedex/pokemon/routes.py",
+                "lines": [
+                  12,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 1,
+                "endColumn": 7,
+                "path": "src/pokedex/pokemon/routes.py",
+                "lines": [
+                  7,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 17,
+                "startColumn": 24,
+                "endColumn": 38,
+                "path": "src/pokedex/pokemon/dependencies.py",
+                "lines": [
+                  22,
+                  22
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 18,
+                "startColumn": 11,
+                "endColumn": 23,
+                "path": "src/pokedex/pokemon/store.py",
+                "lines": [
+                  15,
+                  16
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 18,
+                "startColumn": 24,
+                "endColumn": 31,
+                "path": "src/pokedex/pokemon/routes.py",
+                "lines": [
+                  17,
+                  17
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 21,
+                "startColumn": 1,
+                "endColumn": 7,
+                "path": "src/pokedex/pokemon/routes.py",
+                "lines": [
+                  7,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 23,
+                "startColumn": 14,
+                "endColumn": 26,
+                "path": "src/pokedex/pokemon/store.py",
+                "lines": [
+                  19,
+                  20
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 23,
+                "startColumn": 27,
+                "endColumn": 37,
+                "path": "src/pokedex/pokemon/routes.py",
+                "lines": [
+                  22,
+                  22
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 24,
+                "startColumn": 7,
+                "endColumn": 14,
+                "path": "src/pokedex/pokemon/routes.py",
+                "lines": [
+                  23,
+                  23
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 25,
+                "startColumn": 14,
+                "endColumn": 27,
+                "path": "src/pokedex/pokemon/routes.py",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "fastapi:HTTPException",
+                  "name": "HTTPException"
+                }
+              },
+              {
+                "line": 26,
+                "startColumn": 11,
+                "endColumn": 18,
+                "path": "src/pokedex/pokemon/routes.py",
+                "lines": [
+                  23,
+                  23
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 29,
+                "startColumn": 1,
+                "endColumn": 7,
+                "path": "src/pokedex/pokemon/routes.py",
+                "lines": [
+                  7,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 29,
+                "startColumn": 75,
+                "endColumn": 82,
+                "path": "src/pokedex/pokemon/routes.py",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "fastapi:Depends",
+                  "name": "Depends"
+                }
+              },
+              {
+                "line": 29,
+                "startColumn": 83,
+                "endColumn": 93,
+                "path": "src/pokedex/pokemon/dependencies.py",
+                "lines": [
+                  14,
+                  15
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 30,
+                "startColumn": 42,
+                "endColumn": 54,
+                "path": "src/pokedex/pokemon/schemas.py",
+                "lines": [
+                  4,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 30,
+                "startColumn": 65,
+                "endColumn": 79,
+                "path": "src/pokedex/pokemon/dependencies.py",
+                "lines": [
+                  22,
+                  22
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 31,
+                "startColumn": 11,
+                "endColumn": 23,
+                "path": "src/pokedex/pokemon/store.py",
+                "lines": [
+                  23,
+                  25
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 31,
+                "startColumn": 24,
+                "endColumn": 31,
+                "path": "src/pokedex/pokemon/store.py",
+                "lines": [
+                  4,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 31,
+                "startColumn": 35,
+                "endColumn": 45,
+                "path": "src/pokedex/pokemon/routes.py",
+                "lines": [
+                  30,
+                  30
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 31,
+                "startColumn": 55,
+                "endColumn": 62,
+                "path": "src/pokedex/pokemon/routes.py",
+                "lines": [
+                  30,
+                  30
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 31,
+                "startColumn": 69,
+                "endColumn": 74,
+                "path": "src/pokedex/pokemon/routes.py",
+                "lines": [
+                  30,
+                  30
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 31,
+                "startColumn": 87,
+                "endColumn": 92,
+                "path": "src/pokedex/pokemon/routes.py",
+                "lines": [
+                  30,
+                  30
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 34,
+                "startColumn": 1,
+                "endColumn": 7,
+                "path": "src/pokedex/pokemon/routes.py",
+                "lines": [
+                  7,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 34,
+                "startColumn": 63,
+                "endColumn": 70,
+                "path": "src/pokedex/pokemon/routes.py",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "fastapi:Depends",
+                  "name": "Depends"
+                }
+              },
+              {
+                "line": 34,
+                "startColumn": 71,
+                "endColumn": 81,
+                "path": "src/pokedex/pokemon/dependencies.py",
+                "lines": [
+                  14,
+                  15
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 36,
+                "startColumn": 4,
+                "endColumn": 18,
+                "path": "src/pokedex/pokemon/store.py",
+                "lines": [
+                  28,
+                  29
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 36,
+                "startColumn": 19,
+                "endColumn": 29,
+                "path": "src/pokedex/pokemon/routes.py",
+                "lines": [
+                  35,
+                  35
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [
+              {
+                "line": 12,
+                "startColumn": 25,
+                "endColumn": 28,
+                "name": "len"
+              },
+              {
+                "line": 22,
+                "startColumn": 29,
+                "endColumn": 32,
+                "name": "int"
+              },
+              {
+                "line": 30,
+                "startColumn": 30,
+                "endColumn": 33,
+                "name": "int"
+              },
+              {
+                "line": 35,
+                "startColumn": 32,
+                "endColumn": 35,
+                "name": "int"
+              }
+            ],
+            "exports": [
+              {
+                "line": 7,
+                "startColumn": 0,
+                "endColumn": 6,
+                "lines": [
+                  7,
+                  7
+                ],
+                "usages": [
+                  {
+                    "line": 9,
+                    "startColumn": 19,
+                    "endColumn": 33,
+                    "path": "src/pokedex/main.py",
+                    "text": "app.include_router(pokemon_router, prefix=\"/api/v1\")"
+                  }
+                ]
+              },
+              {
+                "line": 11,
+                "startColumn": 4,
+                "endColumn": 17,
+                "lines": [
+                  10,
+                  13
+                ],
+                "usages": []
+              },
+              {
+                "line": 17,
+                "startColumn": 4,
+                "endColumn": 14,
+                "lines": [
+                  16,
+                  18
+                ],
+                "usages": []
+              },
+              {
+                "line": 22,
+                "startColumn": 4,
+                "endColumn": 16,
+                "lines": [
+                  21,
+                  26
+                ],
+                "usages": []
+              },
+              {
+                "line": 30,
+                "startColumn": 4,
+                "endColumn": 17,
+                "lines": [
+                  29,
+                  31
+                ],
+                "usages": []
+              },
+              {
+                "line": 35,
+                "startColumn": 4,
+                "endColumn": 19,
+                "lines": [
+                  34,
+                  36
+                ],
+                "usages": []
+              }
+            ]
+          },
+          {
+            "path": "src/pokedex/pokemon/schemas.py",
+            "references": [
+              {
+                "line": 4,
+                "startColumn": 19,
+                "endColumn": 28,
+                "path": "src/pokedex/pokemon/schemas.py",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "pydantic:BaseModel",
+                  "name": "BaseModel"
+                }
+              },
+              {
+                "line": 5,
+                "startColumn": 16,
+                "endColumn": 21,
+                "path": "src/pokedex/pokemon/schemas.py",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "pydantic:Field",
+                  "name": "Field"
+                }
+              },
+              {
+                "line": 6,
+                "startColumn": 17,
+                "endColumn": 22,
+                "path": "src/pokedex/pokemon/schemas.py",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "pydantic:Field",
+                  "name": "Field"
+                }
+              }
+            ],
+            "languageReferences": [
+              {
+                "line": 5,
+                "startColumn": 10,
+                "endColumn": 13,
+                "name": "str"
+              },
+              {
+                "line": 6,
+                "startColumn": 11,
+                "endColumn": 14,
+                "name": "int"
+              }
+            ],
+            "exports": [
+              {
+                "line": 4,
+                "startColumn": 6,
+                "endColumn": 18,
+                "lines": [
+                  4,
+                  6
+                ],
+                "usages": [
+                  {
+                    "line": 11,
+                    "startColumn": 25,
+                    "endColumn": 37,
+                    "path": "src/pokedex/pokemon/routes.py",
+                    "text": "def catch_pokemon(draft: PokemonDraft, trainer: CurrentTrainer):"
+                  },
+                  {
+                    "line": 30,
+                    "startColumn": 42,
+                    "endColumn": 54,
+                    "path": "src/pokedex/pokemon/routes.py",
+                    "text": "def train_pokemon(pokemon_id: int, draft: PokemonDraft, trainer: CurrentTrainer):"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

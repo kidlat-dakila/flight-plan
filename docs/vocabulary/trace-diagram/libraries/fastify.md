@@ -64,17 +64,16 @@ app.register(userRoutes, { prefix: "/v1" })
  │ ┌ ƒ () => … ──────────────────────── server/plugins/users.ts ┐ │  ◀── auth (preHandler)
  │ │ Callback                                          Modified │ │
  │ │ Sends every user                                           │ │
+ │ │ RETURNS AND RAISES                                         │ │
  │ │ ╔════════════════════════════════════════════════════════╗ │ │
- │ │ ║ db.user.findMany                                       ║○──▶ db.user.findMany
+ │ │ ║ Returns every user                                     ║ │ │
+ │ │ ║ return                                                 ║ │ │
  │ │ ╚════════════════════════════════════════════════════════╝ │ │
  │ └────────────────────────────────────────────────────────────┘ │
  │ PUT · PATCH                                                    │  ← a heading of several methods
  │ ┌ ƒ saveUser ─────────────────── server/controllers/users.ts ┐ │
  │ │ Function                                                   │ │
  │ │ Saves the user from the form                               │ │
- │ │ ┌────────────────────────────────────────────────────────┐ │ │
- │ │ │ db.user.upsert                                         │○──▶ db.user.upsert
- │ │ └────────────────────────────────────────────────────────┘ │ │
  │ └────────────────────────────────────────────────────────────┘ │
  └────────────────────────────────────────────────────────────────┘
 ```

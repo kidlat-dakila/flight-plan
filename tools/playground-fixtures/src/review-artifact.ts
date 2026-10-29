@@ -67,7 +67,7 @@ const storedTraceNodeSchema: z.ZodType<StoredTraceNode> = z.lazy(() =>
     diffCodeBlockIds: z.array(z.string()),
     children: z.array(storedTraceNodeSchema),
     triggerLabels: z.array(z.object({ label: z.string().nullable(), codeBlockId: z.string() })),
-    blockLabels: z.array(z.object({ label: z.string().nullable(), codeBlockId: z.string() })),
+    blockLabels: z.array(z.object({ label: z.string().nullable(), codeBlockId: z.string(), at: z.object({ line: z.number(), column: z.number() }).optional() })),
   }),
 )
 

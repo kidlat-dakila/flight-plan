@@ -1,4 +1,6 @@
+import { parseWithGrammar, type SyntaxNode } from "@/ast-graph/parser"
 import { codeOf, groupOf, outlineOf } from "@/code-blocks/__tests__/group-fixture"
+import { isMarkup } from "@/code-blocks/languages/typescript/markup"
 
 const outlineOfCode = (...lines: readonly string[]): string[] => outlineOf(groupOf({ "src/file.tsx": codeOf(...lines) }), "src/file.tsx")
 
@@ -145,5 +147,36 @@ describe("a class component", () => {
     )
 
     expect(outline.filter((line) => !line.startsWith(" "))).toStrictEqual(["component Modal 1:1-3:2", "class Store 4:1-6:2", "class Lone 7:1-9:2"])
+  })
+})
+
+const DEEP_CONDITIONS = 5000
+const DEEP_PARENTHESES = 20000
+
+const valueOfDeclared = (source: string): SyntaxNode | null =>
+  parseWithGrammar("tsx", source).rootNode.firstNamedChild?.firstNamedChild?.childForFieldName("value") ?? null
+
+const chainedConditionEndingIn = (last: string): string =>
+  `const view = ${Array.from({ length: DEEP_CONDITIONS }, (_unused, index) => `v === ${String(index)} ? ${String(index)} : `).join("")}${last}`
+
+const wrappedTimes = (inner: string): string => `const view = ${"(".repeat(DEEP_PARENTHESES)}${inner}${")".repeat(DEEP_PARENTHESES)}`
+
+describe("markup deep inside an expression", () => {
+  it("is found at the end of a long chain of conditions", () => {
+    const found = valueOfDeclared(chainedConditionEndingIn("<b />"))
+
+    expect(found !== null && isMarkup(found)).toBe(true)
+  })
+
+  it("is not found in a long chain of conditions that holds none", () => {
+    const found = valueOfDeclared(chainedConditionEndingIn("null"))
+
+    expect(found !== null && isMarkup(found)).toBe(false)
+  })
+
+  it("is found inside many parentheses", () => {
+    const found = valueOfDeclared(wrappedTimes("<b />"))
+
+    expect(found !== null && isMarkup(found)).toBe(true)
   })
 })

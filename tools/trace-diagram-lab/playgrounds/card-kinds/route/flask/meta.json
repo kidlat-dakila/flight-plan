@@ -1,0 +1,6 @@
+{
+  "title": "Route card in Flask",
+  "packages": ["flask"],
+  "language": "python",
+  "mainFramework": "flask"
+}

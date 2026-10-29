@@ -15,12 +15,13 @@ Each node is a card for a function, a component, a hook or another block of code
 - its type, such as **Function**, **Component** or **Hook**, then its classification when that's different, such as **Route • API route**,
 - **Added** or **Modified** when the change touched it,
 - the label your agent wrote, or until it does, Flight Plan's hint, such as "Adds a component.",
-- its parameters,
-- rows grouped under **State**, **Hooks**, **Effects**, **Calls**, **Triggers** and **Steps**, or **Properties** and **Methods** for a class. **Calls** takes the name of the kind of call when there is one, such as **Request** or **Storage**.
+- rows grouped under **Arguments**, **External calls**, **Triggers** and **Returns and raises** for a function, **Props**, **State**, **External calls**, **Memos**, **Effects**, **Triggers** and **Renders** for a component, and **Properties** and **Methods** for a class. **External calls** holds a small card for each function, hook, class or store of your code it calls, tRPC procedures and RTK Query APIs included, with one row per call and a line from each row to the card it calls. Calls into libraries get no row.
 
-Components that render each other are drawn inside one another. Your agent gives the diagram a title that names the flow it shows, such as "Submit order flow diagram". With one Trace Diagram on the page, the title is the section's heading. With several, each title labels its diagram's tab. Above the board, your agent's description tells the diagram in words. Until it's written, Flight Plan's hint names the code the path runs through.
+A component's **Renders** has one group per `return`, in code order. Inside a group, a row stands for markup that shows only sometimes, a list, a child component or markup that a function of your code draws. Plain elements and library components get no row. A child component is drawn inside the row that renders it.
 
-Flight Plan builds the nodes, the edges, the rows, the classifications and the change marks from the code. Your agent writes the title and the description, the label and description of each node, and the labels of its rows. It can't add a node or draw an edge.
+Each effect and memo of a component, such as `useEffect`, `watch`, `useMemo` or `computed`, has its own card beside the component. That card lists its dependencies, the variables it reads from outside and its calls, and for an effect the cleanup it returns. Your agent gives the diagram a title that names the flow it shows, such as "Submit order flow diagram". With one Trace Diagram on the page, the title is the section's heading. With several, each title labels its diagram's tab. Above the board, your agent's description tells the diagram in words. Until it's written, Flight Plan's hint names the code the path runs through.
+
+Flight Plan builds the nodes, the edges, the rows, the classifications and the change marks from the code. Your agent writes the title and the description, the label and description of each node, and the labels of its rows. On a function, those are its calls, its returns and its raises. On a component, they are its calls, its memos, its effects and what each `return` renders. It can't add a node or draw an edge.
 
 A change that touches only types, imports or top-level statements has no Trace Diagram, because nothing that runs has changed.
 

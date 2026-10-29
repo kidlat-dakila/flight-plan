@@ -22,21 +22,40 @@ export const textOfKey = (key: SyntaxNode | null): string | null => {
   return key.namedChildren.filter((part) => part.type === TEXT_CONTENT_TYPE).map((part) => part.text).join("")
 }
 
-const keysAround = (dictionary: SyntaxNode | null): readonly string[] => {
-  const holder = dictionary?.type === DICTIONARY_TYPE ? dictionary.parent : null
-  const key = holder?.type === PAIR_TYPE && holder.childForFieldName("value")?.id === dictionary?.id ? textOfKey(holder.childForFieldName("key")) : null
-  return holder?.type !== PAIR_TYPE || key === null ? NO_KEYS : [...keysAround(holder.parent), key]
+interface KeyedValue {
+  readonly id: number
+  readonly keys: readonly string[]
 }
 
-export const keyPathOf = (pair: SyntaxNode): readonly string[] => {
-  const key = pair.type === PAIR_TYPE && pair.parent?.type === DICTIONARY_TYPE ? textOfKey(pair.childForFieldName("key")) : null
-  return key === null ? NO_KEYS : [...keysAround(pair.parent), key]
+export interface KeyScope {
+  readonly dictionaryKeys: readonly string[] | null
+  readonly keyedValue: KeyedValue | null
 }
 
-export const keyOfSubscript = (read: SyntaxNode): string | null => {
-  const { parent } = read
-  const isRead = parent?.type === SUBSCRIPT_TYPE && parent.childForFieldName("value")?.id === read.id
-  return isRead ? textOfKey(parent.childForFieldName("subscript")) : null
+export const NO_KEY_SCOPE: KeyScope = { dictionaryKeys: null, keyedValue: null }
+
+const keysOfDictionary = (dictionary: SyntaxNode, { keyedValue }: KeyScope): readonly string[] =>
+  keyedValue?.id === dictionary.id ? keyedValue.keys : NO_KEYS
+
+const keyedValueOf = (pair: SyntaxNode, { dictionaryKeys }: KeyScope): KeyedValue | null => {
+  const key = textOfKey(pair.childForFieldName("key"))
+  const value = key === null ? null : pair.childForFieldName("value")
+  return key === null || value === null ? null : { id: value.id, keys: [...(dictionaryKeys ?? NO_KEYS), key] }
+}
+
+export const keyScopeWithin = (node: SyntaxNode, scope: KeyScope): KeyScope => {
+  if (node.type === DICTIONARY_TYPE) return { dictionaryKeys: keysOfDictionary(node, scope), keyedValue: null }
+  return node.type === PAIR_TYPE ? { dictionaryKeys: null, keyedValue: keyedValueOf(node, scope) } : NO_KEY_SCOPE
+}
+
+export const keyPathIn = (pair: SyntaxNode, { dictionaryKeys }: KeyScope): readonly string[] => {
+  const key = pair.type === PAIR_TYPE && dictionaryKeys !== null ? textOfKey(pair.childForFieldName("key")) : null
+  return key === null || dictionaryKeys === null ? NO_KEYS : [...dictionaryKeys, key]
+}
+
+export const keyOfSubscript = (read: SyntaxNode, holder: SyntaxNode): string | null => {
+  const isRead = holder.type === SUBSCRIPT_TYPE && holder.childForFieldName("value")?.id === read.id
+  return isRead ? textOfKey(holder.childForFieldName("subscript")) : null
 }
 
 export const keyOfGetter = (read: SyntaxNode): { readonly key: string, readonly call: SyntaxNode } | null => {

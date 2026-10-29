@@ -1,0 +1,6 @@
+{
+  "title": "Route card in NestJS",
+  "packages": ["@nestjs/common", "@nestjs/core", "class-validator", "express", "reflect-metadata"],
+  "language": "typescript",
+  "mainFramework": "nest"
+}

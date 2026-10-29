@@ -1,0 +1,1409 @@
+{
+  "title": "Added route POST /api/pokemon behind two guards",
+  "diff": [
+    "diff --git a/src/pokemon/pokemon.controller.ts b/src/pokemon/pokemon.controller.ts",
+    "--- a/src/pokemon/pokemon.controller.ts",
+    "+++ b/src/pokemon/pokemon.controller.ts",
+    "@@ -1,2 +1,4 @@",
+    "-import { Controller, Get, Param, ParseIntPipe, UseGuards } from \"@nestjs/common\"",
+    "-import { ApiKeyGuard } from \"@/security\"",
+    "+import { Body, Controller, Get, Headers, Param, ParseIntPipe, Post, UseGuards } from \"@nestjs/common\"",
+    "+import { ApiKeyGuard, TrainerGuard } from \"@/security\"",
+    "+import type { Pokemon } from \"@/pokemon/pokemon\"",
+    "+import { CreatePokemonDto } from \"@/pokemon/pokemon.dto\"",
+    "@@ -4,0 +7,2 @@ import { PokemonService } from \"@/pokemon/pokemon.service\"",
+    "+const toView = ({ id, name, level }: Pokemon) => ({ id, name, level })",
+    "+",
+    "@@ -12 +16,7 @@ export class PokemonController {",
+    "-    return this.pokemon.list()",
+    "+    return this.pokemon.list().map(toView)",
+    "+  }",
+    "+",
+    "+  @Post()",
+    "+  @UseGuards(TrainerGuard)",
+    "+  add(@Body() draft: CreatePokemonDto, @Headers(\"x-trainer\") trainerName: string) {",
+    "+    return toView(this.pokemon.create(draft, trainerName))",
+    "@@ -17 +27 @@ export class PokemonController {",
+    "-    return this.pokemon.find(pokemonId)",
+    "+    return toView(this.pokemon.find(pokemonId))",
+    "diff --git a/src/security.ts b/src/security.ts",
+    "--- a/src/security.ts",
+    "+++ b/src/security.ts",
+    "@@ -1 +1 @@",
+    "-import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from \"@nestjs/common\"",
+    "+import { CanActivate, ExecutionContext, ForbiddenException, Injectable, UnauthorizedException } from \"@nestjs/common\"",
+    "@@ -9 +9,10 @@ export class ApiKeyGuard implements CanActivate {",
+    "-    if (request.header(\"x-api-key\") !== API_KEY) throw new UnauthorizedException(\"invalid API key\")",
+    "+    if (request.header(\"x-api-key\") !== API_KEY) throw new UnauthorizedException(\"The API key is missing or wrong.\")",
+    "+    return true",
+    "+  }",
+    "+}",
+    "+",
+    "+@Injectable()",
+    "+export class TrainerGuard implements CanActivate {",
+    "+  canActivate(context: ExecutionContext): boolean {",
+    "+    const request = context.switchToHttp().getRequest<Request>()",
+    "+    if (request.header(\"x-trainer\") === undefined) throw new ForbiddenException(\"A trainer must sign in to add a Pokemon.\")"
+  ],
+  "codegraph": {
+    "segments": [
+      {
+        "title": "New TrainerGuard and POST /api/pokemon route, modified PokemonController and ApiKeyGuard",
+        "importGraph": [
+          {
+            "filePath": "src/app.module.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/main.ts"
+            ],
+            "importsTo": [
+              "src/pokemon/pokemon.module.ts"
+            ],
+            "importedFilePaths": {
+              "@/health/health.module": "src/health/health.module.ts",
+              "@/pokemon/pokemon.module": "src/pokemon/pokemon.module.ts"
+            }
+          },
+          {
+            "filePath": "src/main.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [],
+            "importsTo": [
+              "src/app.module.ts",
+              "src/settings.ts"
+            ],
+            "importedFilePaths": {
+              "@/app.module": "src/app.module.ts",
+              "@/settings": "src/settings.ts"
+            }
+          },
+          {
+            "filePath": "src/pokemon/pokemon.controller.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "modified",
+            "importedBy": [
+              "src/pokemon/pokemon.module.ts"
+            ],
+            "importsTo": [
+              "src/pokemon/pokemon.dto.ts",
+              "src/pokemon/pokemon.service.ts",
+              "src/pokemon/pokemon.ts",
+              "src/security.ts"
+            ],
+            "importedFilePaths": {
+              "@/security": "src/security.ts",
+              "@/pokemon/pokemon": "src/pokemon/pokemon.ts",
+              "@/pokemon/pokemon.dto": "src/pokemon/pokemon.dto.ts",
+              "@/pokemon/pokemon.service": "src/pokemon/pokemon.service.ts"
+            }
+          },
+          {
+            "filePath": "src/pokemon/pokemon.dto.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/pokemon/pokemon.controller.ts",
+              "src/pokemon/pokemon.service.ts"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/pokemon/pokemon.module.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/app.module.ts"
+            ],
+            "importsTo": [
+              "src/pokemon/pokemon.controller.ts",
+              "src/pokemon/pokemon.service.ts"
+            ],
+            "importedFilePaths": {
+              "@/pokemon/pokemon.controller": "src/pokemon/pokemon.controller.ts",
+              "@/pokemon/pokemon.service": "src/pokemon/pokemon.service.ts"
+            }
+          },
+          {
+            "filePath": "src/pokemon/pokemon.service.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/pokemon/pokemon.controller.ts",
+              "src/pokemon/pokemon.module.ts"
+            ],
+            "importsTo": [
+              "src/pokemon/pokemon.dto.ts",
+              "src/pokemon/pokemon.ts"
+            ],
+            "importedFilePaths": {
+              "@/pokemon/pokemon.dto": "src/pokemon/pokemon.dto.ts",
+              "@/pokemon/pokemon": "src/pokemon/pokemon.ts"
+            }
+          },
+          {
+            "filePath": "src/pokemon/pokemon.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/pokemon/pokemon.controller.ts",
+              "src/pokemon/pokemon.service.ts"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/security.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "modified",
+            "importedBy": [
+              "src/pokemon/pokemon.controller.ts"
+            ],
+            "importsTo": [
+              "src/settings.ts"
+            ],
+            "importedFilePaths": {
+              "@/settings": "src/settings.ts"
+            }
+          },
+          {
+            "filePath": "src/settings.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/main.ts",
+              "src/security.ts"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          }
+        ],
+        "traceDiagram": {
+          "title": "Pokemon API flow diagram",
+          "description": "This diagram shows how `AppModule` reaches `PokemonController` through `PokemonModule`, and how the controller sends the party and one Pokemon to a client that sends the API key. It also shows what happens when a request reaches `POST /api/pokemon`, and how the new Pokemon reaches the party through `PokemonService.create()`.",
+          "traceNodes": [
+            {
+              "id": "src/app.module.ts#class@5:1",
+              "type": "class",
+              "label": "Imports the modules the API is built from",
+              "description": "When the server starts, [`NestFactory.create(AppModule)`](code:src/main.ts#L7) builds the app from this module.",
+              "codeBlockIds": [
+                "src/app.module.ts#class@5:1",
+                "src/app.module.ts#property@6:3"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Loads the health and Pokemon modules",
+                  "codeBlockId": "src/app.module.ts#property@6:3"
+                }
+              ]
+            },
+            {
+              "id": "src/pokemon/pokemon.module.ts#class@5:1",
+              "type": "class",
+              "label": "Registers the Pokemon controller and service",
+              "description": "When the server starts, Nest loads this module, because [`AppModule` imports `PokemonModule`](code:src/app.module.ts#L6).",
+              "codeBlockIds": [
+                "src/pokemon/pokemon.module.ts#class@5:1",
+                "src/pokemon/pokemon.module.ts#property@6:3"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Registers the routes of the Pokemon controller",
+                  "codeBlockId": "src/pokemon/pokemon.module.ts#property@6:3"
+                }
+              ]
+            },
+            {
+              "id": "src/pokemon/pokemon.controller.ts#class@9:1",
+              "type": "class",
+              "label": "Puts /pokemon before every route of the class",
+              "description": "When the server starts, Nest registers the routes of this controller, because [`PokemonModule` lists `PokemonController`](code:src/pokemon/pokemon.module.ts#L6). [`app.setGlobalPrefix(\"api\")`](code:src/main.ts#L8) puts `/api` before each of them.",
+              "codeBlockIds": [
+                "src/pokemon/pokemon.controller.ts#class@9:1",
+                "src/pokemon/pokemon.controller.ts#effect@10:2",
+                "src/pokemon/pokemon.controller.ts#effect-callback@10:12",
+                "src/pokemon/pokemon.controller.ts#method@14:3",
+                "src/pokemon/pokemon.controller.ts#method@19:3",
+                "src/pokemon/pokemon.controller.ts#method@25:3"
+              ],
+              "diffCodeBlockIds": [
+                "src/pokemon/pokemon.controller.ts#method@14:3",
+                "src/pokemon/pokemon.controller.ts#method@19:3",
+                "src/pokemon/pokemon.controller.ts#method@25:3"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": "Runs ApiKeyGuard before every route of the controller",
+                  "codeBlockId": "src/pokemon/pokemon.controller.ts#effect@10:2"
+                }
+              ]
+            },
+            {
+              "id": "src/pokemon/pokemon.controller.ts#function@7:1",
+              "type": "function",
+              "label": "Copies a Pokemon without the name of its trainer",
+              "description": "Every route of the controller returns its Pokemon through this function:\n\n- When a client sends `GET /api/pokemon`, [`readAll()` maps the party through it](code:src/pokemon/pokemon.controller.ts#L16).\n- When a client sends `POST /api/pokemon`, [`add()` passes it the new Pokemon](code:src/pokemon/pokemon.controller.ts#L22).\n- When a client sends `GET /api/pokemon/:pokemonId`, [`read()` passes it the Pokemon of the id](code:src/pokemon/pokemon.controller.ts#L27).",
+              "codeBlockIds": [
+                "src/pokemon/pokemon.controller.ts#function@7:1",
+                "src/pokemon/pokemon.controller.ts#root-argument-value@7:19",
+                "src/pokemon/pokemon.controller.ts#root-argument-value@7:23",
+                "src/pokemon/pokemon.controller.ts#root-argument-value@7:29",
+                "src/pokemon/pokemon.controller.ts#property@7:53",
+                "src/pokemon/pokemon.controller.ts#property@7:57",
+                "src/pokemon/pokemon.controller.ts#property@7:63"
+              ],
+              "diffCodeBlockIds": [
+                "src/pokemon/pokemon.controller.ts#function@7:1",
+                "src/pokemon/pokemon.controller.ts#root-argument-value@7:19",
+                "src/pokemon/pokemon.controller.ts#root-argument-value@7:23",
+                "src/pokemon/pokemon.controller.ts#root-argument-value@7:29",
+                "src/pokemon/pokemon.controller.ts#property@7:53",
+                "src/pokemon/pokemon.controller.ts#property@7:57",
+                "src/pokemon/pokemon.controller.ts#property@7:63"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": []
+            },
+            {
+              "id": "src/security.ts#class@5:1",
+              "type": "class",
+              "label": "Checks the API key of a request",
+              "description": "When a client sends a request to any route of `PokemonController`, Nest calls this guard first, because [`@UseGuards(ApiKeyGuard)` decorates the controller](code:src/pokemon/pokemon.controller.ts#L10).",
+              "codeBlockIds": [
+                "src/security.ts#class@5:1",
+                "src/security.ts#method@7:3"
+              ],
+              "diffCodeBlockIds": [
+                "src/security.ts#class@5:1",
+                "src/security.ts#method@7:3"
+              ],
+              "children": [
+                {
+                  "id": "src/security.ts#method@7:3",
+                  "type": "method",
+                  "label": "Throws UnauthorizedException for a wrong API key",
+                  "description": "When a client sends a request to any route of `PokemonController`, Nest calls this method of `ApiKeyGuard` before the handler.",
+                  "codeBlockIds": [
+                    "src/security.ts#method@7:3",
+                    "src/security.ts#condition@9:5",
+                    "src/security.ts#throw@9:50"
+                  ],
+                  "diffCodeBlockIds": [
+                    "src/security.ts#method@7:3",
+                    "src/security.ts#condition@9:5",
+                    "src/security.ts#throw@9:50"
+                  ],
+                  "children": [],
+                  "triggerLabels": [],
+                  "blockLabels": [
+                    {
+                      "label": "Throws an UnauthorizedException when the API key is missing or wrong",
+                      "codeBlockId": "src/security.ts#throw@9:50"
+                    },
+                    {
+                      "label": "Returns true to let the request through",
+                      "codeBlockId": "src/security.ts#method@7:3",
+                      "at": {
+                        "line": 10,
+                        "column": 5
+                      }
+                    }
+                  ]
+                }
+              ],
+              "triggerLabels": [],
+              "blockLabels": []
+            },
+            {
+              "id": "src/security.ts#class@14:1",
+              "type": "class",
+              "label": "Checks that a trainer is signed in",
+              "description": "When a client sends `POST /api/pokemon`, Nest calls this guard after `ApiKeyGuard`, because [`@UseGuards(TrainerGuard)` decorates `add()`](code:src/pokemon/pokemon.controller.ts#L20).",
+              "codeBlockIds": [
+                "src/security.ts#class@14:1",
+                "src/security.ts#method@16:3"
+              ],
+              "diffCodeBlockIds": [
+                "src/security.ts#class@14:1",
+                "src/security.ts#method@16:3"
+              ],
+              "children": [
+                {
+                  "id": "src/security.ts#method@16:3",
+                  "type": "method",
+                  "label": "Throws ForbiddenException for a request with no trainer",
+                  "description": "When a client sends `POST /api/pokemon`, Nest calls this method of `TrainerGuard` before `add()`.",
+                  "codeBlockIds": [
+                    "src/security.ts#method@16:3",
+                    "src/security.ts#root-argument-value@16:15",
+                    "src/security.ts#variable@17:5",
+                    "src/security.ts#root-argument-value@17:21",
+                    "src/security.ts#condition@18:5",
+                    "src/security.ts#throw@18:52"
+                  ],
+                  "diffCodeBlockIds": [
+                    "src/security.ts#method@16:3",
+                    "src/security.ts#root-argument-value@16:15",
+                    "src/security.ts#variable@17:5",
+                    "src/security.ts#root-argument-value@17:21",
+                    "src/security.ts#condition@18:5",
+                    "src/security.ts#throw@18:52"
+                  ],
+                  "children": [],
+                  "triggerLabels": [],
+                  "blockLabels": [
+                    {
+                      "label": "Throws a ForbiddenException when the request names no trainer",
+                      "codeBlockId": "src/security.ts#throw@18:52"
+                    },
+                    {
+                      "label": "Returns true to let the request through",
+                      "codeBlockId": "src/security.ts#method@16:3",
+                      "at": {
+                        "line": 19,
+                        "column": 5
+                      }
+                    }
+                  ]
+                }
+              ],
+              "triggerLabels": [],
+              "blockLabels": []
+            },
+            {
+              "id": "src/pokemon/pokemon.controller.ts#route@/api/pokemon",
+              "type": "route",
+              "label": "Lists the Pokemon of the party and adds one",
+              "description": "When a client sends `GET` or `POST /api/pokemon`, Nest matches this path, because [`@Controller(\"pokemon\")`](code:src/pokemon/pokemon.controller.ts#L9) and [`app.setGlobalPrefix(\"api\")`](code:src/main.ts#L8) put `/api/pokemon` before both methods. A `GET` runs [`readAll()`](code:src/pokemon/pokemon.controller.ts#L14-17), and a `POST` runs [`add()`](code:src/pokemon/pokemon.controller.ts#L19-23).",
+              "codeBlockIds": [
+                "src/pokemon/pokemon.controller.ts#method@14:3"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [
+                {
+                  "id": "src/pokemon/pokemon.controller.ts#method@14:3",
+                  "type": "method",
+                  "label": "Sends every Pokemon of the party",
+                  "description": "When a client sends `GET /api/pokemon`, Nest calls this method after `ApiKeyGuard` returns `true`.",
+                  "codeBlockIds": [
+                    "src/pokemon/pokemon.controller.ts#method@14:3"
+                  ],
+                  "diffCodeBlockIds": [
+                    "src/pokemon/pokemon.controller.ts#method@14:3"
+                  ],
+                  "children": [],
+                  "triggerLabels": [],
+                  "blockLabels": [
+                    {
+                      "label": "Returns the view of every Pokemon",
+                      "codeBlockId": "src/pokemon/pokemon.controller.ts#method@14:3",
+                      "at": {
+                        "line": 16,
+                        "column": 5
+                      }
+                    },
+                    {
+                      "label": "Calls this.pokemon.list to read every Pokemon of the party",
+                      "codeBlockId": "src/pokemon/pokemon.controller.ts#method@14:3",
+                      "at": {
+                        "line": 16,
+                        "column": 12
+                      }
+                    },
+                    {
+                      "label": "Calls toView to keep the id, name and level of each Pokemon",
+                      "codeBlockId": "src/pokemon/pokemon.controller.ts#method@14:3",
+                      "at": {
+                        "line": 16,
+                        "column": 36
+                      }
+                    }
+                  ]
+                },
+                {
+                  "id": "src/pokemon/pokemon.controller.ts#method@19:3",
+                  "type": "method",
+                  "label": "Adds the Pokemon of the body for the signed-in trainer",
+                  "description": "When a client sends `POST /api/pokemon`, Nest calls this method after `ApiKeyGuard` and `TrainerGuard` return `true`, with the body as a [`CreatePokemonDto`](code:src/pokemon/pokemon.dto.ts#CreatePokemonDto).",
+                  "codeBlockIds": [
+                    "src/pokemon/pokemon.controller.ts#method@19:3",
+                    "src/pokemon/pokemon.controller.ts#effect@20:4",
+                    "src/pokemon/pokemon.controller.ts#effect-callback@20:14",
+                    "src/pokemon/pokemon.controller.ts#root-argument-value@21:7",
+                    "src/pokemon/pokemon.controller.ts#root-argument-value@21:40"
+                  ],
+                  "diffCodeBlockIds": [
+                    "src/pokemon/pokemon.controller.ts#method@19:3",
+                    "src/pokemon/pokemon.controller.ts#effect@20:4",
+                    "src/pokemon/pokemon.controller.ts#effect-callback@20:14",
+                    "src/pokemon/pokemon.controller.ts#root-argument-value@21:7",
+                    "src/pokemon/pokemon.controller.ts#root-argument-value@21:40"
+                  ],
+                  "children": [],
+                  "triggerLabels": [],
+                  "blockLabels": [
+                    {
+                      "label": "Returns the view of the new Pokemon",
+                      "codeBlockId": "src/pokemon/pokemon.controller.ts#method@19:3",
+                      "at": {
+                        "line": 22,
+                        "column": 5
+                      }
+                    },
+                    {
+                      "label": "Calls toView to keep the id, name and level of the new Pokemon",
+                      "codeBlockId": "src/pokemon/pokemon.controller.ts#method@19:3",
+                      "at": {
+                        "line": 22,
+                        "column": 12
+                      }
+                    },
+                    {
+                      "label": "Calls this.pokemon.create to add the Pokemon for the trainer",
+                      "codeBlockId": "src/pokemon/pokemon.controller.ts#method@19:3",
+                      "at": {
+                        "line": 22,
+                        "column": 19
+                      }
+                    }
+                  ]
+                }
+              ],
+              "triggerLabels": [],
+              "blockLabels": []
+            },
+            {
+              "id": "src/pokemon/pokemon.controller.ts#route@/api/pokemon/:pokemonId",
+              "type": "route",
+              "label": "Sends one Pokemon of the party",
+              "description": "When a client sends `GET /api/pokemon/:pokemonId`, Nest matches this path, because [`@Get(\":pokemonId\")`](code:src/pokemon/pokemon.controller.ts#L25) is below `/api/pokemon`. It runs [`read()`](code:src/pokemon/pokemon.controller.ts#L25-28).",
+              "codeBlockIds": [
+                "src/pokemon/pokemon.controller.ts#method@25:3"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [
+                {
+                  "id": "src/pokemon/pokemon.controller.ts#method@25:3",
+                  "type": "method",
+                  "label": "Sends the Pokemon of the id in the path",
+                  "description": "When a client sends `GET /api/pokemon/:pokemonId`, Nest calls this method after `ApiKeyGuard` returns `true`, with the id parsed by `ParseIntPipe`.",
+                  "codeBlockIds": [
+                    "src/pokemon/pokemon.controller.ts#method@25:3"
+                  ],
+                  "diffCodeBlockIds": [
+                    "src/pokemon/pokemon.controller.ts#method@25:3"
+                  ],
+                  "children": [],
+                  "triggerLabels": [],
+                  "blockLabels": [
+                    {
+                      "label": "Returns the view of the Pokemon",
+                      "codeBlockId": "src/pokemon/pokemon.controller.ts#method@25:3",
+                      "at": {
+                        "line": 27,
+                        "column": 5
+                      }
+                    },
+                    {
+                      "label": "Calls toView to keep the id, name and level of the Pokemon",
+                      "codeBlockId": "src/pokemon/pokemon.controller.ts#method@25:3",
+                      "at": {
+                        "line": 27,
+                        "column": 12
+                      }
+                    },
+                    {
+                      "label": "Calls this.pokemon.find to look up the Pokemon of the id",
+                      "codeBlockId": "src/pokemon/pokemon.controller.ts#method@25:3",
+                      "at": {
+                        "line": 27,
+                        "column": 19
+                      }
+                    }
+                  ]
+                }
+              ],
+              "triggerLabels": [],
+              "blockLabels": []
+            }
+          ],
+          "traceNodeEdges": [
+            {
+              "id": "src/app.module.ts#class@5:1 -> src/pokemon/pokemon.module.ts#class@5:1",
+              "from": "src/app.module.ts#class@5:1",
+              "to": "src/pokemon/pokemon.module.ts#class@5:1"
+            },
+            {
+              "id": "src/pokemon/pokemon.module.ts#class@5:1 -> src/pokemon/pokemon.controller.ts#class@9:1",
+              "from": "src/pokemon/pokemon.module.ts#class@5:1",
+              "to": "src/pokemon/pokemon.controller.ts#class@9:1"
+            },
+            {
+              "id": "src/pokemon/pokemon.controller.ts#method@14:3 -> src/pokemon/pokemon.controller.ts#function@7:1",
+              "from": "src/pokemon/pokemon.controller.ts#method@14:3",
+              "to": "src/pokemon/pokemon.controller.ts#function@7:1"
+            },
+            {
+              "id": "src/pokemon/pokemon.controller.ts#method@19:3 -> src/pokemon/pokemon.controller.ts#function@7:1",
+              "from": "src/pokemon/pokemon.controller.ts#method@19:3",
+              "to": "src/pokemon/pokemon.controller.ts#function@7:1"
+            },
+            {
+              "id": "src/pokemon/pokemon.controller.ts#method@25:3 -> src/pokemon/pokemon.controller.ts#function@7:1",
+              "from": "src/pokemon/pokemon.controller.ts#method@25:3",
+              "to": "src/pokemon/pokemon.controller.ts#function@7:1"
+            },
+            {
+              "id": "src/security.ts#class@5:1 -> src/security.ts#method@7:3",
+              "from": "src/security.ts#class@5:1",
+              "to": "src/security.ts#method@7:3"
+            },
+            {
+              "id": "src/security.ts#class@14:1 -> src/security.ts#method@16:3",
+              "from": "src/security.ts#class@14:1",
+              "to": "src/security.ts#method@16:3"
+            },
+            {
+              "id": "src/security.ts#class@14:1 -> src/pokemon/pokemon.controller.ts#method@19:3",
+              "from": "src/security.ts#class@14:1",
+              "to": "src/pokemon/pokemon.controller.ts#method@19:3"
+            },
+            {
+              "id": "src/security.ts#class@5:1 -> src/pokemon/pokemon.controller.ts#route@/api/pokemon",
+              "from": "src/security.ts#class@5:1",
+              "to": "src/pokemon/pokemon.controller.ts#route@/api/pokemon"
+            },
+            {
+              "id": "src/security.ts#class@5:1 -> src/pokemon/pokemon.controller.ts#route@/api/pokemon/:pokemonId",
+              "from": "src/security.ts#class@5:1",
+              "to": "src/pokemon/pokemon.controller.ts#route@/api/pokemon/:pokemonId"
+            },
+            {
+              "id": "src/pokemon/pokemon.controller.ts#class@9:1 -> src/pokemon/pokemon.controller.ts#route@/api/pokemon",
+              "from": "src/pokemon/pokemon.controller.ts#class@9:1",
+              "to": "src/pokemon/pokemon.controller.ts#route@/api/pokemon"
+            },
+            {
+              "id": "src/pokemon/pokemon.controller.ts#class@9:1 -> src/pokemon/pokemon.controller.ts#route@/api/pokemon/:pokemonId",
+              "from": "src/pokemon/pokemon.controller.ts#class@9:1",
+              "to": "src/pokemon/pokemon.controller.ts#route@/api/pokemon/:pokemonId"
+            }
+          ]
+        },
+        "codeWalkthrough": {
+          "files": [
+            {
+              "path": "src/pokemon/pokemon.controller.ts",
+              "waypoints": [
+                {
+                  "id": "w1",
+                  "declaration": "toView",
+                  "range": {
+                    "lineStart": 7,
+                    "lineEnd": 7
+                  },
+                  "codeBlockIds": [
+                    "src/pokemon/pokemon.controller.ts#function@7:1",
+                    "src/pokemon/pokemon.controller.ts#root-argument-value@7:19",
+                    "src/pokemon/pokemon.controller.ts#root-argument-value@7:23",
+                    "src/pokemon/pokemon.controller.ts#root-argument-value@7:29",
+                    "src/pokemon/pokemon.controller.ts#property@7:53",
+                    "src/pokemon/pokemon.controller.ts#property@7:57",
+                    "src/pokemon/pokemon.controller.ts#property@7:63"
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "w2",
+                  "declaration": "PokemonController.readAll",
+                  "range": {
+                    "lineStart": 14,
+                    "lineEnd": 17
+                  },
+                  "codeBlockIds": [
+                    "src/pokemon/pokemon.controller.ts#method@14:3"
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "w3",
+                  "declaration": "PokemonController.add",
+                  "range": {
+                    "lineStart": 19,
+                    "lineEnd": 23
+                  },
+                  "codeBlockIds": [
+                    "src/pokemon/pokemon.controller.ts#method@19:3",
+                    "src/pokemon/pokemon.controller.ts#effect@20:4",
+                    "src/pokemon/pokemon.controller.ts#effect-callback@20:14",
+                    "src/pokemon/pokemon.controller.ts#root-argument-value@21:7",
+                    "src/pokemon/pokemon.controller.ts#root-argument-value@21:40"
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "w4",
+                  "declaration": "PokemonController.read",
+                  "range": {
+                    "lineStart": 25,
+                    "lineEnd": 28
+                  },
+                  "codeBlockIds": [
+                    "src/pokemon/pokemon.controller.ts#method@25:3"
+                  ],
+                  "children": []
+                }
+              ]
+            },
+            {
+              "path": "src/security.ts",
+              "waypoints": [
+                {
+                  "id": "w5",
+                  "declaration": "ApiKeyGuard",
+                  "range": {
+                    "lineStart": 5,
+                    "lineEnd": 12
+                  },
+                  "codeBlockIds": [
+                    "src/security.ts#class@5:1"
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "w6",
+                  "declaration": "ApiKeyGuard.canActivate",
+                  "range": {
+                    "lineStart": 7,
+                    "lineEnd": 11
+                  },
+                  "codeBlockIds": [
+                    "src/security.ts#method@7:3",
+                    "src/security.ts#condition@9:5",
+                    "src/security.ts#throw@9:50"
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "w7",
+                  "declaration": "TrainerGuard",
+                  "range": {
+                    "lineStart": 14,
+                    "lineEnd": 21
+                  },
+                  "codeBlockIds": [
+                    "src/security.ts#class@14:1"
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "w8",
+                  "declaration": "TrainerGuard.canActivate",
+                  "range": {
+                    "lineStart": 16,
+                    "lineEnd": 20
+                  },
+                  "codeBlockIds": [
+                    "src/security.ts#method@16:3",
+                    "src/security.ts#root-argument-value@16:15",
+                    "src/security.ts#variable@17:5",
+                    "src/security.ts#root-argument-value@17:21",
+                    "src/security.ts#condition@18:5",
+                    "src/security.ts#throw@18:52"
+                  ],
+                  "children": []
+                }
+              ]
+            }
+          ]
+        },
+        "codeReferences": [
+          {
+            "path": "src/app.module.ts",
+            "references": [
+              {
+                "line": 5,
+                "startColumn": 1,
+                "endColumn": 7,
+                "path": "src/app.module.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "@nestjs/common",
+                  "name": "Module"
+                }
+              },
+              {
+                "line": 6,
+                "startColumn": 12,
+                "endColumn": 24,
+                "path": "src/app.module.ts",
+                "lines": [
+                  2,
+                  2
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 6,
+                "startColumn": 26,
+                "endColumn": 39,
+                "path": "src/pokemon/pokemon.module.ts",
+                "lines": [
+                  5,
+                  9
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 8,
+                "startColumn": 13,
+                "endColumn": 22,
+                "lines": [
+                  5,
+                  8
+                ],
+                "usages": [
+                  {
+                    "line": 7,
+                    "startColumn": 39,
+                    "endColumn": 48,
+                    "path": "src/main.ts",
+                    "text": "  const app = await NestFactory.create(AppModule)"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/pokemon/pokemon.controller.ts",
+            "references": [
+              {
+                "line": 7,
+                "startColumn": 37,
+                "endColumn": 44,
+                "path": "src/pokemon/pokemon.ts",
+                "lines": [
+                  1,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 1,
+                "endColumn": 11,
+                "path": "src/pokemon/pokemon.controller.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "@nestjs/common",
+                  "name": "Controller"
+                }
+              },
+              {
+                "line": 10,
+                "startColumn": 1,
+                "endColumn": 10,
+                "path": "src/pokemon/pokemon.controller.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "@nestjs/common",
+                  "name": "UseGuards"
+                }
+              },
+              {
+                "line": 10,
+                "startColumn": 11,
+                "endColumn": 22,
+                "path": "src/security.ts",
+                "lines": [
+                  5,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 40,
+                "endColumn": 54,
+                "path": "src/pokemon/pokemon.service.ts",
+                "lines": [
+                  5,
+                  27
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 14,
+                "startColumn": 3,
+                "endColumn": 6,
+                "path": "src/pokemon/pokemon.controller.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "@nestjs/common",
+                  "name": "Get"
+                }
+              },
+              {
+                "line": 16,
+                "startColumn": 35,
+                "endColumn": 41,
+                "path": "src/pokemon/pokemon.controller.ts",
+                "lines": [
+                  7,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 19,
+                "startColumn": 3,
+                "endColumn": 7,
+                "path": "src/pokemon/pokemon.controller.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "@nestjs/common",
+                  "name": "Post"
+                }
+              },
+              {
+                "line": 20,
+                "startColumn": 3,
+                "endColumn": 12,
+                "path": "src/pokemon/pokemon.controller.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "@nestjs/common",
+                  "name": "UseGuards"
+                }
+              },
+              {
+                "line": 20,
+                "startColumn": 13,
+                "endColumn": 25,
+                "path": "src/security.ts",
+                "lines": [
+                  14,
+                  21
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 21,
+                "startColumn": 7,
+                "endColumn": 11,
+                "path": "src/pokemon/pokemon.controller.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "@nestjs/common",
+                  "name": "Body"
+                }
+              },
+              {
+                "line": 21,
+                "startColumn": 21,
+                "endColumn": 37,
+                "path": "src/pokemon/pokemon.dto.ts",
+                "lines": [
+                  3,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 21,
+                "startColumn": 40,
+                "endColumn": 47,
+                "path": "src/pokemon/pokemon.controller.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "@nestjs/common",
+                  "name": "Headers"
+                }
+              },
+              {
+                "line": 22,
+                "startColumn": 11,
+                "endColumn": 17,
+                "path": "src/pokemon/pokemon.controller.ts",
+                "lines": [
+                  7,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 22,
+                "startColumn": 38,
+                "endColumn": 43,
+                "path": "src/pokemon/pokemon.controller.ts",
+                "lines": [
+                  21,
+                  21
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 22,
+                "startColumn": 45,
+                "endColumn": 56,
+                "path": "src/pokemon/pokemon.controller.ts",
+                "lines": [
+                  21,
+                  21
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 25,
+                "startColumn": 3,
+                "endColumn": 6,
+                "path": "src/pokemon/pokemon.controller.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "@nestjs/common",
+                  "name": "Get"
+                }
+              },
+              {
+                "line": 26,
+                "startColumn": 8,
+                "endColumn": 13,
+                "path": "src/pokemon/pokemon.controller.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "@nestjs/common",
+                  "name": "Param"
+                }
+              },
+              {
+                "line": 26,
+                "startColumn": 27,
+                "endColumn": 39,
+                "path": "src/pokemon/pokemon.controller.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "@nestjs/common",
+                  "name": "ParseIntPipe"
+                }
+              },
+              {
+                "line": 27,
+                "startColumn": 11,
+                "endColumn": 17,
+                "path": "src/pokemon/pokemon.controller.ts",
+                "lines": [
+                  7,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 27,
+                "startColumn": 36,
+                "endColumn": 45,
+                "path": "src/pokemon/pokemon.controller.ts",
+                "lines": [
+                  26,
+                  26
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 11,
+                "startColumn": 13,
+                "endColumn": 30,
+                "lines": [
+                  9,
+                  29
+                ],
+                "usages": [
+                  {
+                    "line": 6,
+                    "startColumn": 16,
+                    "endColumn": 33,
+                    "path": "src/pokemon/pokemon.module.ts",
+                    "text": "  controllers: [PokemonController],"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/pokemon/pokemon.module.ts",
+            "references": [
+              {
+                "line": 5,
+                "startColumn": 1,
+                "endColumn": 7,
+                "path": "src/pokemon/pokemon.module.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "@nestjs/common",
+                  "name": "Module"
+                }
+              },
+              {
+                "line": 6,
+                "startColumn": 16,
+                "endColumn": 33,
+                "path": "src/pokemon/pokemon.controller.ts",
+                "lines": [
+                  9,
+                  29
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 7,
+                "startColumn": 14,
+                "endColumn": 28,
+                "path": "src/pokemon/pokemon.service.ts",
+                "lines": [
+                  5,
+                  27
+                ],
+                "isLibrary": false
+              }
+            ],
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 9,
+                "startColumn": 13,
+                "endColumn": 26,
+                "lines": [
+                  5,
+                  9
+                ],
+                "usages": [
+                  {
+                    "line": 6,
+                    "startColumn": 26,
+                    "endColumn": 39,
+                    "path": "src/app.module.ts",
+                    "text": "  imports: [HealthModule, PokemonModule],"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "path": "src/security.ts",
+            "references": [
+              {
+                "line": 5,
+                "startColumn": 1,
+                "endColumn": 11,
+                "path": "src/security.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "@nestjs/common",
+                  "name": "Injectable"
+                }
+              },
+              {
+                "line": 6,
+                "startColumn": 36,
+                "endColumn": 47,
+                "path": "src/security.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "@nestjs/common",
+                  "name": "CanActivate"
+                }
+              },
+              {
+                "line": 7,
+                "startColumn": 23,
+                "endColumn": 39,
+                "path": "src/security.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "@nestjs/common",
+                  "name": "ExecutionContext"
+                }
+              },
+              {
+                "line": 8,
+                "startColumn": 20,
+                "endColumn": 27,
+                "path": "src/security.ts",
+                "lines": [
+                  7,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 8,
+                "startColumn": 54,
+                "endColumn": 61,
+                "path": "src/security.ts",
+                "lines": [
+                  2,
+                  2
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "express",
+                  "name": "Request"
+                }
+              },
+              {
+                "line": 9,
+                "startColumn": 8,
+                "endColumn": 15,
+                "path": "src/security.ts",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 40,
+                "endColumn": 47,
+                "path": "src/settings.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 59,
+                "endColumn": 80,
+                "path": "src/security.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "@nestjs/common",
+                  "name": "UnauthorizedException"
+                }
+              },
+              {
+                "line": 14,
+                "startColumn": 1,
+                "endColumn": 11,
+                "path": "src/security.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "@nestjs/common",
+                  "name": "Injectable"
+                }
+              },
+              {
+                "line": 15,
+                "startColumn": 37,
+                "endColumn": 48,
+                "path": "src/security.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "@nestjs/common",
+                  "name": "CanActivate"
+                }
+              },
+              {
+                "line": 16,
+                "startColumn": 23,
+                "endColumn": 39,
+                "path": "src/security.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "@nestjs/common",
+                  "name": "ExecutionContext"
+                }
+              },
+              {
+                "line": 17,
+                "startColumn": 20,
+                "endColumn": 27,
+                "path": "src/security.ts",
+                "lines": [
+                  16,
+                  16
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 17,
+                "startColumn": 54,
+                "endColumn": 61,
+                "path": "src/security.ts",
+                "lines": [
+                  2,
+                  2
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "express",
+                  "name": "Request"
+                }
+              },
+              {
+                "line": 18,
+                "startColumn": 8,
+                "endColumn": 15,
+                "path": "src/security.ts",
+                "lines": [
+                  17,
+                  17
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 18,
+                "startColumn": 61,
+                "endColumn": 79,
+                "path": "src/security.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "@nestjs/common",
+                  "name": "ForbiddenException"
+                }
+              }
+            ],
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 6,
+                "startColumn": 13,
+                "endColumn": 24,
+                "lines": [
+                  5,
+                  12
+                ],
+                "usages": [
+                  {
+                    "line": 10,
+                    "startColumn": 11,
+                    "endColumn": 22,
+                    "path": "src/pokemon/pokemon.controller.ts",
+                    "text": "@UseGuards(ApiKeyGuard)"
+                  }
+                ]
+              },
+              {
+                "line": 15,
+                "startColumn": 13,
+                "endColumn": 25,
+                "lines": [
+                  14,
+                  21
+                ],
+                "usages": [
+                  {
+                    "line": 20,
+                    "startColumn": 13,
+                    "endColumn": 25,
+                    "path": "src/pokemon/pokemon.controller.ts",
+                    "text": "  @UseGuards(TrainerGuard)"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

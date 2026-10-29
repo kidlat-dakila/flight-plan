@@ -191,16 +191,24 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Prints the errors and exits with code 1 when validation fails",
-                  "codeBlockId": "src/pokedex/cli.py#try-catch@11:5"
+                  "label": "Calls read_trainer to read the trainer from the file of the first argument",
+                  "codeBlockId": "src/pokedex/cli.py#external-value@12:9",
+                  "at": {
+                    "line": 12,
+                    "column": 19
+                  }
                 },
                 {
-                  "label": "Offers the first Pokemon of the team for the wanted Pokemon",
-                  "codeBlockId": "src/pokedex/cli.py#external-value@13:9"
+                  "label": "Calls build_offer to offer the first Pokemon for the one of the second argument",
+                  "codeBlockId": "src/pokedex/cli.py#external-value@13:9",
+                  "at": {
+                    "line": 13,
+                    "column": 17
+                  }
                 },
                 {
-                  "label": "Prints who offers which Pokemon for which",
-                  "codeBlockId": "src/pokedex/cli.py#call@17:5"
+                  "label": "Raises a SystemExit when the trainer file or the offer is not valid",
+                  "codeBlockId": "src/pokedex/cli.py#throw@16:9"
                 }
               ]
             },
@@ -229,12 +237,20 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": "Validates the offered Pokemon as a `PokemonEntry`",
-                  "codeBlockId": "src/pokedex/importer.py#validation@11:48"
+                  "label": "Returns the trade offer with both Pokemon validated",
+                  "codeBlockId": "src/pokedex/importer.py#function@10:1",
+                  "at": {
+                    "line": 11,
+                    "column": 5
+                  }
                 },
                 {
-                  "label": "Validates the wanted Pokemon as a `PokemonEntry`",
-                  "codeBlockId": "src/pokedex/importer.py#validation@11:93"
+                  "label": "Calls TradeOffer to make the offer of the trainer",
+                  "codeBlockId": "src/pokedex/importer.py#function@10:1",
+                  "at": {
+                    "line": 11,
+                    "column": 12
+                  }
                 }
               ]
             },
@@ -277,7 +293,16 @@
                   ],
                   "children": [],
                   "triggerLabels": [],
-                  "blockLabels": []
+                  "blockLabels": [
+                    {
+                      "label": "Returns the trainer name without the spaces around it",
+                      "codeBlockId": "src/pokedex/schemas.py#method@39:5",
+                      "at": {
+                        "line": 42,
+                        "column": 9
+                      }
+                    }
+                  ]
                 },
                 {
                   "id": "src/pokedex/schemas.py#method@44:5",
@@ -298,8 +323,16 @@
                   "triggerLabels": [],
                   "blockLabels": [
                     {
-                      "label": "Checks whether the levels differ by more than 10",
-                      "codeBlockId": "src/pokedex/schemas.py#condition@46:9"
+                      "label": "Raises a ValueError when the levels differ by more than 10",
+                      "codeBlockId": "src/pokedex/schemas.py#throw@47:13"
+                    },
+                    {
+                      "label": "Returns the trade offer as it is",
+                      "codeBlockId": "src/pokedex/schemas.py#method@44:5",
+                      "at": {
+                        "line": 48,
+                        "column": 9
+                      }
                     }
                   ]
                 }

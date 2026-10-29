@@ -1,7 +1,7 @@
-import { listPlaygrounds, listTraceFixtures, PLAYGROUNDS_FOLDER, readPlayground, readTraceFixture, TRACE_FIXTURE_FOLDERS, type TraceFixtureFolders } from "@/fixtures"
+import { listPlaygrounds, listTraceFixtures, PLAYGROUNDS_FOLDER, readPlayground, readTraceFixture, TRACE_FIXTURE_FOLDERS, type PlaygroundCase, type TraceFixtureFolders } from "@/fixtures"
 import { buildTracePage, createCodeHighlighter, DEFAULT_VIEW_PREFERENCES, highlightReview, type CodeHighlighter, type TracePage } from "@flightplan/codegraph"
 import type { ReviewArtifact } from "@flightplan/configurations"
-import type { PlaygroundPage, TraceFixtureLoader, TraceFixturePage } from "./trace-fixture-api"
+import type { PlaygroundCasePage, PlaygroundPage, TraceFixtureLoader, TraceFixturePage } from "./trace-fixture-api"
 
 export interface LabFolders {
   readonly fixtures: TraceFixtureFolders
@@ -33,8 +33,15 @@ const entryPageOf = async <Entry extends { readonly id: string }>(
 const readTraceFixturePage = async (id: string, highlightCode: CodeHighlighter, folders: TraceFixtureFolders): Promise<TraceFixturePage | null> =>
   await entryPageOf(id, await Promise.all([listTraceFixtures(folders), readTraceFixture(id, folders)]), highlightCode)
 
-const readPlaygroundPage = async (id: string, highlightCode: CodeHighlighter, playgroundsPath: string): Promise<PlaygroundPage | null> =>
-  await entryPageOf(id, await Promise.all([listPlaygrounds(playgroundsPath), readPlayground(id, playgroundsPath)]), highlightCode)
+const casePageOf = async ({ artifact, ...playgroundCase }: PlaygroundCase, highlightCode: CodeHighlighter): Promise<PlaygroundCasePage> =>
+  ({ ...playgroundCase, page: await tracePageOf(artifact, highlightCode) })
+
+const readPlaygroundPage = async (id: string, highlightCode: CodeHighlighter, playgroundsPath: string): Promise<PlaygroundPage | null> => {
+  const [entries, cases] = await Promise.all([listPlaygrounds(playgroundsPath), readPlayground(id, playgroundsPath)])
+  const entry = entries.find((candidate) => candidate.id === id)
+  if (entry === undefined || cases === null) return null
+  return { entry, cases: await Promise.all(cases.map(async (playgroundCase) => await casePageOf(playgroundCase, highlightCode))) }
+}
 
 export const createTraceFixtureLoader = (
   highlightCode: CodeHighlighter = createCodeHighlighter(),

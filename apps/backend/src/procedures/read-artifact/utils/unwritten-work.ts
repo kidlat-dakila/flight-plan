@@ -1,6 +1,7 @@
 import { contextIdOf, listTraceNodes, listReachedPaths, listUnassessedNodes } from "@flightplan/codegraph"
-import type { Blast, TraceNode, ReviewArtifact, Segment } from "@flightplan/configurations"
+import type { Blast, BlockLabel, TraceNode, ReviewArtifact, Segment, SourceFile } from "@flightplan/configurations"
 import { waypointsOf } from "./artifact-walk"
+import { blockLabelRowsOf, type BlockLabelRow, type BlockLabelRowKind } from "./block-label-rows"
 import { isDescriptionOwed } from "./context-code-blocks"
 
 export const WORK_KINDS = [
@@ -105,16 +106,57 @@ const triggerLabelWork = (segment: Segment, node: TraceNode): Work[] =>
       message: `The trigger \`${trigger.codeBlock.id}\` of \`${node.id}\` has no label. Say what the user does, or what is loaded.`,
     } as const))
 
-const blockLabelWork = (segment: Segment, node: TraceNode): Work[] =>
-  node.blockLabels
+const namedOf = (name: string | null): string => (name === null ? "" : ` \`${name}\``)
+
+const placeOf = ({ codeBlock, at }: BlockLabel): string =>
+  at === undefined ? `block \`${codeBlock.id}\`` : `block \`${codeBlock.id}\`, at line ${String(at.line)}, column ${String(at.column)}`
+
+type HeldRowKind = Exclude<BlockLabelRowKind, "call" | "return" | "throw" | "block">
+
+interface HeldRowAsk {
+  readonly subject: string
+  readonly ask: string
+}
+
+const RENDER_ROW = "render row"
+const COMPONENT: TraceNode["type"] = "component"
+
+const HELD_ROW_ASKS: Readonly<Record<HeldRowKind, HeldRowAsk>> = {
+  condition: { subject: RENDER_ROW, ask: "Say what it renders and when, as \"Renders … when …\"." },
+  loop: { subject: RENDER_ROW, ask: "Say what it renders for each item, as \"Renders … for each …\"." },
+  component: { subject: RENDER_ROW, ask: "Say which component it renders, and when or for each what, as \"Renders `<TeamSlot />` for each …\"." },
+  value: { subject: RENDER_ROW, ask: "Say what it renders and which code drew it, as \"Renders … that renderBadges drew\"." },
+  memo: { subject: "memo", ask: "Say what it works out, starting with a verb." },
+  effect: { subject: "effect", ask: "Say what it does, starting with a verb." },
+}
+
+const returnMessageOf = (name: string | null, place: string, node: TraceNode): string =>
+  node.type === COMPONENT
+    ? `The return${namedOf(name)} (${place}) of \`${node.id}\` has no label. Say what it renders, and when, if it is not the last return.`
+    : `The return (${place}) of \`${node.id}\` has no label. Say what it returns, and when, if it is not the only or the last return.`
+
+const unlabelledRowMessageOf = (listed: BlockLabel, { kind, name }: BlockLabelRow, node: TraceNode): string => {
+  const place = placeOf(listed)
+  if (kind === "call") return `The call${namedOf(name)} (${place}) of \`${node.id}\` has no label. Say what the call is for, and the condition it runs under when it has one.`
+  if (kind === "return") return returnMessageOf(name, place, node)
+  if (kind === "throw") return `The throw${namedOf(name)} (${place}) of \`${node.id}\` has no label. Say what it raises and when.`
+  if (kind === "block") return `The block \`${listed.codeBlock.id}\` of \`${node.id}\` has no label. Say what the block does, starting with a verb.`
+  const { subject, ask } = HELD_ROW_ASKS[kind]
+  return `The ${subject}${namedOf(name)} (${place}) of \`${node.id}\` has no label. ${ask}`
+}
+
+const blockLabelWork = (segment: Segment, node: TraceNode, sources: readonly SourceFile[]): Work[] => {
+  const rowOf = blockLabelRowsOf(node, sources)
+  return node.blockLabels
     .filter((listed) => listed.label === null)
     .map((listed) => ({
       target: "trace-node",
       id: node.id,
       segmentId: segment.id,
       needs: "block-label",
-      message: `The block \`${listed.codeBlock.id}\` of \`${node.id}\` has no label. Say what the block does, starting with a verb.`,
+      message: unlabelledRowMessageOf(listed, rowOf(listed), node),
     } as const))
+}
 
 const titleWork = (segment: Segment): Work[] =>
   isTraceDescriptionRequired(segment) && segment.traceDiagram?.title === null
@@ -138,7 +180,7 @@ const descriptionWork = (segment: Segment): Work[] =>
       }]
     : []
 
-const nodeWork = (segment: Segment): Work[] =>
+const nodeWork = (segment: Segment, sources: readonly SourceFile[]): Work[] =>
   requiredTraceNodesOf(segment).flatMap((node): Work[] => [
     ...(node.label === null
       ? [{
@@ -149,16 +191,16 @@ const nodeWork = (segment: Segment): Work[] =>
           message: `\`${node.id}\` still shows the declaration's name. A label says what the step does.`,
         } as const]
       : []),
-    ...(node.rows === undefined ? [...triggerLabelWork(segment, node), ...blockLabelWork(segment, node)] : []),
+    ...(node.rows === undefined ? [...triggerLabelWork(segment, node), ...blockLabelWork(segment, node, sources)] : []),
   ])
 
-const traceWork = (segment: Segment): Work[] => [...nodeWork(segment), ...titleWork(segment), ...descriptionWork(segment)]
+const traceWork = (segment: Segment, sources: readonly SourceFile[]): Work[] => [...nodeWork(segment, sources), ...titleWork(segment), ...descriptionWork(segment)]
 
-const segmentWork = (segment: Segment, isTitled: boolean): Work[] => [
+const segmentWork = (segment: Segment, isTitled: boolean, sources: readonly SourceFile[]): Work[] => [
   ...blastWork(segment),
   ...contextWork(segment, isTitled),
   ...waypointWork(segment),
-  ...traceWork(segment),
+  ...traceWork(segment, sources),
 ]
 
 const contextCodeBlockWork = (artifact: ReviewArtifact): Work[] =>
@@ -171,7 +213,7 @@ const contextCodeBlockWork = (artifact: ReviewArtifact): Work[] =>
   }))
 
 export const unwrittenWork = (artifact: ReviewArtifact): Work[] => [
-  ...artifact.segments.flatMap((segment) => segmentWork(segment, artifact.isSegmented)),
+  ...artifact.segments.flatMap((segment) => segmentWork(segment, artifact.isSegmented, artifact.sources)),
   ...contextCodeBlockWork(artifact),
 ]
 

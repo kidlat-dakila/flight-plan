@@ -1,4 +1,4 @@
-import { CLASSIFICATION_BY_CATEGORY, classificationOfType, classificationsAt, readOwnClassifications, sortClassifications } from "@/code-blocks/classifications"
+import { CLASSIFICATION_BY_CATEGORY, classificationOfType, classificationsAt, classifyGroup, readOwnClassifications, sortClassifications } from "@/code-blocks/classifications"
 import { LIBRARIES } from "@/code-blocks/libraries"
 import type { StoredCodeBlock, StoredCodeGroupGraph } from "@/code-blocks/stored-types"
 import type { CodeBlockClassification } from "@/code-blocks/types"
@@ -375,5 +375,78 @@ describe("the classifications a file location gives", () => {
     const group = groupOf({ "vite.config.ts": codeOf("export default defineConfig({ plugins: [] })") })
 
     expect(group.codeBlocks.every((block) => block.classifications.includes("build-and-infrastructure"))).toBe(true)
+  })
+})
+
+const DEEP_NESTING = 5000
+const TREE_FILE = "src/tree.ts"
+const NO_SIGNALS = { libraryUsesByPath: new Map(), placedByPath: new Map(), libraries: LIBRARIES }
+
+interface TreeBlock {
+  readonly id: string
+  readonly parentId: string | null
+  readonly childIds: readonly string[]
+  readonly type?: StoredCodeBlock["type"]
+  readonly isChanged?: boolean
+}
+
+const storedBlockOf = ({ id, parentId, childIds, type = "function", isChanged = false }: TreeBlock): StoredCodeBlock => ({
+  id,
+  type,
+  lineOfCodeRangeReference: [],
+  parentBlockId: parentId,
+  childrenBlockIds: childIds,
+  isRoot: parentId === null,
+  isExported: false,
+  exportedByFilePaths: [],
+  lineOfCodeDiffs: isChanged ? [rangeAt(1, 1, 1, 2)] : null,
+  diffs: [],
+  diffSourceIds: [],
+  classifications: [],
+  diffClassifications: [],
+  outerSymbols: [],
+  usedByIds: [],
+  nextBlockIds: [],
+  handedFrom: [],
+  filePath: TREE_FILE,
+  catalogue: null,
+})
+
+const chainIdAt = (depth: number): string => `chain-${String(depth)}`
+
+const chainBlockAt = (depth: number): StoredCodeBlock => {
+  const isInnermost = depth === DEEP_NESTING - 1
+  return storedBlockOf({
+    id: chainIdAt(depth),
+    parentId: depth === 0 ? null : chainIdAt(depth - 1),
+    childIds: isInnermost ? [] : [chainIdAt(depth + 1)],
+    ...(isInnermost ? { type: "data", isChanged: true } : {}),
+  })
+}
+
+describe("the classifications of nested blocks", () => {
+  it("lists every block before the blocks inside it, and a block's children in their order", () => {
+    const tree = [
+      storedBlockOf({ id: "top", parentId: null, childIds: ["first", "second"] }),
+      storedBlockOf({ id: "second", parentId: "top", childIds: [], type: "state" }),
+      storedBlockOf({ id: "first", parentId: "top", childIds: ["inner"] }),
+      storedBlockOf({ id: "inner", parentId: "first", childIds: [], type: "data", isChanged: true }),
+    ]
+    const { classifiedById } = classifyGroup(tree, NO_SIGNALS)
+
+    expect([...classifiedById]).toStrictEqual([
+      ["top", { classifications: ["database-read-write", "ui-state"], diffClassifications: ["database-read-write"] }],
+      ["first", { classifications: ["database-read-write"], diffClassifications: ["database-read-write"] }],
+      ["inner", { classifications: ["database-read-write"], diffClassifications: ["database-read-write"] }],
+      ["second", { classifications: ["ui-state"], diffClassifications: [] }],
+    ])
+  })
+
+  it("carries what the innermost block earns up to every block around it, however deep", () => {
+    const chain = Array.from({ length: DEEP_NESTING }, (_unused, depth) => chainBlockAt(depth))
+    const { classifiedById } = classifyGroup(chain, NO_SIGNALS)
+
+    expect([...classifiedById.keys()]).toStrictEqual(chain.map((block) => block.id))
+    expect([...classifiedById.values()]).toStrictEqual(chain.map(() => ({ classifications: ["database-read-write"], diffClassifications: ["database-read-write"] })))
   })
 })

@@ -1,0 +1,6 @@
+{
+  "title": "State card in Nano Stores",
+  "packages": ["react", "react-dom", "nanostores", "@nanostores/react"],
+  "language": "typescript",
+  "mainFramework": "react"
+}

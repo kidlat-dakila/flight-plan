@@ -999,6 +999,12 @@
         ],
         "isRoot": false,
         "isExported": false,
+        "returnsAt": [
+          {
+            "line": 11,
+            "column": 9
+          }
+        ],
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": [
           {
@@ -3101,6 +3107,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 8,
+            "column": 5
+          }
+        ],
         "exportedByFilePaths": [
           "src/pokedex/pokemon/queries.py",
           "src/pokedex/reports.py"
@@ -3636,6 +3648,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 12,
+            "column": 5
+          }
+        ],
         "exportedByFilePaths": [
           "src/pokedex/cli.py",
           "src/pokedex/reports.py"
@@ -5505,6 +5523,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 9,
+            "column": 5
+          }
+        ],
         "exportedByFilePaths": [
           "src/pokedex/trades/queries.py",
           "src/pokedex/trades/service.py"
@@ -6175,6 +6199,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 16,
+            "column": 5
+          }
+        ],
         "exportedByFilePaths": [
           "src/pokedex/trades/queries.py",
           "src/pokedex/trades/service.py"
@@ -7541,6 +7571,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 14,
+            "column": 9
+          }
+        ],
         "exportedByFilePaths": [
           "src/pokedex/cli.py",
           "src/pokedex/trades/service.py"
@@ -8576,6 +8612,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 8,
+            "column": 5
+          }
+        ],
         "exportedByFilePaths": [
           "src/pokedex/trainers/queries.py"
         ],
@@ -8888,6 +8930,12 @@
         ],
         "isRoot": true,
         "isExported": true,
+        "returnsAt": [
+          {
+            "line": 12,
+            "column": 5
+          }
+        ],
         "exportedByFilePaths": [
           "src/pokedex/reports.py",
           "src/pokedex/trades/service.py",

@@ -1,4 +1,4 @@
-import { layoutBlast, type PlacedBlastNode } from "@/blast/layout"
+import { blastColumnsOf, layoutBlast, type PlacedBlastNode } from "@/blast/layout"
 import type { Blast } from "@flightplan/configurations"
 
 const LABEL_BY_PATH = new Map([
@@ -22,6 +22,23 @@ const blastDiagram: Blast = {
     { importer: "src/checkout.ts", imported: "src/pricing.ts" },
     { importer: "src/ui.ts", imported: "src/pricing.ts" },
   ],
+}
+
+const LONG_CHAIN_LENGTH = 5_000
+const LOOP_START = 2_000
+const LOOP_END = 3_000
+
+const chainPathOf = (position: number): string => `src/chain-${String(position)}.ts`
+
+const longChainOf = (extraEdges: Blast["edges"]): Blast => {
+  const positions = Array.from({ length: LONG_CHAIN_LENGTH }, (_position, position) => position)
+  return {
+    nodes: positions.map((position) => ({ path: chainPathOf(position), diffType: null, impactType: null, impactReason: null, isRequired: false })),
+    edges: [
+      ...positions.slice(1).map((position) => ({ importer: chainPathOf(position - 1), imported: chainPathOf(position) })),
+      ...extraEdges,
+    ],
+  }
 }
 
 const placedAt = (nodes: readonly PlacedBlastNode[], path: string): PlacedBlastNode => {
@@ -129,6 +146,19 @@ describe("layoutBlast", () => {
 
     expect(placedAt(layout.nodes, "src/a.ts").x).toBeLessThan(placedAt(layout.nodes, "src/b.ts").x)
     expect(layout.edges).toHaveLength(2)
+  })
+
+  it("gives each file of a long import chain the column after the file that imports it", () => {
+    const chain = longChainOf([])
+
+    expect(blastColumnsOf(chain)).toStrictEqual(chain.nodes.map((_node, position) => position))
+  })
+
+  it("leaves out of the columns the import that closes a loop in the middle of a long import chain", () => {
+    const loopCloser = { importer: chainPathOf(LOOP_END), imported: chainPathOf(LOOP_START) }
+    const chain = longChainOf([loopCloser])
+
+    expect(blastColumnsOf(chain)).toStrictEqual(chain.nodes.map((_node, position) => position))
   })
 
   it("gives an empty board for an empty diagram", () => {
